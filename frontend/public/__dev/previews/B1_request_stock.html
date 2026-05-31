@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B1 — Request Stock Form (Intelligent UI Preview)</title>
+<style>
+:root {
+  --bg: #09090b; --surface: #18181b; --surface2: #27272a;
+  --border: #3f3f46; --border-light: #27272a;
+  --text: #fafafa; --text-sec: #a1a1aa; --text-muted: #71717a;
+  --blue: #3b82f6; --green: #22c55e; --amber: #f59e0b; --red: #ef4444;
+  --purple: #a855f7; --cyan: #06b6d4;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'SF Mono', 'Fira Code', Consolas, monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:var(--font); font-size:14px; line-height:1.5; padding:20px; max-width:520px; margin:0 auto; }
+
+.preview-banner { background:#1e1b4b; border:1px solid #4338ca; border-radius:6px; padding:8px 12px; margin-bottom:16px; font-size:11px; color:#a5b4fc; display:flex; align-items:center; gap:8px; }
+.preview-banner strong { color:#c7d2fe; }
+
+.back-btn { display:inline-flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted); margin-bottom:12px; cursor:pointer; }
+.back-btn:hover { color:var(--text); }
+
+h1 { font-size:18px; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+h1 .icon { width:20px; height:20px; background:var(--blue); border-radius:4px; }
+
+.subtitle { font-size:11px; color:var(--text-muted); margin-bottom:16px; }
+
+/* B1-07: Step guidance */
+.step-guide { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px 14px; margin-bottom:14px; }
+.step-guide .steps { display:flex; gap:0; align-items:center; margin-bottom:8px; }
+.step { display:flex; align-items:center; gap:6px; font-size:11px; }
+.step .num { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; }
+.step.active .num { background:var(--blue); color:white; }
+.step.done .num { background:var(--green); color:white; }
+.step.pending .num { background:var(--surface2); color:var(--text-muted); border:1px solid var(--border); }
+.step .label { color:var(--text-sec); }
+.step.active .label { color:var(--text); font-weight:600; }
+.step-arrow { margin:0 8px; color:var(--text-muted); font-size:10px; }
+.step-guide .help { font-size:11px; color:var(--text-muted); line-height:1.4; }
+
+/* B1-03: Duplicate request banner */
+.alert-banner { border-radius:6px; padding:10px 12px; margin-bottom:12px; display:flex; align-items:flex-start; gap:8px; font-size:12px; line-height:1.4; }
+.alert-banner.warning { background:#422006; border:1px solid #92400e; color:#fbbf24; }
+.alert-banner.info { background:#0c2d48; border:1px solid #1e6091; color:#7dd3fc; }
+.alert-banner .alert-icon { flex-shrink:0; margin-top:1px; }
+.alert-banner a { color:#60a5fa; text-decoration:underline; cursor:pointer; }
+
+/* Cards */
+.card { background:var(--surface); border:1px solid var(--border); border-radius:8px; margin-bottom:12px; overflow:hidden; }
+.card-header { padding:8px 14px; border-bottom:1px solid var(--border-light); }
+.card-header h2 { font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); font-weight:600; }
+.card-body { padding:12px 14px; }
+
+/* Source picker */
+.source-select { width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:8px 10px; color:var(--text); font-size:12px; }
+.source-meta { display:flex; gap:12px; margin-top:8px; font-size:11px; }
+.source-meta .tag { padding:2px 8px; border-radius:3px; font-size:10px; font-weight:600; }
+.source-meta .tag-parent { background:#1e3a5f; color:var(--blue); }
+
+/* Item row */
+.item-row { border:1px solid var(--border-light); border-radius:6px; padding:10px 12px; margin-bottom:10px; }
+.item-row-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.item-row-header .label { font-size:10px; color:var(--text-muted); }
+.item-row-header .remove { color:var(--red); cursor:pointer; font-size:12px; }
+
+.item-select { width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:6px 8px; color:var(--text); font-size:12px; margin-bottom:8px; }
+
+/* B1-01: Own stock visibility */
+.own-stock-badge { display:flex; align-items:center; gap:6px; padding:6px 10px; border-radius:5px; margin-bottom:8px; font-size:11px; }
+.own-stock-badge.ok { background:#052e16; border:1px solid #166534; color:#4ade80; }
+.own-stock-badge.low { background:#422006; border:1px solid #92400e; color:#fbbf24; }
+.own-stock-badge.zero { background:#450a0a; border:1px solid #991b1b; color:#fca5a5; }
+.own-stock-badge .dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.own-stock-badge.ok .dot { background:var(--green); }
+.own-stock-badge.low .dot { background:var(--amber); }
+.own-stock-badge.zero .dot { background:var(--red); }
+
+.qty-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:6px; }
+.field label { display:block; font-size:10px; color:var(--text-muted); margin-bottom:2px; }
+.field label .req { color:var(--red); }
+.field input { width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:5px 8px; color:var(--text); font-size:12px; }
+.field input.error { border-color:var(--red); }
+.field input:read-only { opacity:0.6; }
+.field .validation-msg { font-size:10px; margin-top:2px; }
+.field .validation-msg.error { color:var(--red); }
+.field .validation-msg.warn { color:var(--amber); }
+
+/* B1-04: Source availability hint */
+.source-hint { display:flex; align-items:center; gap:4px; font-size:10px; color:var(--text-muted); margin-top:4px; }
+.source-hint .avail { font-weight:600; }
+.source-hint.warn { color:var(--amber); }
+
+/* B1-08: Qty exceeds source */
+.qty-warning { display:flex; align-items:center; gap:4px; font-size:10px; color:var(--amber); background:#422006; border:1px solid #92400e; border-radius:4px; padding:4px 8px; margin-top:4px; }
+
+.add-item-btn { display:flex; align-items:center; gap:4px; font-size:11px; color:var(--blue); cursor:pointer; padding:4px 0; }
+
+/* Submit */
+.submit-btn { width:100%; padding:10px; border:none; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; }
+.submit-btn.enabled { background:var(--blue); color:white; }
+.submit-btn.disabled { background:var(--surface2); color:var(--text-muted); cursor:not-allowed; border:1px solid var(--border); }
+
+/* B1-10: Validation summary */
+.validation-summary { background:#450a0a; border:1px solid #991b1b; border-radius:6px; padding:8px 12px; margin-bottom:10px; font-size:11px; color:#fca5a5; }
+.validation-summary ul { margin:4px 0 0 16px; }
+.validation-summary li { margin-bottom:2px; }
+
+/* Intelligence label */
+.intel { position:relative; }
+.intel::after { content:attr(data-intel); position:absolute; right:-4px; top:-4px; background:var(--purple); color:white; font-size:8px; font-weight:700; padding:1px 4px; border-radius:2px; letter-spacing:0.5px; white-space:nowrap; z-index:10; }
+</style>
+</head>
+<body>
+
+<div class="preview-banner">
+  <strong>PHASE 4 PREVIEW</strong> — B1 Request Stock Form — Intelligence Elements Annotated
+  <span style="margin-left:auto;font-size:10px;color:#818cf8">10 elements applied</span>
+</div>
+
+<div class="back-btn">← Back</div>
+
+<h1><div class="icon"></div> Request Stock</h1>
+<div class="subtitle">Request items from your parent store</div>
+
+<!-- B1-07: Step Guide -->
+<div class="step-guide" data-intel="B1-07">
+  <div class="steps">
+    <div class="step done"><div class="num">1</div><span class="label">Pick Source</span></div>
+    <span class="step-arrow">→</span>
+    <div class="step active"><div class="num">2</div><span class="label">Select Items</span></div>
+    <span class="step-arrow">→</span>
+    <div class="step pending"><div class="num">3</div><span class="label">Submit</span></div>
+  </div>
+  <div class="help">Select items from your source store's catalog. Your parent allocates batch/segment at dispatch.</div>
+</div>
+
+<!-- B1-03: Duplicate Request Warning -->
+<div class="alert-banner warning" data-intel="B1-03">
+  <span class="alert-icon">⚠</span>
+  <div>
+    <strong>You have 2 active requests</strong> pending with this source.
+    <a>View pending requests →</a>
+  </div>
+</div>
+
+<!-- Source Picker -->
+<div class="card">
+  <div class="card-header"><h2>Request From</h2></div>
+  <div class="card-body">
+    <select class="source-select">
+      <option>Kala Bahia Central Store (Central Store) — Direct Parent</option>
+    </select>
+    <div class="source-meta">
+      <span class="tag tag-parent">Direct Parent</span>
+      <span style="color:var(--text-muted)">4 items available</span>
+    </div>
+  </div>
+</div>
+
+<!-- Items Card -->
+<div class="card">
+  <div class="card-header"><h2>Items</h2></div>
+  <div class="card-body">
+
+    <!-- Item Row 1: Normal case (good stock, requesting more) -->
+    <div class="item-row">
+      <div class="item-row-header">
+        <span class="label">Item 1</span>
+      </div>
+      <select class="item-select">
+        <option>Cooking Oil (ltr) — 24.82 avail</option>
+      </select>
+
+      <!-- B1-01: Own stock visibility -->
+      <div class="own-stock-badge ok intel" data-intel="B1-01">
+        <div class="dot"></div>
+        <span>You have <strong>12.5 ltr</strong> in stock</span>
+      </div>
+
+      <div class="qty-row">
+        <div class="field">
+          <label>Quantity <span class="req">*</span></label>
+          <input type="number" value="5" />
+          <!-- B1-04: Source hint -->
+          <div class="source-hint intel" data-intel="B1-04">
+            Source has <span class="avail">24.82 ltr</span> available
+          </div>
+        </div>
+        <div class="field">
+          <label>Unit</label>
+          <input value="ltr" readonly />
+        </div>
+      </div>
+    </div>
+
+    <!-- Item Row 2: Low stock + qty exceeds source -->
+    <div class="item-row">
+      <div class="item-row-header">
+        <span class="label">Item 2</span>
+        <span class="remove">✕</span>
+      </div>
+      <select class="item-select">
+        <option>Maida (kg) — 3.2 avail</option>
+      </select>
+
+      <!-- B1-01: Own stock — LOW -->
+      <div class="own-stock-badge low intel" data-intel="B1-01">
+        <div class="dot"></div>
+        <span>You have <strong>0.5 kg</strong> in stock <strong style="color:#fbbf24">(LOW)</strong></span>
+      </div>
+
+      <div class="qty-row">
+        <div class="field">
+          <label>Quantity <span class="req">*</span></label>
+          <input type="number" value="10" class="error" />
+          <!-- B1-08: Qty exceeds source -->
+          <div class="qty-warning intel" data-intel="B1-08">
+            ⚠ Requesting 10 kg but source only has 3.2 kg available
+          </div>
+        </div>
+        <div class="field">
+          <label>Unit</label>
+          <input value="kg" readonly />
+        </div>
+      </div>
+    </div>
+
+    <!-- Item Row 3: Zero stock -->
+    <div class="item-row">
+      <div class="item-row-header">
+        <span class="label">Item 3</span>
+        <span class="remove">✕</span>
+      </div>
+      <select class="item-select">
+        <option>Red Meat (gm) — 1250 avail</option>
+      </select>
+
+      <!-- B1-01: Own stock — ZERO -->
+      <div class="own-stock-badge zero intel" data-intel="B1-01">
+        <div class="dot"></div>
+        <span>You have <strong>0 gm</strong> — out of stock</span>
+      </div>
+
+      <div class="qty-row">
+        <div class="field">
+          <label>Quantity <span class="req">*</span></label>
+          <input type="number" value="" placeholder="Enter qty" />
+          <!-- B1-09: Zero qty validation -->
+          <div class="validation-msg error intel" data-intel="B1-09">Enter a quantity greater than 0</div>
+        </div>
+        <div class="field">
+          <label>Unit</label>
+          <input value="gm" readonly />
+        </div>
+      </div>
+    </div>
+
+    <div class="add-item-btn">+ Add Item</div>
+  </div>
+</div>
+
+<!-- B1-10: Validation Summary -->
+<div class="validation-summary intel" data-intel="B1-10">
+  <strong>Cannot submit yet:</strong>
+  <ul>
+    <li>Item 2: Quantity exceeds source availability (10 > 3.2)</li>
+    <li>Item 3: Quantity is required</li>
+  </ul>
+</div>
+
+<!-- Submit button — disabled state with explanation -->
+<button class="submit-btn disabled" data-intel="B1-09">
+  Submit Request (fix 2 issues above)
+</button>
+
+<div style="height:40px"></div>
+
+<!-- Intelligence Legend -->
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:20px">
+  <div style="font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Intelligence Elements Applied</div>
+  <div style="font-size:11px;color:var(--text-sec);line-height:1.8">
+    <div><span style="color:var(--purple);font-weight:700">B1-01</span> Own stock visibility — green/yellow/red per item</div>
+    <div><span style="color:var(--purple);font-weight:700">B1-03</span> Duplicate request warning banner</div>
+    <div><span style="color:var(--purple);font-weight:700">B1-04</span> Source stock level display (enhanced hint)</div>
+    <div><span style="color:var(--purple);font-weight:700">B1-07</span> Step guide with contextual help text</div>
+    <div><span style="color:var(--purple);font-weight:700">B1-08</span> Qty exceeds source warning (yellow, not blocker)</div>
+    <div><span style="color:var(--purple);font-weight:700">B1-09</span> Zero qty blocker + disabled submit explanation</div>
+    <div><span style="color:var(--purple);font-weight:700">B1-10</span> Validation summary before submit</div>
+    <div style="margin-top:6px;color:var(--text-muted)"><em>B1-02 (pending incoming), B1-05 (consumption suggestion), B1-06 (last request) — lightweight versions, not shown in static preview</em></div>
+  </div>
+</div>
+
+</body>
+</html>
