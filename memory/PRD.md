@@ -4,51 +4,46 @@
 Build a governance & control system + intelligent UI freeze for the Central Inventory project.
 
 ## Architecture & Tech Stack
-- **Frontend**: React 19, Tailwind CSS 3, Radix UI, craco
-- **Backend**: FastAPI proxy → preprod.mygenie.online
-- **Governance**: 10-layer control + registry.json + generator + dashboard
+- **Frontend**: React 19, Tailwind CSS 3, Radix UI, craco (34 components, 8 hooks, 88 API methods)
+- **Backend**: FastAPI proxy → preprod.mygenie.online (177 lines, zero business logic)
+- **Governance**: 10-layer control + registry.json (35 items) + dev dashboard
 
-## What's Been Implemented
+## Current Status: PHASE 7 FROZEN — Implementation Ready
 
-### Phase 1: Repo Pull & Run (May 31, 2026)
-- Cloned repo (branch: 31_5_26), app running
+### Governance System (Complete)
+- 10-layer control layer, dev dashboard at `/__dev/`, drift linter
 
-### Phase 2: Governance & Control System (May 31, 2026)
-- 10-layer control layer, registry.json (34 items), dev dashboard at /__dev/
+### Intelligent UI Freeze (FROZEN)
+- **24/24 screens approved** across 5 flows
+- **10 HTML previews** at `/__dev/previews/`
+- **Phase 7 Final Freeze** at `control/sessions/INTELLIGENT_UI_FREEZE_PHASE_7_FINAL_FREEZE.md`
+- **3 implementation sprints planned**: Sprint A (read-only, 3-4d), Sprint B (transfer flow, 5-6d), Sprint C (operations, 4-5d)
+- **~28% codebase growth** estimated (9,800 → 12,500 lines)
+- **6 new files** to create (1 hook + 5 shared components)
+- **24 existing files** modified
+- **5 backend gaps** (G-012 to G-016) for parallel POS team work
 
-### Phase 3: Intelligent UI Freeze (May 31, 2026) — ALL 24 SCREENS APPROVED
-
-**Flow A — Operations Hub (1 screen):** Intelligent Command Center with Next Best Actions, Store Health Grid, Priority KPIs, Today's Activity feed
-
-**Flow B — Transfer Lifecycle (7 screens):** Intelligent PO (auto-detect low stock), Intelligent Approval Inbox (requester stock in brackets, store health), Transfer Detail (store snapshot, approval impact, dual stock), Direct Dispatch (destination needs auto-detect), Source Selector (FEFO), Receive (dispatched-vs-expected), Dispute (impact cards)
-
-**Flow C — Stock Operations (4 screens):** Adjustment (impact preview, FEFO), Wastage (anomaly detection 3.2x), Procurement (3-mode: Invoice AI + Excel upload + Manual, review-approve), Wastage Report (trend ranking)
-
-**Flow D — Stock Visibility (4 screens):** Inventory Summary (expiry risk, pending in/out, days of cover), Stock Detail (FEFO batches, consumption context, reorder suggestion), History/Ledger (movement badges, PO ref, signed qty), Timeline (relative timestamps, stale detection)
-
-**Flow E — Configuration (8 screens):** Settings (impact badges), Vendors (inactive detection), Catalogue (usage cross-ref, push status), Consumption (vs stock, trend), Hierarchy (push sync status, stale detection)
-
-### Design Decisions Locked
-- 3-color palette: red + amber + neutral gray
-- Intelligent PO as default on Request Stock
-- Requester stock in brackets on approval cards
-- PO auto-generation for direct dispatch
-- 3-mode procurement (Invoice AI + Excel + Manual)
-- Web-first, mobile-compatible
+### Key Innovations
+- Intelligent PO (auto-detect low stock, pre-build request)
+- Intelligent Approval Inbox (requester stock, store health, fulfillment verdict)
+- 3-mode Procurement (Invoice AI + Excel + Manual)
+- Store Health Grid + Next Best Actions command center
+- FEFO recommendations + anomaly detection + days-of-cover
+- Cross-item expiry scan + undo guidance + CSV export
 
 ### Backend Gaps
-- G-012: request-catalog missing category (P1)
-- G-013: No PO number (P0)
-- G-014: Invoice OCR/AI endpoint (P1)
-- G-015: Excel/CSV parsing (P2)
-- G-016: Invoice number storage (P2)
+- G-013: No PO number (P0) — blocks user-facing identifiers
+- G-012: Catalog category (P1)
+- G-014: Invoice OCR endpoint (P1)
+- G-015: Excel parsing (P2)
+- G-016: Invoice storage (P2)
 
-### 10 HTML Previews
-All at `/__dev/previews/`:
-A1, B1, B2, B3, B5, B6_B7_B8, C_stock_operations, D_stock_visibility, E_configuration
+### CRs Registered
+- CR-019: Intelligent UI Freeze (IN_PROGRESS → OWNER_REVIEW)
+- CR-020: Daily Intelligence Digest SMS/WhatsApp/Email (PROPOSED, future phase)
 
 ## Next Steps
-- Phase 5: Slice Approval Gate
-- Phase 6: E2E Intelligence Review (request→approve→dispatch→receive→ledger)
-- Phase 7: Final Freeze Document (implementation-ready spec)
-- Then: Implementation sprints
+1. **Implementation Sprint A** — Hub + Inventory + Detail + History + Timeline
+2. **Implementation Sprint B** — Request + Queues + Transfer + Dispatch + Modals
+3. **Implementation Sprint C** — Procurement + Adjustment + Wastage + Config
+4. **G-013 resolution** with POS backend team (P0 blocker)

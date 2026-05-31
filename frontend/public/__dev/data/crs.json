@@ -1698,5 +1698,84 @@
       "Owner-Signoff: PENDING"
     ],
     "sprint_name": "Governance Setup"
+  },
+  {
+    "type": "CR",
+    "id": "CR-020",
+    "title": "Daily Intelligence Digest (SMS + WhatsApp + Email)",
+    "status": "PROPOSED",
+    "severity": null,
+    "sprint_key": null,
+    "phase": "Future",
+    "files": [],
+    "notes": "Auto-generated daily summary: expiring items, stale approvals, stores needing restocking. Channels: SMS, WhatsApp, Email. Owner confirmed: next phase, not now.",
+    "artifact_refs": [
+      {
+        "artifact": 0,
+        "label": "Session-Start",
+        "status": "MISSING",
+        "tags": [],
+        "paths": []
+      },
+      {
+        "artifact": 1,
+        "label": "Intake",
+        "status": "MISSING",
+        "tags": [],
+        "paths": []
+      },
+      {
+        "artifact": 2,
+        "label": "Impact-Analysis",
+        "status": "MISSING",
+        "tags": [],
+        "paths": []
+      },
+      {
+        "artifact": 3,
+        "label": "Impl-Plan",
+        "status": "MISSING",
+        "tags": [],
+        "paths": []
+      },
+      {
+        "artifact": 4,
+        "label": "Code-Gate",
+        "status": "MISSING",
+        "tags": [],
+        "paths": []
+      },
+      {
+        "artifact": 5,
+        "label": "QA-Report",
+        "status": "MISSING",
+        "tags": [],
+        "paths": []
+      },
+      {
+        "artifact": 6,
+        "label": "Owner-Signoff",
+        "status": "MISSING",
+        "tags": [],
+        "paths": []
+      }
+    ],
+    "completeness": {
+      "done": 0,
+      "total": 7,
+      "pct": 0
+    },
+    "doc_count": 0,
+    "is_debt": false,
+    "debt_reasons": [
+      "Session-Start: MISSING",
+      "Intake: MISSING",
+      "Impact-Analysis: MISSING",
+      "Impl-Plan: MISSING",
+      "Code-Gate: MISSING",
+      "QA-Report: MISSING",
+      "Owner-Signoff: MISSING"
+    ],
+    "sprint_name": "Unassigned"
   }
 ]
