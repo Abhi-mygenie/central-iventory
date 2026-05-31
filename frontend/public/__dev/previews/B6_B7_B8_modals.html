@@ -3,18 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>B6+B7+B8 — Modals (Intelligent UI Preview)</title>
+<title>B6+B7+B8 — Modals Web View</title>
 <style>
-:root{--bg:#fff;--surface:#fff;--surface2:#f4f4f5;--surface3:#fafafa;--border:#e4e4e7;--border-light:#f4f4f5;--text:#09090b;--text-sec:#52525b;--text-muted:#a1a1aa;--primary:#18181b;--primary-fg:#fafafa;--amber:#b45309;--amber-light:#fffbeb;--amber-border:#fde68a;--red:#dc2626;--red-light:#fef2f2;--red-border:#fecaca;--green:#16a34a;--green-light:#f0fdf4;--green-border:#bbf7d0;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--mono:'SF Mono',Consolas,monospace;}
+:root{--bg:#fff;--surface:#fff;--surface2:#f4f4f5;--surface3:#fafafa;--border:#e4e4e7;--border-light:#f4f4f5;--text:#09090b;--text-sec:#52525b;--text-muted:#a1a1aa;--primary:#18181b;--primary-fg:#fafafa;--amber:#b45309;--amber-light:#fffbeb;--amber-border:#fde68a;--red:#dc2626;--red-light:#fef2f2;--red-border:#fecaca;--green:#16a34a;--green-light:#f0fdf4;--green-border:#bbf7d0;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--mono:'SF Mono',Consolas,monospace;--sidebar-w:200px;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--surface2);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;padding:24px;}
+body{background:var(--surface2);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;}
+.shell{display:flex;min-height:100vh;}
+.sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);padding:16px 0;flex-shrink:0;position:sticky;top:0;height:100vh;}
+.sidebar .logo{padding:0 16px 16px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.sidebar .logo .icon{width:24px;height:24px;background:var(--primary);border-radius:6px;}
+.sidebar nav a{display:flex;align-items:center;padding:8px 16px;font-size:13px;color:var(--text-sec);text-decoration:none;}
+.sidebar nav a:hover{background:var(--surface2);}
+.sidebar nav a.active{background:var(--surface2);color:var(--text);font-weight:600;border-right:2px solid var(--primary);}
+.topbar{height:48px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;justify-content:space-between;background:var(--surface);}
+.topbar .store-name{font-size:13px;font-weight:600;}
+.topbar .badge{font-size:10px;padding:2px 8px;border-radius:4px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);font-weight:600;margin-left:8px;}
+.main{flex:1;display:flex;flex-direction:column;}
+.content{flex:1;padding:20px 28px 40px;max-width:1100px;}
+.preview-bar{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 12px;margin-bottom:16px;font-size:11px;color:var(--text-sec);}
 
-.preview-bar{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 12px;margin-bottom:20px;font-size:11px;color:var(--text-sec);max-width:900px;margin-left:auto;margin-right:auto;}
+/* Section divider */
+.section-div{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin:28px 0 12px;padding-top:20px;border-top:2px solid var(--border);}
+.section-div:first-of-type{border-top:none;margin-top:0;padding-top:0;}
 
-.section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:10px;max-width:560px;margin-left:auto;margin-right:auto;}
-
-/* Modal frame */
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;max-width:560px;margin:0 auto 32px;box-shadow:0 8px 30px rgba(0,0,0,.08);overflow:hidden;}
+/* Modal overlay simulation on desktop */
+.modal-scene{background:rgba(0,0,0,.03);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;max-width:640px;box-shadow:0 8px 30px rgba(0,0,0,.08);overflow:hidden;}
 .modal-head{padding:16px 20px;border-bottom:1px solid var(--border-light);}
 .modal-head h2{font-size:16px;font-weight:700;}
 .modal-head .sub{font-size:12px;color:var(--text-muted);margin-top:2px;}
@@ -24,71 +38,84 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
 .btn-primary{background:var(--primary);color:var(--primary-fg);border-color:var(--primary);}
 .btn-danger{color:var(--red);border-color:var(--red-border);}
 
-/* Segment list */
+/* ═══ B6: Source Selector ═══ */
 .seg-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
-.seg-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all .1s;}
+.seg-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all .1s;}
 .seg-item:hover{background:var(--surface3);}
 .seg-item.selected{border-color:var(--primary);background:var(--surface3);}
 .seg-item.expired{opacity:.5;border-color:var(--red-border);background:var(--red-light);cursor:not-allowed;}
 .seg-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;}
 .seg-item.selected .seg-radio{border-color:var(--primary);background:var(--primary);}
-.seg-item.expired .seg-radio{border-color:var(--red-border);}
 .seg-info{flex:1;min-width:0;}
 .seg-title{font-size:12px;font-weight:600;}
-.seg-meta{font-size:10px;color:var(--text-muted);display:flex;gap:8px;margin-top:2px;}
-.seg-qty{font-family:var(--mono);font-size:13px;font-weight:700;flex-shrink:0;}
-.seg-badge{font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;flex-shrink:0;}
+.seg-meta{font-size:10px;color:var(--text-muted);display:flex;gap:10px;margin-top:2px;}
+.seg-qty{font-family:var(--mono);font-size:14px;font-weight:700;flex-shrink:0;}
+.seg-badge{font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;flex-shrink:0;white-space:nowrap;}
 .seg-badge.fefo{background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);}
 .seg-badge.expiry-warn{background:var(--amber-light);color:var(--amber);border:1px solid var(--amber-border);}
-.seg-badge.expired{background:var(--red-light);color:var(--red);border:1px solid var(--red-border);}
-
-.seg-remaining{font-size:10px;color:var(--text-muted);margin-top:6px;padding:6px 0;border-top:1px solid var(--border-light);}
+.seg-badge.expired-b{background:var(--red-light);color:var(--red);border:1px solid var(--red-border);}
+.seg-remaining{font-size:11px;color:var(--text-muted);margin-top:10px;padding:8px 0;border-top:1px solid var(--border-light);}
 .seg-remaining strong{color:var(--text-sec);}
-
-.empty-seg{text-align:center;padding:20px;color:var(--text-muted);font-size:12px;}
+.empty-seg{text-align:center;padding:24px;color:var(--text-muted);font-size:12px;}
 .empty-seg a{color:var(--text-sec);text-decoration:underline;}
 
-/* Receive dialog */
-.rcv-row{padding:10px 0;border-bottom:1px solid var(--border-light);}
+/* ═══ B7: Receive Dialog ═══ */
+.rcv-toggle{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:12px;}
+.rcv-toggle input{width:16px;height:16px;accent-color:var(--primary);}
+.rcv-row{padding:12px 0;border-bottom:1px solid var(--border-light);}
 .rcv-row:last-child{border-bottom:none;}
-.rcv-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-.rcv-name{font-size:13px;font-weight:600;}
-.rcv-dispatched{font-size:11px;color:var(--text-muted);}
-.rcv-compare{display:flex;gap:16px;align-items:center;font-size:11px;margin-bottom:6px;padding:4px 8px;background:var(--surface3);border-radius:4px;}
+.rcv-name{font-size:13px;font-weight:600;margin-bottom:6px;}
+.rcv-compare{display:flex;gap:20px;align-items:center;font-size:11px;padding:6px 10px;background:var(--surface3);border-radius:4px;margin-bottom:8px;flex-wrap:wrap;}
 .rcv-compare .label{color:var(--text-muted);}
 .rcv-compare .val{font-family:var(--mono);font-weight:600;}
 .rcv-compare .mismatch{color:var(--amber);}
-.rcv-inputs{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.rcv-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .rcv-inputs label{display:block;font-size:10px;color:var(--text-muted);margin-bottom:2px;}
-.rcv-inputs input{width:100%;border:1px solid var(--border);border-radius:4px;padding:6px 8px;font-size:13px;}
+.rcv-inputs input{width:100%;border:1px solid var(--border);border-radius:4px;padding:6px 10px;font-size:13px;}
 .rcv-inputs input:read-only{background:var(--surface2);opacity:.7;}
-.rcv-resolution{margin-top:6px;}
-.rcv-resolution select{width:100%;border:1px solid var(--border);border-radius:4px;padding:6px 8px;font-size:12px;}
-.rcv-resolution textarea{width:100%;border:1px solid var(--border);border-radius:4px;padding:6px 8px;font-size:12px;margin-top:4px;resize:vertical;}
-.rcv-help{font-size:10px;color:var(--text-muted);margin-top:4px;line-height:1.4;}
-.rcv-summary{background:var(--surface3);border:1px solid var(--border-light);border-radius:6px;padding:8px 12px;margin-top:10px;font-size:11px;}
-.rcv-summary .line{display:flex;justify-content:space-between;margin-bottom:2px;}
-.rcv-toggle{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:12px;}
-.rcv-toggle input{width:16px;height:16px;accent-color:var(--primary);}
-.rcv-confirm{background:var(--green-light);border:1px solid var(--green-border);border-radius:6px;padding:8px 12px;font-size:11px;color:#166534;margin-top:10px;}
+.rcv-resolution{margin-top:8px;}
+.rcv-resolution label{font-size:10px;color:var(--text-muted);display:block;margin-bottom:2px;}
+.rcv-resolution select{width:100%;border:1px solid var(--border);border-radius:4px;padding:6px 10px;font-size:12px;}
+.rcv-resolution textarea{width:100%;border:1px solid var(--border);border-radius:4px;padding:6px 10px;font-size:12px;margin-top:6px;resize:vertical;font-family:var(--font);}
+.rcv-help{font-size:10px;color:var(--text-muted);margin-top:4px;line-height:1.5;background:var(--surface3);padding:6px 10px;border-radius:4px;}
+.rcv-summary{background:var(--surface3);border:1px solid var(--border-light);border-radius:6px;padding:10px 14px;margin-top:12px;font-size:11px;}
+.rcv-summary .line{display:flex;justify-content:space-between;margin-bottom:3px;}
+.rcv-confirm{background:var(--green-light);border:1px solid var(--green-border);border-radius:6px;padding:10px 14px;font-size:11px;color:#166534;margin-top:10px;}
 
-/* Dispute dialog */
-.dis-summary{background:var(--amber-light);border:1px solid var(--amber-border);border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#92400e;}
-.dis-summary .label{font-size:10px;color:var(--text-muted);margin-bottom:2px;}
-.dis-impact{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
-.dis-option{padding:12px;border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all .1s;}
+/* ═══ B8: Dispute Resolution ═══ */
+.dis-summary{background:var(--amber-light);border:1px solid var(--amber-border);border-radius:6px;padding:12px 16px;margin-bottom:14px;font-size:12px;color:#92400e;}
+.dis-summary .dlabel{font-size:10px;color:var(--text-muted);margin-bottom:2px;}
+.dis-impact{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+.dis-option{padding:14px;border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .1s;}
 .dis-option:hover{background:var(--surface3);}
 .dis-option.selected{border-color:var(--primary);background:var(--surface3);}
 .dis-option h3{font-size:13px;font-weight:600;margin-bottom:4px;}
 .dis-option p{font-size:11px;color:var(--text-muted);line-height:1.4;}
+
+@media(max-width:900px){.sidebar{display:none;}.content{padding:16px;}}
 </style>
 </head>
 <body>
+<div class="shell">
+<aside class="sidebar">
+  <div class="logo"><div class="icon"></div>Central Inventory</div>
+  <nav>
+    <a href="#">Operations Hub</a>
+    <a href="#">Pending Queues</a>
+    <a href="#">Stock Inventory</a>
+    <a href="#" class="active">Transfer Detail</a>
+    <a href="#">History & Ledger</a>
+  </nav>
+</aside>
+<div class="main">
+<div class="topbar"><div class="store-name">Kala Bahia Central<span class="badge">Central Store</span></div></div>
+<div class="content">
 
-<div class="preview-bar">PREVIEW — B6 Source Selector + B7 Receive Dialog + B8 Dispute Resolution — All modals with intelligence</div>
+<div class="preview-bar">PREVIEW — B6 Source Selector + B7 Receive Dialog + B8 Dispute Resolution — Desktop Web View</div>
 
 <!-- ═══════════════ B6: SOURCE SELECTOR ═══════════════ -->
-<div class="section-label">B6 — Source Selector (used in Dispatch, Adjustment, Wastage)</div>
+<div class="section-div">B6 — Source Selector</div>
+<div class="modal-scene">
 <div class="modal">
   <div class="modal-head">
     <h2>Select Source Segment</h2>
@@ -96,50 +123,37 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
   </div>
   <div class="modal-body">
     <div class="seg-list">
-      <!-- FEFO recommended (soonest expiry) -->
       <div class="seg-item selected">
         <div class="seg-radio"></div>
         <div class="seg-info">
           <div class="seg-title">Segment #42 — Batch BRD-2026-05</div>
-          <div class="seg-meta">
-            <span>Source: Self</span>
-            <span>Expires: 2026-06-15</span>
-          </div>
+          <div class="seg-meta"><span>Source: Self</span><span>Expires: 2026-06-15</span></div>
         </div>
         <span class="seg-badge expiry-warn">Expires in 15 days</span>
         <span class="seg-badge fefo">FEFO Recommended</span>
         <span class="seg-qty">800 gm</span>
       </div>
-      <!-- Second segment -->
       <div class="seg-item">
         <div class="seg-radio"></div>
         <div class="seg-info">
           <div class="seg-title">Segment #45 — Batch BRD-2026-04</div>
-          <div class="seg-meta">
-            <span>Source: Vendor XYZ</span>
-            <span>Expires: 2026-07-20</span>
-          </div>
+          <div class="seg-meta"><span>Source: Vendor XYZ</span><span>Expires: 2026-07-20</span></div>
         </div>
         <span class="seg-badge fefo">Expires in 50 days</span>
         <span class="seg-qty">450 gm</span>
       </div>
-      <!-- Expired segment — blocked -->
       <div class="seg-item expired">
         <div class="seg-radio"></div>
         <div class="seg-info">
           <div class="seg-title">Segment #38 — Batch BRD-2026-02</div>
-          <div class="seg-meta">
-            <span>Source: Self</span>
-            <span style="color:var(--red)">Expired: 2026-05-20</span>
-          </div>
+          <div class="seg-meta"><span>Source: Self</span><span style="color:var(--red)">Expired: 2026-05-20</span></div>
         </div>
-        <span class="seg-badge expired">Expired</span>
+        <span class="seg-badge expired-b">Expired</span>
         <span class="seg-qty" style="color:var(--red);text-decoration:line-through;">200 gm</span>
       </div>
     </div>
-    <!-- B6-04: Remaining after selection -->
     <div class="seg-remaining">
-      Dispatching <strong>500 gm</strong> from Segment #42 (800 gm available) → <strong>300 gm remaining</strong> in this segment after dispatch
+      Dispatching <strong>500 gm</strong> from Segment #42 (800 gm) → <strong>300 gm remaining</strong> in this segment
     </div>
   </div>
   <div class="modal-foot">
@@ -147,45 +161,25 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
     <button class="btn btn-primary">Confirm Segment</button>
   </div>
 </div>
-
-<!-- Empty state -->
-<div class="section-label">B6 — Empty State (no segments available)</div>
-<div class="modal">
-  <div class="modal-head">
-    <h2>Select Source Segment</h2>
-    <div class="sub">Maida (kg)</div>
-  </div>
-  <div class="modal-body">
-    <div class="empty-seg">
-      No stock segments available for this item.<br>
-      <a href="#">Add stock via Procurement →</a>
-    </div>
-  </div>
 </div>
 
 <!-- ═══════════════ B7: RECEIVE DIALOG ═══════════════ -->
-<div class="section-label" style="margin-top:16px;">B7 — Receive Dialog (Full + Partial Receive)</div>
+<div class="section-div">B7 — Receive Dialog</div>
+<div class="modal-scene">
 <div class="modal">
   <div class="modal-head">
     <h2>Receive Transfer PO-XXXX</h2>
     <div class="sub">From: Kala Bahia Central → To: DemoFranchise1 · 3 items</div>
   </div>
   <div class="modal-body">
-    <!-- Toggle -->
-    <div class="rcv-toggle">
-      <input type="checkbox" checked id="partial" /> <label for="partial" style="cursor:pointer;">Partial Receive</label>
-    </div>
+    <div class="rcv-toggle"><input type="checkbox" checked /><label>Partial Receive</label></div>
 
-    <!-- Item 1: No discrepancy -->
     <div class="rcv-row">
-      <div class="rcv-top">
-        <span class="rcv-name">Red Meat <span style="color:var(--text-muted);font-weight:400;font-size:11px;">gm</span></span>
-      </div>
-      <!-- B7-01: Dispatched vs expected -->
+      <div class="rcv-name">Red Meat <span style="color:var(--text-muted);font-weight:400;font-size:11px;">gm</span></div>
       <div class="rcv-compare">
         <span><span class="label">Dispatched:</span> <span class="val">500 gm</span></span>
         <span><span class="label">Requested:</span> <span class="val">500 gm</span></span>
-        <span style="font-size:10px;color:var(--text-muted);">Match</span>
+        <span style="font-size:10px;color:var(--text-muted)">Match</span>
       </div>
       <div class="rcv-inputs">
         <div><label>Accepted *</label><input type="number" value="500" /></div>
@@ -193,43 +187,36 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
       </div>
     </div>
 
-    <!-- Item 2: Discrepancy — dispatched less than requested -->
     <div class="rcv-row">
-      <div class="rcv-top">
-        <span class="rcv-name">Patri <span style="color:var(--text-muted);font-weight:400;font-size:11px;">gm</span></span>
-      </div>
+      <div class="rcv-name">Patri <span style="color:var(--text-muted);font-weight:400;font-size:11px;">gm</span></div>
       <div class="rcv-compare">
         <span><span class="label">Dispatched:</span> <span class="val">600 gm</span></span>
         <span><span class="label">Requested:</span> <span class="val mismatch">800 gm</span></span>
-        <span style="font-size:10px;color:var(--amber);">⚠ 200 gm less than requested</span>
+        <span style="font-size:10px;color:var(--amber)">⚠ 200 gm less than requested</span>
       </div>
       <div class="rcv-inputs">
         <div><label>Accepted *</label><input type="number" value="500" /></div>
         <div><label>Rejected</label><input type="number" value="100" readonly /></div>
       </div>
-      <!-- B7-04: Resolution type with explanation -->
       <div class="rcv-resolution">
-        <label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:2px;">Resolution Type * (for 100 gm rejected)</label>
+        <label>Resolution Type * (for 100 gm rejected)</label>
         <select><option>Damaged — stock written off, not returned</option></select>
         <div class="rcv-help">
-          <strong>Damaged:</strong> Rejected stock is written off permanently. No stock returns to source.<br>
+          <strong>Damaged:</strong> Rejected stock written off permanently. No stock returns to source.<br>
           <strong>Return to Source:</strong> Rejected stock goes back to sender's inventory.<br>
           <strong>Other:</strong> Custom resolution — describe in reason field.
         </div>
-        <textarea placeholder="Describe the issue clearly (min 10 characters)..." rows="2" style="margin-top:6px;"></textarea>
+        <textarea placeholder="Describe the issue clearly (min 10 characters)..." rows="2"></textarea>
         <div style="font-size:10px;color:var(--text-muted);text-align:right;margin-top:2px;">0 / 10 minimum characters</div>
       </div>
     </div>
 
-    <!-- Item 3: Full accept -->
     <div class="rcv-row">
-      <div class="rcv-top">
-        <span class="rcv-name">Cooking Oil <span style="color:var(--text-muted);font-weight:400;font-size:11px;">ltr</span></span>
-      </div>
+      <div class="rcv-name">Cooking Oil <span style="color:var(--text-muted);font-weight:400;font-size:11px;">ltr</span></div>
       <div class="rcv-compare">
         <span><span class="label">Dispatched:</span> <span class="val">5 ltr</span></span>
         <span><span class="label">Requested:</span> <span class="val">5 ltr</span></span>
-        <span style="font-size:10px;color:var(--text-muted);">Match</span>
+        <span style="font-size:10px;color:var(--text-muted)">Match</span>
       </div>
       <div class="rcv-inputs">
         <div><label>Accepted *</label><input type="number" value="5" /></div>
@@ -237,55 +224,47 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
       </div>
     </div>
 
-    <!-- B7-05: Partial receive summary -->
     <div class="rcv-summary">
-      <div class="line"><span>Accepting:</span><span>Red Meat 500 gm, Patri 500 gm, Cooking Oil 5 ltr</span></div>
+      <div class="line"><span>Accepting:</span><span>Red Meat 500 gm, Patri 500 gm, Oil 5 ltr</span></div>
       <div class="line" style="color:var(--red);"><span>Rejecting:</span><span>Patri 100 gm (Damaged)</span></div>
     </div>
-
-    <!-- B7-03: Post-receive projection -->
-    <div class="rcv-confirm">
-      <strong>After receiving:</strong> Red Meat → 500 gm, Patri → 500 gm, Cooking Oil → 5 ltr in your inventory
-    </div>
+    <div class="rcv-confirm"><strong>After receiving:</strong> Red Meat → 500 gm, Patri → 500 gm, Cooking Oil → 5 ltr added to your inventory</div>
   </div>
   <div class="modal-foot">
     <button class="btn">Cancel</button>
     <button class="btn btn-primary">Submit Partial Receive</button>
   </div>
 </div>
+</div>
 
 <!-- ═══════════════ B8: DISPUTE RESOLUTION ═══════════════ -->
-<div class="section-label" style="margin-top:16px;">B8 — Dispute Resolution (Source resolves destination's issue report)</div>
+<div class="section-div">B8 — Dispute Resolution</div>
+<div class="modal-scene">
 <div class="modal">
   <div class="modal-head">
     <h2>Resolve Dispute — PO-XXXX</h2>
     <div class="sub">DemoFranchise1 reported an issue with this transfer</div>
   </div>
   <div class="modal-body">
-    <!-- B8-01: Issue summary -->
     <div class="dis-summary">
-      <div class="label">Issue Reported</div>
-      <div><strong>Resolution type:</strong> Damaged</div>
+      <div class="dlabel">Issue Reported</div>
+      <div><strong>Type:</strong> Damaged</div>
       <div><strong>Reason:</strong> "Patri package was torn and contaminated during transit. 100 gm unusable."</div>
       <div style="margin-top:4px;font-size:10px;color:var(--text-muted);">Reported by DemoFranchise1 · 2 hours ago</div>
     </div>
-
-    <!-- B8-02: Impact explanation -->
     <div class="dis-impact">
       <div class="dis-option selected">
         <h3>Accept Issue</h3>
-        <p>Acknowledge the damage. Rejected stock (100 gm Patri) will be written off. No stock returns to you. Transfer closes as partially received.</p>
+        <p>Acknowledge the damage. 100 gm Patri written off. No stock returns to you. Transfer closes as partially received.</p>
       </div>
       <div class="dis-option">
         <h3>Reject Issue</h3>
-        <p>Dispute the claim. Transfer reverts to "dispatched" status. Destination must re-receive. Use this if you believe the damage claim is incorrect.</p>
+        <p>Dispute the claim. Transfer reverts to "dispatched". Destination must re-receive. Use if damage claim is incorrect.</p>
       </div>
     </div>
-
-    <!-- B8-03: Note -->
-    <div style="margin-top:12px;">
+    <div style="margin-top:14px;">
       <label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:2px;">Your response (recommended)</label>
-      <textarea style="width:100%;border:1px solid var(--border);border-radius:4px;padding:8px;font-size:12px;resize:vertical;font-family:var(--font);" rows="2" placeholder="Provide context for your decision..."></textarea>
+      <textarea style="width:100%;border:1px solid var(--border);border-radius:4px;padding:8px 10px;font-size:12px;resize:vertical;font-family:var(--font);" rows="2" placeholder="Provide context for your decision..."></textarea>
     </div>
   </div>
   <div class="modal-foot">
@@ -293,27 +272,8 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
     <button class="btn btn-primary">Accept Issue</button>
   </div>
 </div>
-
-<!-- Legend -->
-<div style="max-width:560px;margin:16px auto 0;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;">
-  <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;color:var(--text-sec);">Intelligence Elements — All 3 Modals</div>
-  <div style="font-size:11px;color:var(--text-sec);line-height:2;">
-    <div><strong>B6-01</strong> FEFO Recommended badge — soonest expiry auto-selected</div>
-    <div><strong>B6-02</strong> Near-expiry warning — "Expires in 15 days" amber badge</div>
-    <div><strong>B6-03</strong> Expired segment blocked — greyed out, strikethrough qty, "Expired" red badge</div>
-    <div><strong>B6-04</strong> Remaining after selection — "300 gm remaining in this segment"</div>
-    <div><strong>B6-06</strong> Empty state — "No segments. Add stock via Procurement →"</div>
-    <div style="margin-top:4px;"><strong>B7-01</strong> Dispatched vs Expected — side-by-side comparison with mismatch flag</div>
-    <div><strong>B7-02</strong> Discrepancy highlight — "200 gm less than requested" in amber</div>
-    <div><strong>B7-03</strong> Post-receive projection — "After receiving: Red Meat → 500 gm in your inventory"</div>
-    <div><strong>B7-04</strong> Resolution type explanation — inline help for Damaged / Return to Source / Other</div>
-    <div><strong>B7-05</strong> Partial receive summary — "Accepting: ... / Rejecting: ..."</div>
-    <div><strong>B7-06</strong> Reason char counter — "0 / 10 minimum characters"</div>
-    <div style="margin-top:4px;"><strong>B8-01</strong> Issue summary — what was reported, by whom, when</div>
-    <div><strong>B8-02</strong> Accept vs Reject impact cards — clear consequence explanation</div>
-    <div><strong>B8-03</strong> Response note — "Provide context for your decision"</div>
-  </div>
 </div>
 
+</div></div></div>
 </body>
 </html>
