@@ -82,6 +82,15 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
 
 /* Action footer */
 .t-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface3);border-top:1px solid var(--border-light);}
+
+/* Requester health strip */
+.req-health{display:flex;align-items:center;gap:10px;padding:8px 16px;border-top:1px solid var(--border-light);font-size:11px;background:var(--surface3);flex-wrap:wrap;}
+.req-health-urgent{background:var(--red-light);}
+.rh-label{color:var(--text-muted);font-weight:500;}
+.rh-stat{display:flex;align-items:center;gap:3px;color:var(--text-sec);}
+.rh-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.rh-muted{color:var(--text-muted);}
+.rh-alert{color:var(--amber);font-weight:500;margin-left:auto;}
 .t-footer-left{font-size:11px;color:var(--text-muted);}
 .t-footer-right{display:flex;gap:6px;}
 .btn{font-size:12px;font-weight:500;padding:6px 16px;border-radius:5px;border:1px solid var(--border);background:var(--surface);color:var(--text-sec);cursor:pointer;}
@@ -173,6 +182,14 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
         </tbody>
       </table>
 
+      <!-- Requester health strip -->
+      <div class="req-health">
+        <span class="rh-label">DemoCentral1 store health:</span>
+        <span class="rh-stat"><span class="rh-dot" style="background:var(--red)"></span>1 out</span>
+        <span class="rh-stat"><span class="rh-dot" style="background:var(--amber)"></span>0 low</span>
+        <span class="rh-stat rh-muted">3 adequate</span>
+      </div>
+
       <div class="t-footer">
         <div class="t-footer-left">1 item · Requested by DemoCentral1</div>
         <div class="t-footer-right">
@@ -225,6 +242,15 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
         </tbody>
       </table>
 
+      <!-- Requester health strip — critical urgency -->
+      <div class="req-health req-health-urgent">
+        <span class="rh-label">DemoFranchise1 store health:</span>
+        <span class="rh-stat"><span class="rh-dot" style="background:var(--red)"></span><strong>3 out</strong></span>
+        <span class="rh-stat"><span class="rh-dot" style="background:var(--amber)"></span>1 low</span>
+        <span class="rh-stat rh-muted">0 adequate</span>
+        <span class="rh-alert">⚠ 1 out-of-stock item not in this request</span>
+      </div>
+
       <div class="t-footer">
         <div class="t-footer-left">3 items · <span style="color:var(--amber)">Maida: insufficient stock (3.2 of 10 requested)</span></div>
         <div class="t-footer-right">
@@ -271,6 +297,14 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
           </tr>
         </tbody>
       </table>
+
+      <!-- Requester health strip — healthy store -->
+      <div class="req-health">
+        <span class="rh-label">DemoFranchise2 store health:</span>
+        <span class="rh-stat"><span class="rh-dot" style="background:var(--red)"></span>1 out</span>
+        <span class="rh-stat"><span class="rh-dot" style="background:var(--amber)"></span>1 low</span>
+        <span class="rh-stat rh-muted">2 adequate</span>
+      </div>
 
       <div class="t-footer">
         <div class="t-footer-left">2 items · Requested by DemoFranchise2</div>
