@@ -220,72 +220,189 @@ tr:last-child td{border-bottom:none;}
 <div class="section-div">C3 — Procurement / Add Stock (Central + Master)</div>
 <a class="back">← Back</a>
 <h1>Procurement — Add Stock</h1>
-<div class="sub">Purchase stock from vendors. Multi-line entry with batch, expiry, and pricing.</div>
+<div class="sub">Purchase stock from vendors. Upload invoice or enter manually.</div>
 
+<!-- Tab toggle -->
+<div style="display:inline-flex;background:var(--surface2);border-radius:6px;padding:3px;border:1px solid var(--border);margin-bottom:16px;">
+  <button class="btn" style="flex:none;padding:8px 24px;background:var(--surface);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08);border:none;border-radius:4px;">Upload Invoice</button>
+  <button class="btn" style="flex:none;padding:8px 24px;border:none;color:var(--text-muted);background:none;">Manual Entry</button>
+</div>
+
+<!-- Upload Invoice Tab -->
 <div class="card">
-  <div class="card-head"><h2>Purchase Details</h2></div>
+  <div class="card-head"><h2>Step 1 — Upload Invoice</h2></div>
+  <div style="padding:16px;">
+    <!-- Upload zone -->
+    <div style="border:2px dashed var(--border);border-radius:8px;padding:32px;text-align:center;background:var(--surface3);margin-bottom:14px;">
+      <div style="font-size:24px;color:var(--text-muted);margin-bottom:6px;">&#8593;</div>
+      <div style="font-size:13px;font-weight:600;">Drop invoice here or click to browse</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">PDF, JPG, PNG — max 10MB</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Supports printed invoices and handwritten bills</div>
+    </div>
+
+    <!-- Simulated: Invoice uploaded + extracted -->
+    <div style="background:var(--green-light);border:1px solid var(--green-border);border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#166534;display:flex;align-items:center;gap:8px;">
+      <span style="font-size:16px;">&#10003;</span>
+      <div>
+        <strong>Invoice extracted successfully</strong>
+        <div style="font-size:11px;color:#15803d;">INV-2026-0487.pdf — 4 items detected, vendor matched</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 2: Extracted data with matching -->
+<div class="card">
+  <div class="card-head">
+    <h2>Step 2 — Review Extracted Data</h2>
+    <span style="font-size:10px;color:var(--text-muted);">Verify and correct before submitting</span>
+  </div>
   <div style="padding:14px 16px;">
-    <div class="form-row">
-      <div class="field">
-        <label>Vendor <span class="req">*</span></label>
-        <select><option>Test Vendor (ID: 16)</option></select>
+    <!-- Invoice metadata extracted -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
+      <div class="field"><label>Invoice Number</label><input value="INV-2026-0487" readonly style="background:var(--surface2);" /></div>
+      <div class="field"><label>Vendor (auto-detected)</label>
+        <select><option>Test Vendor (ID: 16) &#10003; matched</option></select>
       </div>
-      <div class="field">
-        <label>Purchase Date</label>
-        <input type="date" value="2026-05-31" />
+      <div class="field"><label>Invoice Date</label><input type="date" value="2026-05-31" /></div>
+      <div class="field"><label>Invoice Total</label><input value="Rs 6,410" readonly style="background:var(--surface2);font-family:var(--mono);" /></div>
+    </div>
+
+    <!-- Duplicate invoice check -->
+    <!--<div style="background:var(--amber-light);border:1px solid var(--amber-border);border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:#92400e;">
+      ⚠ Invoice INV-2026-0487 may be a duplicate — similar invoice processed on May 20. <a href="#" style="color:var(--text-sec);text-decoration:underline;">View previous →</a>
+    </div>-->
+
+    <!-- Extracted items table with matching -->
+    <table>
+      <thead>
+        <tr>
+          <th style="width:30px;">Match</th>
+          <th>Extracted Item</th>
+          <th>Matched To</th>
+          <th>Qty</th>
+          <th>Unit</th>
+          <th>Batch</th>
+          <th>Expiry</th>
+          <th>Price/Unit</th>
+          <th>Current Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Row 1: Exact match -->
+        <tr>
+          <td><span style="color:var(--green);font-size:16px;">&#9679;</span></td>
+          <td style="font-size:11px;color:var(--text-muted);">"Cooking Oil 10L"</td>
+          <td>
+            <select style="font-size:12px;border:1px solid var(--green-border);border-radius:4px;padding:4px 8px;background:var(--green-light);color:#166534;">
+              <option>Cooking Oil (ltr) &#10003;</option>
+            </select>
+            <div style="font-size:9px;color:var(--green);">Exact match (100%)</div>
+          </td>
+          <td><input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="10" /></td>
+          <td style="color:var(--text-muted);font-size:12px;">ltr</td>
+          <td><input style="width:80px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="" placeholder="—" /></td>
+          <td><input style="width:100px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" type="date" /></td>
+          <td>
+            <input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="150" />
+            <div style="font-size:9px;color:var(--text-muted);">Last: Rs 145</div>
+          </td>
+          <td>
+            <span style="font-family:var(--mono);font-size:12px;">24.82 ltr</span>
+            <div style="font-size:9px;color:var(--text-muted);">→ 34.82 after</div>
+          </td>
+        </tr>
+        <!-- Row 2: Exact match + price warning -->
+        <tr>
+          <td><span style="color:var(--green);font-size:16px;">&#9679;</span></td>
+          <td style="font-size:11px;color:var(--text-muted);">"Maida Fine 20kg"</td>
+          <td>
+            <select style="font-size:12px;border:1px solid var(--green-border);border-radius:4px;padding:4px 8px;background:var(--green-light);color:#166534;">
+              <option>Maida (kg) &#10003;</option>
+            </select>
+            <div style="font-size:9px;color:var(--green);">Exact match (98%)</div>
+          </td>
+          <td><input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="20" /></td>
+          <td style="color:var(--text-muted);font-size:12px;">kg</td>
+          <td><input style="width:80px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="MDA-06" /></td>
+          <td><input style="width:100px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" type="date" value="2026-08-31" /></td>
+          <td>
+            <input style="width:60px;border:1px solid var(--amber-border);border-radius:4px;padding:4px 6px;font-size:12px;background:var(--amber-light);" value="45" />
+            <div style="font-size:9px;color:var(--amber);">⚠ Last Rs 38 (+18%)</div>
+          </td>
+          <td>
+            <span style="font-family:var(--mono);font-size:12px;color:var(--amber);">3.2 kg</span>
+            <div style="font-size:9px;color:var(--text-muted);">→ 23.2 after</div>
+          </td>
+        </tr>
+        <!-- Row 3: Fuzzy match — needs confirmation -->
+        <tr style="background:var(--amber-light);">
+          <td><span style="color:var(--amber);font-size:16px;">&#9679;</span></td>
+          <td style="font-size:11px;color:var(--amber);">"Red M. Fresh 500g"</td>
+          <td>
+            <select style="font-size:12px;border:1px solid var(--amber-border);border-radius:4px;padding:4px 8px;background:var(--amber-light);color:#92400e;">
+              <option>Red Meat (gm) ? confirm</option>
+              <option>— No match —</option>
+            </select>
+            <div style="font-size:9px;color:var(--amber);">Fuzzy match (72%) — please confirm</div>
+          </td>
+          <td><input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="500" /></td>
+          <td style="color:var(--text-muted);font-size:12px;">gm</td>
+          <td><input style="width:80px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="RM-31" /></td>
+          <td><input style="width:100px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" type="date" value="2026-06-20" /></td>
+          <td>
+            <input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="320" />
+            <div style="font-size:9px;color:var(--text-muted);">Last: Rs 310</div>
+          </td>
+          <td>
+            <span style="font-family:var(--mono);font-size:12px;">1,250 gm</span>
+            <div style="font-size:9px;color:var(--text-muted);">→ 1,750 after</div>
+          </td>
+        </tr>
+        <!-- Row 4: No match — unrecognized -->
+        <tr style="background:var(--red-light);">
+          <td><span style="color:var(--red);font-size:16px;">&#9679;</span></td>
+          <td style="font-size:11px;color:var(--red);">"Spice Mix Special 2pk"</td>
+          <td>
+            <select style="font-size:12px;border:1px solid var(--red-border);border-radius:4px;padding:4px 8px;background:var(--red-light);color:#991b1b;">
+              <option>— No match found —</option>
+              <option>Create new item...</option>
+            </select>
+            <div style="font-size:9px;color:var(--red);">Not in inventory — skip or create new item</div>
+          </td>
+          <td><input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="2" /></td>
+          <td style="color:var(--text-muted);font-size:12px;">pkt</td>
+          <td><input style="width:80px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="" /></td>
+          <td><input style="width:100px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" type="date" /></td>
+          <td>
+            <input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="85" />
+          </td>
+          <td style="color:var(--text-muted);font-size:11px;font-style:italic;">N/A</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Running total vs invoice total -->
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--surface3);border:1px solid var(--border-light);border-radius:6px;margin-top:12px;font-size:12px;">
+      <div>
+        <span style="color:var(--text-muted);">Match summary:</span>
+        <span style="color:var(--green);font-weight:600;margin-left:6px;">2 exact</span> ·
+        <span style="color:var(--amber);font-weight:600;">1 fuzzy</span> ·
+        <span style="color:var(--red);font-weight:600;">1 unmatched</span>
+      </div>
+      <div>
+        <span style="color:var(--text-muted);">Calculated total:</span>
+        <span style="font-family:var(--mono);font-weight:700;margin-left:4px;">Rs 6,370</span>
+        <span style="color:var(--text-muted);margin-left:6px;">Invoice total:</span>
+        <span style="font-family:var(--mono);font-weight:700;margin-left:4px;">Rs 6,410</span>
+        <span style="color:var(--amber);font-size:10px;margin-left:6px;">Diff: Rs 40</span>
       </div>
     </div>
 
-    <!-- Vendor context -->
-    <div class="vendor-hint">
-      Last purchase from this vendor: <strong>2026-05-20</strong> (11 days ago) · 3 items · Total: Rs 4,500
-    </div>
-
-    <!-- Item rows -->
-    <div class="card" style="border:1px solid var(--border-light);">
-      <table>
-        <thead>
-          <tr><th>Item</th><th>Qty</th><th>Unit</th><th>Batch</th><th>Expiry</th><th>Price/Unit</th><th>Current Stock</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span style="font-weight:600;">Cooking Oil</span></td>
-            <td><input style="width:70px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="10" /></td>
-            <td style="color:var(--text-muted);">ltr</td>
-            <td><input style="width:90px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" placeholder="Optional" /></td>
-            <td><input style="width:110px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" type="date" /></td>
-            <td>
-              <input style="width:70px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="150" />
-              <div style="font-size:9px;color:var(--text-muted);margin-top:1px;">Last: Rs 145/ltr</div>
-            </td>
-            <td>
-              <span style="font-family:var(--mono);font-size:12px;">24.82 ltr</span>
-              <div style="font-size:9px;color:var(--text-muted);">→ 34.82 after</div>
-            </td>
-          </tr>
-          <tr>
-            <td><span style="font-weight:600;">Maida</span></td>
-            <td><input style="width:70px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="20" /></td>
-            <td style="color:var(--text-muted);">kg</td>
-            <td><input style="width:90px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="MDA-2026-06" /></td>
-            <td><input style="width:110px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" type="date" value="2026-08-31" /></td>
-            <td>
-              <input style="width:70px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px;" value="45" />
-              <div style="font-size:9px;color:var(--amber);margin-top:1px;">⚠ Last: Rs 38/kg (+18%)</div>
-            </td>
-            <td>
-              <span style="font-family:var(--mono);font-size:12px;color:var(--amber);">3.2 kg</span>
-              <div style="font-size:9px;color:var(--text-muted);">→ 23.2 after</div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div style="padding:6px 14px;"><button style="font-size:11px;color:var(--text-sec);background:none;border:none;cursor:pointer;text-decoration:underline;">+ Add item</button></div>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn">Cancel</button>
-      <button class="btn btn-primary">Review & Submit</button>
+    <div class="btn-row" style="margin-top:14px;">
+      <button class="btn">Re-upload</button>
+      <button class="btn">Skip Unmatched</button>
+      <button class="btn btn-primary">Confirm & Submit (3 matched items)</button>
     </div>
   </div>
 </div>
