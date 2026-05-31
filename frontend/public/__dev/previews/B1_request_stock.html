@@ -3,291 +3,305 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>B1 — Request Stock: Intelligent PO (Preview)</title>
+<title>B1 — Intelligent PO: Web View</title>
 <style>
 :root {
-  --bg: #ffffff; --surface: #ffffff; --surface2: #f4f4f5;
-  --border: #e4e4e7; --border-light: #f4f4f5;
-  --text: #09090b; --text-sec: #52525b; --text-muted: #a1a1aa;
-  --primary: #18181b; --primary-fg: #fafafa;
-  --blue: #2563eb; --blue-light: #eff6ff; --blue-border: #bfdbfe;
-  --green: #16a34a; --green-light: #f0fdf4; --green-border: #bbf7d0;
-  --amber: #d97706; --amber-light: #fffbeb; --amber-border: #fde68a;
-  --red: #dc2626; --red-light: #fef2f2; --red-border: #fecaca;
-  --purple: #7c3aed;
-  --radius: 8px;
-  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --mono: 'SF Mono', Consolas, monospace;
+  --bg:#ffffff;--surface:#ffffff;--surface2:#f4f4f5;--surface3:#fafafa;
+  --border:#e4e4e7;--border-light:#f4f4f5;
+  --text:#09090b;--text-sec:#52525b;--text-muted:#a1a1aa;
+  --primary:#18181b;--primary-fg:#fafafa;
+  --blue:#2563eb;--blue-light:#eff6ff;--blue-border:#bfdbfe;
+  --green:#16a34a;--green-light:#f0fdf4;--green-border:#bbf7d0;
+  --amber:#d97706;--amber-light:#fffbeb;--amber-border:#fde68a;
+  --red:#dc2626;--red-light:#fef2f2;--red-border:#fecaca;
+  --purple:#7c3aed;
+  --sidebar-w:200px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'SF Mono',Consolas,monospace;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--bg); color:var(--text); font-family:var(--font); font-size:14px; line-height:1.5; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;}
 
-.page { max-width:640px; margin:0 auto; padding:16px 16px 40px; }
-@media(min-width:768px) { .page { padding:24px 32px 60px; } }
+/* App shell */
+.shell{display:flex;min-height:100vh;}
+
+/* Sidebar mock */
+.sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);padding:16px 0;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sidebar .logo{padding:0 16px 16px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.sidebar .logo .icon{width:24px;height:24px;background:var(--primary);border-radius:6px;}
+.sidebar nav a{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:13px;color:var(--text-sec);text-decoration:none;transition:all .1s;}
+.sidebar nav a:hover{background:var(--surface2);}
+.sidebar nav a.active{background:var(--blue-light);color:var(--blue);font-weight:600;}
+.sidebar nav a .dot{width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.4;}
+
+/* Top bar */
+.topbar{height:48px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;justify-content:space-between;background:var(--surface);}
+.topbar .store-name{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.topbar .store-badge{font-size:10px;padding:2px 8px;border-radius:4px;background:var(--blue-light);color:var(--blue);border:1px solid var(--blue-border);font-weight:600;}
+.topbar .right{font-size:12px;color:var(--text-muted);}
+
+/* Main content */
+.main{flex:1;display:flex;flex-direction:column;}
+.content{flex:1;padding:20px 28px 40px;max-width:1100px;}
 
 /* Preview banner */
-.preview-bar { background:#f5f3ff; border:1px solid #ddd6fe; border-radius:6px; padding:8px 12px; margin-bottom:16px; font-size:11px; color:#6d28d9; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-.preview-bar strong { color:#4c1d95; }
+.preview-bar{background:#f5f3ff;border:1px solid #ddd6fe;border-radius:6px;padding:6px 12px;margin-bottom:16px;font-size:11px;color:#6d28d9;display:flex;align-items:center;gap:8px;}
 
-.back-btn { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--text-muted); margin-bottom:12px; cursor:pointer; text-decoration:none; }
-.back-btn:hover { color:var(--text); }
-
-h1 { font-size:18px; font-weight:700; margin-bottom:2px; }
-.subtitle { font-size:13px; color:var(--text-muted); margin-bottom:16px; }
+/* Page header */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.page-header h1{font-size:20px;font-weight:700;}
+.back-link{font-size:12px;color:var(--text-muted);cursor:pointer;text-decoration:none;}
+.page-sub{font-size:13px;color:var(--text-muted);margin-bottom:16px;}
 
 /* Mode toggle */
-.mode-bar { display:flex; background:var(--surface2); border-radius:6px; padding:3px; margin-bottom:14px; border:1px solid var(--border); }
-.mode-btn { flex:1; padding:7px 12px; border:none; background:none; font-size:12px; font-weight:500; color:var(--text-muted); cursor:pointer; border-radius:4px; text-align:center; transition:all .15s; }
-.mode-btn.active { background:var(--surface); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.08); font-weight:600; }
+.mode-bar{display:inline-flex;background:var(--surface2);border-radius:6px;padding:3px;margin-bottom:16px;border:1px solid var(--border);}
+.mode-btn{padding:7px 20px;border:none;background:none;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;border-radius:4px;transition:all .15s;}
+.mode-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.08);font-weight:600;}
 
-/* Smart summary strip */
-.smart-summary { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
-.ss-card { flex:1; min-width:100px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:10px 12px; text-align:center; }
-.ss-card .val { font-size:22px; font-weight:700; font-family:var(--mono); }
-.ss-card .lbl { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; margin-top:2px; }
-.ss-card.red .val { color:var(--red); }
-.ss-card.amber .val { color:var(--amber); }
-.ss-card.green .val { color:var(--green); }
-.ss-card.blue .val { color:var(--blue); }
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;text-align:center;}
+.stat-card .v{font-size:26px;font-weight:700;font-family:var(--mono);}
+.stat-card .l{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+.stat-card.red .v{color:var(--red);} .stat-card.amber .v{color:var(--amber);}
+.stat-card.green .v{color:var(--green);} .stat-card.blue .v{color:var(--blue);}
 
-/* Source bar */
-.source-bar { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:10px 14px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
-.source-bar .src-left { display:flex; align-items:center; gap:8px; }
-.source-bar .src-name { font-size:13px; font-weight:600; }
-.source-bar .src-tag { font-size:10px; font-weight:600; padding:2px 8px; border-radius:3px; background:var(--blue-light); color:var(--blue); border:1px solid var(--blue-border); }
-.source-bar select { font-size:12px; border:1px solid var(--border); border-radius:4px; padding:4px 8px; background:var(--surface); color:var(--text); }
+/* Source + alerts row */
+.context-row{display:flex;gap:12px;margin-bottom:14px;align-items:stretch;}
+.source-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}
+.source-card .name{font-size:14px;font-weight:600;}
+.source-card .tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:3px;background:var(--blue-light);color:var(--blue);border:1px solid var(--blue-border);margin-left:8px;}
+.source-card select{font-size:12px;border:1px solid var(--border);border-radius:4px;padding:4px 8px;}
 
-/* Pending banner */
-.pending-banner { background:var(--amber-light); border:1px solid var(--amber-border); border-radius:6px; padding:8px 12px; margin-bottom:12px; font-size:12px; color:#92400e; display:flex; align-items:center; gap:8px; }
-.pending-banner a { color:var(--blue); text-decoration:underline; cursor:pointer; }
+.alert-card{background:var(--amber-light);border:1px solid var(--amber-border);border-radius:8px;padding:12px 16px;font-size:12px;color:#92400e;display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.alert-card a{color:var(--blue);text-decoration:underline;}
 
-/* Suggested items card */
-.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:12px; }
-.card-head { padding:10px 14px; border-bottom:1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between; }
-.card-head h2 { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); font-weight:600; }
-.card-head .badge { font-size:10px; padding:2px 8px; border-radius:10px; font-weight:600; }
-.card-head .badge-smart { background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; }
-.card-body { padding:0; }
+/* Items table */
+.items-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:16px;}
+.items-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.items-head h2{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);font-weight:600;}
+.items-head .badge{font-size:10px;padding:3px 10px;border-radius:10px;font-weight:600;background:var(--green-light);color:var(--green);border:1px solid var(--green-border);}
 
-/* Suggested item row */
-.sug-row { padding:12px 14px; border-bottom:1px solid var(--border-light); }
-.sug-row:last-child { border-bottom:none; }
-.sug-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
-.sug-name { font-size:13px; font-weight:600; }
-.sug-unit { font-size:11px; color:var(--text-muted); margin-left:4px; font-weight:400; }
-.sug-check { display:flex; align-items:center; gap:6px; }
-.sug-check input[type=checkbox] { width:16px; height:16px; accent-color:var(--blue); }
+/* Table layout for items */
+.item-table{width:100%;border-collapse:collapse;}
+.item-table th{text-align:left;padding:8px 16px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);font-weight:600;border-bottom:1px solid var(--border);background:var(--surface3);}
+.item-table td{padding:12px 16px;border-bottom:1px solid var(--border-light);vertical-align:top;}
+.item-table tr:last-child td{border-bottom:none;}
+.item-table tr:hover td{background:var(--surface3);}
 
-/* Stock indicators */
-.stock-row { display:flex; gap:12px; margin-bottom:8px; flex-wrap:wrap; }
-.stock-pill { display:inline-flex; align-items:center; gap:4px; font-size:11px; padding:3px 8px; border-radius:4px; }
-.stock-pill .dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
-.pill-red { background:var(--red-light); color:#991b1b; border:1px solid var(--red-border); }
-.pill-red .dot { background:var(--red); }
-.pill-amber { background:var(--amber-light); color:#92400e; border:1px solid var(--amber-border); }
-.pill-amber .dot { background:var(--amber); }
-.pill-green { background:var(--green-light); color:#166534; border:1px solid var(--green-border); }
-.pill-green .dot { background:var(--green); }
-.pill-blue { background:var(--blue-light); color:#1e40af; border:1px solid var(--blue-border); }
-.pill-blue .dot { background:var(--blue); }
+.item-name{font-size:13px;font-weight:600;}
+.item-unit{font-size:11px;color:var(--text-muted);margin-left:4px;}
 
-/* Qty input row */
-.qty-grid { display:grid; grid-template-columns:1fr 1fr auto; gap:8px; align-items:end; }
-@media(max-width:420px) { .qty-grid { grid-template-columns:1fr 1fr; } }
-.qty-grid label { display:block; font-size:10px; color:var(--text-muted); margin-bottom:2px; }
-.qty-grid label .req { color:var(--red); }
-.qty-grid input { width:100%; border:1px solid var(--border); border-radius:4px; padding:6px 8px; font-size:13px; color:var(--text); background:var(--surface); }
-.qty-grid input:focus { outline:none; border-color:var(--blue); box-shadow:0 0 0 2px rgba(37,99,235,.1); }
-.qty-grid input.warn-border { border-color:var(--amber); }
-.qty-grid .unit-display { font-size:12px; color:var(--text-muted); padding:6px 0; }
+/* Stock pills */
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 8px;border-radius:4px;white-space:nowrap;}
+.pill .d{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.p-red{background:var(--red-light);color:#991b1b;border:1px solid var(--red-border);} .p-red .d{background:var(--red);}
+.p-amb{background:var(--amber-light);color:#92400e;border:1px solid var(--amber-border);} .p-amb .d{background:var(--amber);}
+.p-grn{background:var(--green-light);color:#166534;border:1px solid var(--green-border);} .p-grn .d{background:var(--green);}
+.p-blu{background:var(--blue-light);color:#1e40af;border:1px solid var(--blue-border);} .p-blu .d{background:var(--blue);}
 
-/* Suggestion tag */
-.sug-tag { display:inline-flex; align-items:center; gap:4px; font-size:10px; color:#6d28d9; background:#f5f3ff; border:1px solid #ddd6fe; border-radius:3px; padding:2px 6px; margin-top:4px; font-weight:500; }
-.sug-tag-green { color:#15803d; background:#f0fdf4; border-color:#bbf7d0; }
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
 
-/* Qty warning */
-.qty-note { font-size:10px; margin-top:3px; display:flex; align-items:center; gap:4px; }
-.qty-note.warn { color:#92400e; }
-.qty-note.info { color:var(--text-muted); }
+/* Qty cell */
+.qty-input{width:90px;border:1px solid var(--border);border-radius:4px;padding:6px 8px;font-size:13px;color:var(--text);}
+.qty-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px rgba(37,99,235,.1);}
+.qty-input.warn{border-color:var(--amber);}
+.unit-label{font-size:12px;color:var(--text-muted);margin-left:6px;}
 
-/* Manual add section */
-.manual-add { padding:10px 14px; border-top:1px solid var(--border-light); }
-.add-btn { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--blue); cursor:pointer; font-weight:500; border:none; background:none; padding:4px 0; }
+/* Suggestion tags */
+.stag{display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:2px 6px;border-radius:3px;margin-top:4px;font-weight:500;}
+.stag-purple{color:#6d28d9;background:#f5f3ff;border:1px solid #ddd6fe;}
+.stag-green{color:#15803d;background:#f0fdf4;border:1px solid #bbf7d0;}
+.stag-amber{color:#92400e;background:var(--amber-light);border:1px solid var(--amber-border);}
 
-/* Submit area */
-.submit-area { margin-top:16px; }
-.summary-strip { background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:8px 14px; margin-bottom:10px; display:flex; justify-content:space-between; font-size:12px; color:var(--text-sec); }
-.summary-strip strong { color:var(--text); }
-.submit-btn { width:100%; padding:10px 16px; border:none; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; transition:all .15s; }
-.submit-btn.enabled { background:var(--primary); color:var(--primary-fg); }
-.submit-btn.enabled:hover { opacity:.9; }
-.submit-btn.disabled { background:var(--surface2); color:var(--text-muted); cursor:not-allowed; border:1px solid var(--border); }
+.note{font-size:10px;margin-top:3px;}
+.note.warn{color:#92400e;}
 
-/* Validation box */
-.val-box { background:var(--red-light); border:1px solid var(--red-border); border-radius:6px; padding:8px 12px; margin-bottom:10px; font-size:11px; color:#991b1b; }
-.val-box ul { margin:4px 0 0 16px; }
+/* Checkbox */
+.check{width:16px;height:16px;accent-color:var(--blue);}
 
-/* Intel annotation */
-.intel { position:relative; }
-.intel::after { content:attr(data-i); position:absolute; right:-2px; top:-6px; background:#7c3aed; color:white; font-size:7px; font-weight:700; padding:1px 3px; border-radius:2px; letter-spacing:.3px; z-index:10; line-height:1.2; }
+/* Footer actions */
+.footer-area{display:flex;gap:12px;align-items:flex-start;}
+.footer-left{flex:1;}
+.footer-right{width:280px;flex-shrink:0;}
+
+.add-btn{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--blue);cursor:pointer;font-weight:500;border:none;background:none;padding:8px 16px;}
+
+.summary-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:10px;}
+.summary-box .line{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;}
+.summary-box .line:last-child{margin-bottom:0;}
+.summary-box .total{font-weight:700;border-top:1px solid var(--border);padding-top:6px;margin-top:6px;}
+
+.val-box{background:var(--red-light);border:1px solid var(--red-border);border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:#991b1b;}
+.val-box ul{margin:4px 0 0 16px;}
+
+.submit-btn{width:100%;padding:10px 16px;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;background:var(--primary);color:var(--primary-fg);transition:all .15s;}
+.submit-btn:hover{opacity:.9;}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+  .context-row{flex-direction:column;}
+  .footer-area{flex-direction:column;}
+  .footer-right{width:100%;}
+}
 </style>
 </head>
 <body>
-<div class="page">
+<div class="shell">
 
-<div class="preview-bar">
-  <strong>PREVIEW</strong> B1 — Intelligent PO (Request Stock) &nbsp;|&nbsp; Light theme, existing color schema
-</div>
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="logo"><div class="icon"></div>Central Inventory</div>
+  <nav>
+    <a href="#"><span class="dot"></span> Operations Hub</a>
+    <a href="#"><span class="dot"></span> Stock Inventory</a>
+    <a href="#"><span class="dot"></span> Hierarchy Summary</a>
+    <a href="#"><span class="dot"></span> Pending Queues</a>
+    <a href="#"><span class="dot"></span> History & Ledger</a>
+    <a href="#" class="active"><span class="dot"></span> Request Stock</a>
+    <a href="#"><span class="dot"></span> Vendors</a>
+  </nav>
+</aside>
 
-<div class="back-btn">← Back</div>
-<h1>Request Stock</h1>
-<div class="subtitle">Intelligent reorder suggestion based on your stock levels</div>
-
-<!-- Mode toggle: Smart / Manual -->
-<div class="mode-bar">
-  <button class="mode-btn active">Suggested Reorder</button>
-  <button class="mode-btn">Manual Request</button>
-</div>
-
-<!-- Smart summary cards -->
-<div class="smart-summary intel" data-i="NEW">
-  <div class="ss-card red"><div class="val">2</div><div class="lbl">Out of Stock</div></div>
-  <div class="ss-card amber"><div class="val">1</div><div class="lbl">Low Stock</div></div>
-  <div class="ss-card green"><div class="val">1</div><div class="lbl">Adequate</div></div>
-  <div class="ss-card blue"><div class="val">3</div><div class="lbl">Items to Order</div></div>
-</div>
-
-<!-- Source bar -->
-<div class="source-bar">
-  <div class="src-left">
-    <span class="src-name">Kala Bahia Central</span>
-    <span class="src-tag">Direct Parent</span>
+<div class="main">
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="store-name">DemoCentral1 <span class="store-badge">Master Store</span></div>
+    <div class="right">Logged in as Master Store</div>
   </div>
-  <select><option>Change source</option></select>
-</div>
 
-<!-- Pending requests banner -->
-<div class="pending-banner intel" data-i="B1-03">
-  ⚠ You have <strong>2 active requests</strong> pending with this source. <a>View →</a>
-</div>
+  <div class="content">
+    <div class="preview-bar">
+      <strong>PREVIEW</strong> B1 — Intelligent PO (Request Stock) — Web Desktop View
+    </div>
 
-<!-- Suggested Items -->
-<div class="card">
-  <div class="card-head">
-    <h2>Suggested Items</h2>
-    <span class="badge badge-smart">Auto-detected</span>
-  </div>
-  <div class="card-body">
+    <a class="back-link">← Back to Operations Hub</a>
+    <div class="page-header">
+      <h1>Request Stock</h1>
+      <!-- Mode toggle -->
+      <div class="mode-bar">
+        <button class="mode-btn active">Suggested Reorder</button>
+        <button class="mode-btn">Manual Request</button>
+      </div>
+    </div>
+    <div class="page-sub">System detected items below minimum stock. Review and submit your reorder.</div>
 
-    <!-- Item 1: OUT OF STOCK — urgent -->
-    <div class="sug-row">
-      <div class="sug-top">
-        <div>
-          <span class="sug-name">Red Meat<span class="sug-unit">(gm)</span></span>
-        </div>
-        <div class="sug-check"><input type="checkbox" checked /><span style="font-size:10px;color:var(--text-muted)">Include</span></div>
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card red"><div class="v">2</div><div class="l">Out of Stock</div></div>
+      <div class="stat-card amber"><div class="v">1</div><div class="l">Low Stock</div></div>
+      <div class="stat-card green"><div class="v">1</div><div class="l">Adequate</div></div>
+      <div class="stat-card blue"><div class="v">3</div><div class="l">Suggested Items</div></div>
+    </div>
+
+    <!-- Source + Alert -->
+    <div class="context-row">
+      <div class="source-card">
+        <div><span class="name">Kala Bahia Central</span><span class="tag">Direct Parent</span></div>
+        <select><option>Change source</option></select>
       </div>
-      <div class="stock-row">
-        <span class="stock-pill pill-red intel" data-i="B1-01"><span class="dot"></span>Your stock: <strong>0 gm</strong> — OUT</span>
-        <span class="stock-pill pill-green"><span class="dot"></span>Source: <strong>1,250 gm</strong> avail</span>
+      <div class="alert-card">⚠ <strong>2 active requests</strong> pending &nbsp;<a href="#">View →</a></div>
+    </div>
+
+    <!-- Items table -->
+    <div class="items-card">
+      <div class="items-head">
+        <h2>Suggested Items</h2>
+        <span class="badge">Auto-detected</span>
       </div>
-      <div class="qty-grid">
-        <div>
-          <label>Order Qty <span class="req">*</span></label>
-          <input type="number" value="500" />
-          <div class="sug-tag intel" data-i="NEW">Gap to min: 500 gm (min: 500)</div>
-        </div>
-        <div>
-          <label>Unit</label>
-          <div class="unit-display">gm</div>
-        </div>
-      </div>
-      <div class="qty-note info" style="margin-top:6px">
-        <span class="sug-tag-green sug-tag intel" data-i="B1-05">~3 days cover based on avg consumption of 180 gm/day</span>
+      <table class="item-table">
+        <thead>
+          <tr>
+            <th style="width:30px"></th>
+            <th>Item</th>
+            <th>Your Stock</th>
+            <th>Source Available</th>
+            <th>Order Qty</th>
+            <th>Suggestion</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1: Red Meat — OUT -->
+          <tr>
+            <td><input type="checkbox" class="check" checked /></td>
+            <td>
+              <span class="item-name">Red Meat</span><span class="item-unit">gm</span>
+            </td>
+            <td><span class="pill p-red"><span class="d"></span><strong>0 gm</strong> — OUT</span></td>
+            <td><span class="pill p-grn"><span class="d"></span><strong>1,250 gm</strong></span></td>
+            <td>
+              <input type="number" class="qty-input" value="500" />
+              <span class="unit-label">gm</span>
+            </td>
+            <td>
+              <div class="stag stag-purple">Gap to min: 500 gm</div>
+              <div class="stag stag-green" style="margin-top:4px">~3 days cover (180 gm/day)</div>
+            </td>
+          </tr>
+          <!-- Row 2: Patri — OUT -->
+          <tr>
+            <td><input type="checkbox" class="check" checked /></td>
+            <td>
+              <span class="item-name">Patri</span><span class="item-unit">gm</span>
+            </td>
+            <td><span class="pill p-red"><span class="d"></span><strong>0 gm</strong> — OUT</span></td>
+            <td><span class="pill p-grn"><span class="d"></span><strong>3,950 gm</strong></span></td>
+            <td>
+              <input type="number" class="qty-input" value="800" />
+              <span class="unit-label">gm</span>
+            </td>
+            <td>
+              <div class="stag stag-purple">Gap to min: 800 gm</div>
+            </td>
+          </tr>
+          <!-- Row 3: Maida — LOW + exceeds source -->
+          <tr>
+            <td><input type="checkbox" class="check" checked /></td>
+            <td>
+              <span class="item-name">Maida</span><span class="item-unit">kg</span>
+            </td>
+            <td><span class="pill p-amb"><span class="d"></span><strong>0.5 kg</strong> — LOW</span></td>
+            <td><span class="pill p-blu"><span class="d"></span><strong>3.2 kg</strong></span></td>
+            <td>
+              <input type="number" class="qty-input warn" value="10" />
+              <span class="unit-label">kg</span>
+              <div class="note warn">⚠ Source has only 3.2 kg</div>
+            </td>
+            <td>
+              <div class="stag stag-purple">Gap to min: 9.5 kg</div>
+              <div class="stag stag-amber" style="margin-top:4px">Exceeds source — consider 3.2</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="padding:4px 16px 12px;">
+        <button class="add-btn">+ Add item manually</button>
       </div>
     </div>
 
-    <!-- Item 2: OUT OF STOCK -->
-    <div class="sug-row">
-      <div class="sug-top">
-        <div><span class="sug-name">Patri<span class="sug-unit">(gm)</span></span></div>
-        <div class="sug-check"><input type="checkbox" checked /><span style="font-size:10px;color:var(--text-muted)">Include</span></div>
-      </div>
-      <div class="stock-row">
-        <span class="stock-pill pill-red"><span class="dot"></span>Your stock: <strong>0 gm</strong> — OUT</span>
-        <span class="stock-pill pill-green"><span class="dot"></span>Source: <strong>3,950 gm</strong> avail</span>
-      </div>
-      <div class="qty-grid">
-        <div>
-          <label>Order Qty <span class="req">*</span></label>
-          <input type="number" value="800" />
-          <div class="sug-tag">Gap to min: 800 gm (min: 800)</div>
+    <!-- Footer: summary + submit -->
+    <div class="footer-area">
+      <div class="footer-left">
+        <div class="val-box">
+          <strong>Review before submitting:</strong>
+          <ul><li>Maida: Qty (10 kg) exceeds source availability (3.2 kg)</li></ul>
         </div>
-        <div><label>Unit</label><div class="unit-display">gm</div></div>
       </div>
-    </div>
-
-    <!-- Item 3: LOW STOCK — qty exceeds source -->
-    <div class="sug-row">
-      <div class="sug-top">
-        <div><span class="sug-name">Maida<span class="sug-unit">(kg)</span></span></div>
-        <div class="sug-check"><input type="checkbox" checked /><span style="font-size:10px;color:var(--text-muted)">Include</span></div>
-      </div>
-      <div class="stock-row">
-        <span class="stock-pill pill-amber intel" data-i="B1-01"><span class="dot"></span>Your stock: <strong>0.5 kg</strong> — LOW</span>
-        <span class="stock-pill pill-blue"><span class="dot"></span>Source: <strong>3.2 kg</strong> avail</span>
-      </div>
-      <div class="qty-grid">
-        <div>
-          <label>Order Qty <span class="req">*</span></label>
-          <input type="number" value="10" class="warn-border" />
-          <div class="sug-tag">Gap to min: 9.5 kg (min: 10)</div>
+      <div class="footer-right">
+        <div class="summary-box">
+          <div class="line"><span>Red Meat</span><span>500 gm</span></div>
+          <div class="line"><span>Patri</span><span>800 gm</span></div>
+          <div class="line"><span>Maida</span><span>10 kg</span></div>
+          <div class="line total"><span>3 items selected</span><span></span></div>
         </div>
-        <div><label>Unit</label><div class="unit-display">kg</div></div>
+        <button class="submit-btn">Submit Request (3 items)</button>
       </div>
-      <div class="qty-note warn intel" data-i="B1-08">⚠ Requesting 10 kg but source only has 3.2 kg — consider reducing to 3.2</div>
-    </div>
-
-    <!-- Manual add -->
-    <div class="manual-add">
-      <button class="add-btn">+ Add item manually</button>
     </div>
 
   </div>
 </div>
-
-<!-- Submit area -->
-<div class="submit-area">
-  <div class="summary-strip">
-    <span><strong>3 items</strong> selected</span>
-    <span>Total: Red Meat 500gm, Patri 800gm, Maida 10kg</span>
-  </div>
-
-  <div class="val-box intel" data-i="B1-10">
-    <strong>Review before submitting:</strong>
-    <ul><li>Maida: Qty (10 kg) exceeds source availability (3.2 kg)</li></ul>
-  </div>
-
-  <button class="submit-btn enabled">Submit Request (3 items)</button>
-</div>
-
-<!-- Legend -->
-<div style="margin-top:24px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;">
-  <div style="font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Intelligence Elements</div>
-  <div style="font-size:11px;color:var(--text-sec);line-height:2">
-    <div><strong style="color:var(--purple)">Intelligent PO</strong> — System pre-builds request from low/out-of-stock items</div>
-    <div><strong style="color:var(--purple)">B1-01</strong> Own stock: green/amber/red pills per item</div>
-    <div><strong style="color:var(--purple)">B1-03</strong> Duplicate request warning banner</div>
-    <div><strong style="color:var(--purple)">B1-04</strong> Source availability per item</div>
-    <div><strong style="color:var(--purple)">B1-05</strong> Consumption-based cover estimate ("~3 days cover")</div>
-    <div><strong style="color:var(--purple)">B1-08</strong> Qty exceeds source warning</div>
-    <div><strong style="color:var(--purple)">B1-10</strong> Validation summary before submit</div>
-    <div><strong style="color:var(--purple)">Gap-to-min</strong> — Suggested qty = min_threshold - current_stock</div>
-    <div><strong style="color:var(--purple)">Mode toggle</strong> — Suggested Reorder (default) / Manual Request</div>
-    <div style="margin-top:4px;color:var(--text-muted)"><em>All editable — user can change qty, uncheck items, add manual items</em></div>
-  </div>
-</div>
-
 </div>
 </body>
 </html>
