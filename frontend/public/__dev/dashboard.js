@@ -114,25 +114,79 @@
   }
 
   // ── Expand/collapse ─────────────────────────────────────────
-  function toggleRow(id) {
-    const detail = document.getElementById('detail-' + id);
-    const icon = document.getElementById('icon-' + id);
-    if (detail) {
-      detail.classList.toggle('open');
+  function toggleRow(prefix, id) {
+    const detailTr = document.getElementById(prefix + '-detailrow-' + id);
+    const icon = document.getElementById(prefix + '-icon-' + id);
+    if (detailTr) {
+      detailTr.classList.toggle('open');
       icon?.classList.toggle('open');
     }
   }
   window.toggleRow = toggleRow;
 
-  // ── Render artifact list ────────────────────────────────────
-  function renderArtifacts(refs) {
-    return `<ul class="artifact-list">${refs.map(a => {
-      const statusBadge = artifactBadge(a.status);
-      const link = a.path
-        ? `<a href="#" title="${a.path}">${a.path.split('/').pop()}</a>`
-        : '<span style="color:var(--text-muted)">—</span>';
-      return `<li>${statusBadge} <strong>${a.label}</strong> ${link}</li>`;
-    }).join('')}</ul>`;
+  // ── Copy to clipboard ───────────────────────────────────────
+  function copyPath(path, btnId) {
+    navigator.clipboard.writeText(path).then(() => {
+      const btn = document.getElementById(btnId);
+      if (btn) { btn.textContent = 'copied'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500); }
+    });
+  }
+  window.copyPath = copyPath;
+
+  // ── Render artifact detail card ─────────────────────────────
+  function renderDetailCard(item) {
+    const c = item.completeness || { done: 0, total: 7 };
+    const artRows = (item.artifact_refs || []).map((a, idx) => {
+      const dotClass = a.status === 'DONE' ? 'done' : a.status === 'WAIVED' ? 'waived' : a.status === 'PENDING' ? 'pending' : 'missing';
+      const tags = (a.tags || []).map(t => {
+        const cls = t === 'PRE-GOVERNANCE' ? 'art-tag-pre-governance' : t === 'AWAITING-OWNER' ? 'art-tag-awaiting-owner' : t === 'WAIVED' ? 'art-tag-waived' : 'art-tag-default';
+        return `<span class="art-tag ${cls}">${t}</span>`;
+      }).join(' ');
+      const statusTag = (a.status !== 'DONE' && a.tags?.length === 0) ? `<span class="art-tag art-tag-${a.status === 'MISSING' ? 'default' : 'awaiting-owner'}">${a.status}</span>` : '';
+
+      const paths = (a.paths || []).map((p, pi) => {
+        const btnId = `copy-${item.id}-${idx}-${pi}`;
+        const filename = p.split('/').pop();
+        return `<div class="art-path-row">
+          <span class="art-path-text" title="${p}">${filename}</span>
+          <button class="copy-btn" id="${btnId}" onclick="event.stopPropagation(); copyPath('${p.replace(/'/g, "\\'")}', '${btnId}')">copy</button>
+        </div>`;
+      }).join('');
+      const emptyMsg = (!a.paths || a.paths.length === 0) ? '<div class="art-empty">No documents linked</div>' : '';
+
+      return `<div class="artifact-row">
+        <div class="art-dot ${dotClass}"></div>
+        <div class="art-label-col">
+          <div class="art-label">${a.label}</div>
+          <div class="art-tags">${tags}${statusTag}</div>
+        </div>
+        <div class="art-paths-col">${paths}${emptyMsg}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="detail-card">
+      <div class="detail-header">
+        <span class="detail-id">${item.id}</span>
+        <span class="detail-title">${item.title}</span>
+        ${badge(item.severity, 'badge')}
+        ${badge(item.status, 'badge')}
+      </div>
+      <div class="detail-meta">
+        <span><strong>Sprint:</strong> ${item.sprint_name || 'Unassigned'}</span>
+        <span><strong>Phase:</strong> ${item.phase || '—'}</span>
+        ${item.files?.length ? `<span><strong>Files:</strong> ${item.files.length}</span>` : ''}
+        ${item.doc_count ? `<span><strong>Docs:</strong> ${item.doc_count}</span>` : ''}
+      </div>
+      ${item.notes ? `<div style="color:var(--text-muted);font-size:12px;margin-bottom:12px">${item.notes}</div>` : ''}
+      ${item.files?.length ? `<div style="font-size:11px;color:var(--text-muted);margin-bottom:12px"><strong style="color:var(--text-secondary)">Files touched:</strong> <code style="font-family:var(--font-mono);font-size:11px">${item.files.join(', ')}</code></div>` : ''}
+      <div class="artifact-block">
+        <div class="artifact-block-header">
+          <span>Artifact References</span>
+          <span class="art-count">(${c.done}/${c.total})</span>
+        </div>
+        ${artRows}
+      </div>
+    </div>`;
   }
 
   // ── Render tables ───────────────────────────────────────────
@@ -142,9 +196,11 @@
       <thead><tr>
         <th></th><th>ID</th><th>Type</th><th>Title</th><th>Status</th><th>Sprint</th><th>Debt Reasons</th>
       </tr></thead>
-      <tbody>${items.map(d => `
-        <tr class="expandable" onclick="toggleRow('${d.id}')">
-          <td><span class="expand-icon" id="icon-${d.id}">&#9654;</span></td>
+      <tbody>${items.map(d => {
+        const fullItem = [...crs, ...bugs].find(i => i.id === d.id) || d;
+        return `
+        <tr class="expandable" onclick="toggleRow('debt','${d.id}')">
+          <td><span class="expand-icon" id="debt-icon-${d.id}">&#9654;</span></td>
           <td style="font-family:var(--font-mono);font-size:12px;white-space:nowrap">${d.id}</td>
           <td>${badge(d.type, 'badge')}</td>
           <td>${d.title}</td>
@@ -153,10 +209,10 @@
           <td><div class="debt-reasons">${d.debt_reasons.map(r =>
             `<span class="debt-reason-tag">${r}</span>`).join('')}</div></td>
         </tr>
-        <tr class="detail-row"><td colspan="7"><div class="detail-content" id="detail-${d.id}">
-          <strong>Missing:</strong> ${d.missing_count} &nbsp; <strong>Pending:</strong> ${d.pending_count}
+        <tr class="detail-row" id="debt-detailrow-${d.id}"><td colspan="7"><div class="detail-content">
+          ${renderDetailCard(fullItem)}
         </div></td></tr>
-      `).join('')}</tbody>
+      `}).join('')}</tbody>
     </table>`;
   }
 
@@ -164,24 +220,21 @@
     if (!items.length) return '<div class="no-data">No bugs match filters.</div>';
     return `<table class="data-table">
       <thead><tr>
-        <th></th><th>ID</th><th>Severity</th><th>Title</th><th>Status</th><th>Sprint</th><th>Files</th><th>Artifacts</th>
+        <th></th><th>ID</th><th>Severity</th><th>Title</th><th>Status</th><th>Sprint</th><th>Docs</th><th>Artifacts</th>
       </tr></thead>
       <tbody>${items.map(b => `
-        <tr class="expandable" onclick="toggleRow('${b.id}')">
-          <td><span class="expand-icon" id="icon-${b.id}">&#9654;</span></td>
+        <tr class="expandable" onclick="toggleRow('bug','${b.id}')">
+          <td><span class="expand-icon" id="bug-icon-${b.id}">&#9654;</span></td>
           <td style="font-family:var(--font-mono);font-size:12px;white-space:nowrap">${b.id}</td>
           <td>${badge(b.severity, 'badge')}</td>
           <td>${b.title}</td>
           <td>${badge(b.status, 'badge')}</td>
           <td style="font-size:11px;color:var(--text-muted)">${b.sprint_name || '—'}</td>
-          <td style="font-size:11px;color:var(--text-muted)">${(b.files||[]).length}</td>
+          <td style="font-family:var(--font-mono);font-size:11px;text-align:center">${b.doc_count || 0}</td>
           <td>${completenessBar(b.completeness)}</td>
         </tr>
-        <tr class="detail-row"><td colspan="8"><div class="detail-content" id="detail-${b.id}">
-          <p style="margin-bottom:6px;color:var(--text-secondary)">${b.notes || ''}</p>
-          ${b.files?.length ? `<p style="margin-bottom:6px"><strong>Files:</strong> <code>${b.files.join(', ')}</code></p>` : ''}
-          ${renderArtifacts(b.artifact_refs)}
-          ${b.debt_reasons?.length ? `<div style="margin-top:8px"><strong>Debt:</strong> <div class="debt-reasons">${b.debt_reasons.map(r => `<span class="debt-reason-tag">${r}</span>`).join('')}</div></div>` : ''}
+        <tr class="detail-row" id="bug-detailrow-${b.id}"><td colspan="8"><div class="detail-content">
+          ${renderDetailCard(b)}
         </div></td></tr>
       `).join('')}</tbody>
     </table>`;
@@ -191,24 +244,21 @@
     if (!items.length) return '<div class="no-data">No CRs match filters.</div>';
     return `<table class="data-table">
       <thead><tr>
-        <th></th><th>ID</th><th>Phase</th><th>Title</th><th>Status</th><th>Sprint</th><th>Files</th><th>Artifacts</th>
+        <th></th><th>ID</th><th>Phase</th><th>Title</th><th>Status</th><th>Sprint</th><th>Docs</th><th>Artifacts</th>
       </tr></thead>
       <tbody>${items.map(c => `
-        <tr class="expandable" onclick="toggleRow('${c.id}')">
-          <td><span class="expand-icon" id="icon-${c.id}">&#9654;</span></td>
+        <tr class="expandable" onclick="toggleRow('cr','${c.id}')">
+          <td><span class="expand-icon" id="cr-icon-${c.id}">&#9654;</span></td>
           <td style="font-family:var(--font-mono);font-size:12px;white-space:nowrap">${c.id}</td>
           <td style="font-size:11px;color:var(--text-muted)">${c.phase || '—'}</td>
           <td>${c.title}</td>
           <td>${badge(c.status, 'badge')}</td>
           <td style="font-size:11px;color:var(--text-muted)">${c.sprint_name || '—'}</td>
-          <td style="font-size:11px;color:var(--text-muted)">${(c.files||[]).length}</td>
+          <td style="font-family:var(--font-mono);font-size:11px;text-align:center">${c.doc_count || 0}</td>
           <td>${completenessBar(c.completeness)}</td>
         </tr>
-        <tr class="detail-row"><td colspan="8"><div class="detail-content" id="detail-${c.id}">
-          <p style="margin-bottom:6px;color:var(--text-secondary)">${c.notes || ''}</p>
-          ${c.files?.length ? `<p style="margin-bottom:6px"><strong>Files:</strong> <code>${c.files.join(', ')}</code></p>` : ''}
-          ${renderArtifacts(c.artifact_refs)}
-          ${c.debt_reasons?.length ? `<div style="margin-top:8px"><strong>Debt:</strong> <div class="debt-reasons">${c.debt_reasons.map(r => `<span class="debt-reason-tag">${r}</span>`).join('')}</div></div>` : ''}
+        <tr class="detail-row" id="cr-detailrow-${c.id}"><td colspan="8"><div class="detail-content">
+          ${renderDetailCard(c)}
         </div></td></tr>
       `).join('')}</tbody>
     </table>`;

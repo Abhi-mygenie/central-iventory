@@ -24,43 +24,66 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_CR_REQUIREMENT_PLANNING.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_CR_REQUIREMENT_PLANNING.md",
+          "memory/central_inventory/CENTRAL_INVENTORY_BUSINESS_RULE_AND_UX_FIELD_FREEZE.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_FRONTEND_SLICE_1_HANDOVER.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_FRONTEND_SLICE_1_HANDOVER.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_FRONTEND_SLICE_1_QA_VALIDATION_REPORT.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_FRONTEND_SLICE_1_QA_VALIDATION_REPORT.md",
+          "memory/central_inventory/CENTRAL_INVENTORY_FRONTEND_SLICE_1_QA_CHECKLIST.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -68,6 +91,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 5,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -94,43 +118,65 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_2_IMPLEMENTATION_PLANNING_HANDOVER.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_2_IMPLEMENTATION_PLANNING_HANDOVER.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_2_UX_REVIEW_AND_PLANNING.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_2_UX_REVIEW_AND_PLANNING.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_2_IMPLEMENTATION_PLAN.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_2_IMPLEMENTATION_PLAN.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_2_QA_HANDOVER.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_2_QA_HANDOVER.md",
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_2_IMPLEMENTATION_REPORT.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -138,6 +184,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 5,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -161,43 +208,65 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_3_PLANNING_HANDOVER.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_3_PLANNING_HANDOVER.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_3_HISTORY_LEDGER_PLANNING.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_3_HISTORY_LEDGER_PLANNING.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_3_HISTORY_LEDGER_PLANNING.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_3_HISTORY_LEDGER_PLANNING.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_3_QA_HANDOVER.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_3_QA_HANDOVER.md",
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_3_IMPLEMENTATION_REPORT.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -205,6 +274,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 5,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -233,43 +303,67 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_4_PLANNING_HANDOVER.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_4_PLANNING_HANDOVER.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_4_WRITE_FLOW_PLANNING.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_4_WRITE_FLOW_PLANNING.md",
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_4_PLANNING_HANDOVER.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_4_IMPLEMENTATION_PLAN.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_4_IMPLEMENTATION_PLAN.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_4_QA_HANDOVER.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_4_QA_HANDOVER.md",
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_4_IMPLEMENTATION_REPORT.md",
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_1_TO_4_FINAL_ACCEPTANCE_AND_CLOSURE_REPORT.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -277,6 +371,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 7,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -303,43 +398,67 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_5_PHASE_0_APPROVAL_AND_BASELINE_LOCK.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_5_PHASE_0_APPROVAL_AND_BASELINE_LOCK.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_5_SCOPE_PLANNING.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_5_SCOPE_PLANNING.md",
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_5_SCOPE_PLANNING_HANDOVER.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_5_IMPLEMENTATION_PLANNING_HANDOVER.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_5_IMPLEMENTATION_PLANNING_HANDOVER.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_5_IMPLEMENTATION_PLAN.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_5_IMPLEMENTATION_PLAN.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "memory/central_inventory/CENTRAL_INVENTORY_SLICE_5_FINAL_QA_VALIDATION_REPORT.md"
+        "paths": [
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_5_FINAL_QA_VALIDATION_REPORT.md",
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_5_FINAL_ACCEPTANCE_RECOMMENDATION.md",
+          "memory/central_inventory/CENTRAL_INVENTORY_SLICE_5_OWNER_SMOKE_RESULT.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -347,6 +466,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 8,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -371,43 +491,64 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "AI/Plans/phase2/P17_amend_withdraw_modification_plan.md"
+        "paths": [
+          "AI/Plans/phase2/P17_amend_withdraw_modification_plan.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "AI/Plans/phase2/P17_amend_withdraw_modification_plan.md"
+        "paths": [
+          "AI/Plans/phase2/P17_amend_withdraw_modification_plan.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "AI/Plans/api_implementation_status_p17_addendum.md"
+        "paths": [
+          "AI/Plans/api_implementation_status_p17_addendum.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -415,6 +556,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 3,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -439,43 +581,64 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "AI/Plans/phase2/P17P18P19_settings_vendors_procurement_plan.md"
+        "paths": [
+          "AI/Plans/phase2/P17P18P19_settings_vendors_procurement_plan.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "AI/Plans/phase2/P17P18P19_settings_vendors_procurement_plan.md"
+        "paths": [
+          "AI/Plans/phase2/P17P18P19_settings_vendors_procurement_plan.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "AI/Plans/api_implementation_status_p17p18p19_addendum.md"
+        "paths": [
+          "AI/Plans/api_implementation_status_p17p18p19_addendum.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -483,6 +646,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 3,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -507,43 +671,64 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "AI/Plans/phase2/P17P18P19_settings_vendors_procurement_plan.md"
+        "paths": [
+          "AI/Plans/phase2/P17P18P19_settings_vendors_procurement_plan.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "AI/Plans/phase2/P17P18P19_settings_vendors_procurement_plan.md"
+        "paths": [
+          "AI/Plans/phase2/P17P18P19_settings_vendors_procurement_plan.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "AI/Plans/api_implementation_status_p17p18p19_addendum.md"
+        "paths": [
+          "AI/Plans/api_implementation_status_p17p18p19_addendum.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -551,6 +736,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 3,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -575,43 +761,64 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "AI/Plans/phase2/P17P18P19_settings_vendors_procurement_plan.md"
+        "paths": [
+          "AI/Plans/phase2/P17P18P19_settings_vendors_procurement_plan.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "AI/Plans/phase2/P17P18P19_settings_vendors_procurement_plan.md"
+        "paths": [
+          "AI/Plans/phase2/P17P18P19_settings_vendors_procurement_plan.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "AI/Plans/api_implementation_status_p17p18p19_addendum.md"
+        "paths": [
+          "AI/Plans/api_implementation_status_p17p18p19_addendum.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -619,6 +826,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 3,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -644,43 +852,64 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "AI/Plans/phase2/P20_stock_inventory_summary_plan.md"
+        "paths": [
+          "AI/Plans/phase2/P20_stock_inventory_summary_plan.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "AI/Plans/phase2/P20_stock_inventory_summary_plan.md"
+        "paths": [
+          "AI/Plans/phase2/P20_stock_inventory_summary_plan.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "AI/Plans/api_implementation_status_p20_implementation_addendum.md"
+        "paths": [
+          "AI/Plans/api_implementation_status_p20_implementation_addendum.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -688,6 +917,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 3,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -716,43 +946,65 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "AI/Plans/phase3/P21_catalogue_planning.md"
+        "paths": [
+          "AI/Plans/phase3/P21_catalogue_planning.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "AI/Plans/phase3/P21_catalogue_planning.md"
+        "paths": [
+          "AI/Plans/phase3/P21_catalogue_planning.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "AI/Plans/api_implementation_status_p21_catalogue_implementation_addendum.md"
+        "paths": [
+          "AI/Plans/api_implementation_status_p21_catalogue_implementation_addendum.md",
+          "AI/Plans/api_implementation_status_p21_catalogue_addendum.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -760,6 +1012,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 4,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -784,43 +1037,64 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "AI/Plans/api_implementation_status_p21_catalogue_gaps_addendum.md"
+        "paths": [
+          "AI/Plans/api_implementation_status_p21_catalogue_gaps_addendum.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "AI/Plans/api_implementation_status_p21_catalogue_gaps_addendum.md"
+        "paths": [
+          "AI/Plans/api_implementation_status_p21_catalogue_gaps_addendum.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "AI/Plans/api_implementation_status_p21_gaps_implementation_addendum.md"
+        "paths": [
+          "AI/Plans/api_implementation_status_p21_gaps_implementation_addendum.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -828,6 +1102,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 3,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -853,43 +1128,64 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "AI/Plans/phase3/P22_daily_consumption_report_planning.md"
+        "paths": [
+          "AI/Plans/phase3/P22_daily_consumption_report_planning.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "AI/Plans/phase3/P22_daily_consumption_report_planning.md"
+        "paths": [
+          "AI/Plans/phase3/P22_daily_consumption_report_planning.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "AI/Plans/api_implementation_status_p22_addendum.md"
+        "paths": [
+          "AI/Plans/api_implementation_status_p22_addendum.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -897,6 +1193,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 3,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -922,43 +1219,64 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "AI/Plans/phase3/P23_hierarchy_management_planning.md"
+        "paths": [
+          "AI/Plans/phase3/P23_hierarchy_management_planning.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "AI/Plans/phase3/P23_hierarchy_management_planning.md"
+        "paths": [
+          "AI/Plans/phase3/P23_hierarchy_management_planning.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "WAIVED",
-        "path": null
+        "paths": [],
+        "tags": [
+          "PRE-GOVERNANCE"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "DONE",
-        "path": "AI/Plans/api_implementation_status_p23_addendum.md"
+        "paths": [
+          "AI/Plans/api_implementation_status_p23_addendum.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "PENDING",
-        "path": null
+        "paths": [],
+        "tags": [
+          "AWAITING-OWNER"
+        ]
       }
     ],
     "completeness": {
@@ -966,6 +1284,7 @@
       "total": 7,
       "pct": 86
     },
+    "doc_count": 3,
     "is_debt": true,
     "debt_reasons": [
       "Owner-Signoff: PENDING"
@@ -987,43 +1306,56 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "AI/Plans/phase3/P24_fefo_batch_stock_planning.md"
+        "paths": [
+          "AI/Plans/phase3/P24_fefo_batch_stock_planning.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "DONE",
-        "path": "AI/Plans/api_implementation_status_p24_addendum.md"
+        "paths": [
+          "AI/Plans/api_implementation_status_p24_addendum.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "AI/Plans/phase3/P24_fefo_batch_stock_planning.md"
+        "paths": [
+          "AI/Plans/phase3/P24_fefo_batch_stock_planning.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       }
     ],
     "completeness": {
@@ -1031,6 +1363,7 @@
       "total": 7,
       "pct": 43
     },
+    "doc_count": 3,
     "is_debt": true,
     "debt_reasons": [
       "Session-Start: MISSING",
@@ -1055,43 +1388,52 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "AI/Plans/phase2/P20_stock_inventory_summary_plan.md"
+        "paths": [
+          "AI/Plans/phase2/P20_stock_inventory_summary_plan.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       }
     ],
     "completeness": {
@@ -1099,6 +1441,7 @@
       "total": 7,
       "pct": 14
     },
+    "doc_count": 1,
     "is_debt": true,
     "debt_reasons": [
       "Session-Start: MISSING",
@@ -1125,43 +1468,52 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "AI/Plans/phase3/P21_smart_dispatch_request_assistance.md"
+        "paths": [
+          "AI/Plans/phase3/P21_smart_dispatch_request_assistance.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       }
     ],
     "completeness": {
@@ -1169,6 +1521,7 @@
       "total": 7,
       "pct": 14
     },
+    "doc_count": 1,
     "is_debt": false,
     "debt_reasons": [
       "Session-Start: MISSING",
@@ -1195,43 +1548,52 @@
         "artifact": 0,
         "label": "Session-Start",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": "AI/Plans/api_implementation_status_p25_addendum.md"
+        "paths": [
+          "AI/Plans/api_implementation_status_p25_addendum.md"
+        ],
+        "tags": []
       },
       {
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 4,
         "label": "Code-Gate",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 5,
         "label": "QA-Report",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
         "status": "MISSING",
-        "path": null
+        "paths": [],
+        "tags": []
       }
     ],
     "completeness": {
@@ -1239,6 +1601,7 @@
       "total": 7,
       "pct": 14
     },
+    "doc_count": 1,
     "is_debt": true,
     "debt_reasons": [
       "Session-Start: MISSING",

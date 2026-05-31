@@ -33,6 +33,10 @@ function computeCompleteness(artifactRefs) {
   return { done, total, pct: total > 0 ? Math.round((done / total) * 100) : 0 };
 }
 
+function countDocs(artifactRefs) {
+  return artifactRefs.reduce((sum, a) => sum + (a.paths ? a.paths.length : 0), 0);
+}
+
 function isDebt(item) {
   // An item is in debt if it has any MISSING or PENDING artifact
   // UNLESS the item itself is PROPOSED (not yet started)
@@ -53,6 +57,7 @@ function getDebtReasons(item) {
 const crs = items.filter(i => i.type === 'CR').map(item => ({
   ...item,
   completeness: computeCompleteness(item.artifact_refs),
+  doc_count: countDocs(item.artifact_refs),
   is_debt: isDebt(item),
   debt_reasons: getDebtReasons(item),
   sprint_name: item.sprint_key ? sprints[item.sprint_key]?.name || item.sprint_key : 'Unassigned'
@@ -62,6 +67,7 @@ const crs = items.filter(i => i.type === 'CR').map(item => ({
 const bugs = items.filter(i => i.type === 'BUG').map(item => ({
   ...item,
   completeness: computeCompleteness(item.artifact_refs),
+  doc_count: countDocs(item.artifact_refs),
   is_debt: isDebt(item),
   debt_reasons: getDebtReasons(item),
   sprint_name: item.sprint_key ? sprints[item.sprint_key]?.name || item.sprint_key : 'Unassigned'
