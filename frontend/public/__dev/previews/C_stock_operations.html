@@ -224,11 +224,12 @@ tr:last-child td{border-bottom:none;}
 
 <!-- Tab toggle -->
 <div style="display:inline-flex;background:var(--surface2);border-radius:6px;padding:3px;border:1px solid var(--border);margin-bottom:16px;">
-  <button class="btn" style="flex:none;padding:8px 24px;background:var(--surface);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08);border:none;border-radius:4px;">Upload Invoice</button>
-  <button class="btn" style="flex:none;padding:8px 24px;border:none;color:var(--text-muted);background:none;">Manual Entry</button>
+  <button id="tab-upload" onclick="document.getElementById('panel-upload').style.display='block';document.getElementById('panel-manual').style.display='none';this.style.background='var(--surface)';this.style.fontWeight='600';this.style.boxShadow='0 1px 3px rgba(0,0,0,.08)';document.getElementById('tab-manual').style.background='none';document.getElementById('tab-manual').style.fontWeight='500';document.getElementById('tab-manual').style.boxShadow='none';document.getElementById('tab-manual').style.color='var(--text-muted)';" class="btn" style="flex:none;padding:8px 24px;background:var(--surface);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08);border:none;border-radius:4px;cursor:pointer;">Upload Invoice</button>
+  <button id="tab-manual" onclick="document.getElementById('panel-manual').style.display='block';document.getElementById('panel-upload').style.display='none';this.style.background='var(--surface)';this.style.fontWeight='600';this.style.boxShadow='0 1px 3px rgba(0,0,0,.08)';document.getElementById('tab-upload').style.background='none';document.getElementById('tab-upload').style.fontWeight='500';document.getElementById('tab-upload').style.boxShadow='none';document.getElementById('tab-upload').style.color='var(--text-muted)';" class="btn" style="flex:none;padding:8px 24px;border:none;color:var(--text-muted);background:none;border-radius:4px;cursor:pointer;">Manual Entry</button>
 </div>
 
 <!-- Upload Invoice Tab -->
+<div id="panel-upload">
 <div class="card">
   <div class="card-head"><h2>Step 1 — Upload Invoice</h2></div>
   <div style="padding:16px;">
@@ -406,6 +407,124 @@ tr:last-child td{border-bottom:none;}
     </div>
   </div>
 </div>
+</div><!-- end panel-upload -->
+
+<!-- Manual Entry Tab -->
+<!-- closing upload panel before manual -->
+
+<div id="panel-manual" style="display:none;">
+<div class="card">
+  <div class="card-head"><h2>Purchase Details</h2></div>
+  <div style="padding:14px 16px;">
+    <div class="form-row">
+      <div class="field"><label>Vendor <span class="req">*</span></label><select><option value="">Select vendor...</option><option>Test Vendor (ID: 16)</option></select></div>
+      <div class="field"><label>Purchase Date</label><input type="date" value="2026-05-31" /></div>
+    </div>
+    <div class="vendor-hint">Last purchase from this vendor: <strong>2026-05-20</strong> (11 days ago) &middot; 3 items &middot; Total: Rs 4,500</div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-head"><h2>Import Items</h2><span style="font-size:10px;color:var(--text-muted);">Upload Excel/CSV or add rows manually</span></div>
+  <div style="padding:14px 16px;">
+    <div style="display:flex;gap:12px;align-items:stretch;margin-bottom:14px;">
+      <div style="flex:1;border:2px dashed var(--border);border-radius:8px;padding:20px;text-align:center;background:var(--surface3);cursor:pointer;">
+        <div style="font-size:20px;color:var(--text-muted);margin-bottom:4px;">&uarr;</div>
+        <div style="font-size:12px;font-weight:600;">Drop Excel/CSV here</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:3px;">.xlsx, .xls, .csv &mdash; max 5MB</div>
+      </div>
+      <div style="flex:1;border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center;">
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px;">Need a template?</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">Download format with items pre-filled</div>
+        <button class="btn" style="font-size:11px;padding:5px 14px;">Download Template</button>
+      </div>
+    </div>
+    <div style="background:var(--green-light);border:1px solid var(--green-border);border-radius:6px;padding:8px 14px;font-size:12px;color:#166534;display:flex;align-items:center;gap:8px;">
+      <span style="font-size:14px;">&#10003;</span>
+      <div><strong>purchase_order_may.xlsx imported</strong> &mdash; 4 rows parsed, 3 matched<div style="font-size:10px;color:#15803d;">1 row has issues</div></div>
+      <button style="margin-left:auto;font-size:10px;color:#166534;background:none;border:1px solid var(--green-border);border-radius:3px;padding:2px 8px;cursor:pointer;">Clear</button>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-head"><h2>Review Items (4 rows)</h2><span style="font-size:10px;color:var(--text-muted);">Verify before approving</span></div>
+  <div style="overflow-x:auto;">
+    <table>
+      <thead><tr><th style="width:20px"></th><th>Row</th><th>Item</th><th>Qty</th><th>Unit</th><th>Batch</th><th>Expiry</th><th>Price/Unit</th><th>Amount</th><th>Stock Now</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><input type="checkbox" checked style="accent-color:var(--primary)" /></td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text-muted)">1</td>
+          <td><select style="width:130px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px"><option>Cooking Oil (ltr)</option></select></td>
+          <td><input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" value="10" /></td>
+          <td style="color:var(--text-muted);font-size:12px">ltr</td>
+          <td><input style="width:80px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" placeholder="&mdash;" /></td>
+          <td><input style="width:100px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" type="date" /></td>
+          <td><input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" value="150" /><div style="font-size:9px;color:var(--text-muted)">Last: 145</div></td>
+          <td style="font-family:var(--mono);font-size:12px">1,500</td>
+          <td><span style="font-family:var(--mono);font-size:11px">24.82</span><div style="font-size:9px;color:var(--text-muted)">&rarr; 34.82</div></td>
+          <td><span style="font-size:10px;color:var(--green);font-weight:600">Valid</span></td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" checked style="accent-color:var(--primary)" /></td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text-muted)">2</td>
+          <td><select style="width:130px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px"><option>Maida (kg)</option></select></td>
+          <td><input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" value="20" /></td>
+          <td style="color:var(--text-muted);font-size:12px">kg</td>
+          <td><input style="width:80px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" value="MDA-06" /></td>
+          <td><input style="width:100px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" type="date" value="2026-08-31" /></td>
+          <td><input style="width:60px;border:1px solid var(--amber-border);border-radius:4px;padding:4px 6px;font-size:12px;background:var(--amber-light)" value="45" /><div style="font-size:9px;color:var(--amber)">&triangle; +18%</div></td>
+          <td style="font-family:var(--mono);font-size:12px">900</td>
+          <td><span style="font-family:var(--mono);font-size:11px;color:var(--amber)">3.2</span><div style="font-size:9px;color:var(--text-muted)">&rarr; 23.2</div></td>
+          <td><span style="font-size:10px;color:var(--amber);font-weight:600">Price &#9888;</span></td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" checked style="accent-color:var(--primary)" /></td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text-muted)">3</td>
+          <td><select style="width:130px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px"><option>Red Meat (gm)</option></select></td>
+          <td><input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" value="500" /></td>
+          <td style="color:var(--text-muted);font-size:12px">gm</td>
+          <td><input style="width:80px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" value="RM-31" /></td>
+          <td><input style="width:100px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" type="date" value="2026-06-20" /></td>
+          <td><input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" value="320" /><div style="font-size:9px;color:var(--text-muted)">Last: 310</div></td>
+          <td style="font-family:var(--mono);font-size:12px">1,600</td>
+          <td><span style="font-family:var(--mono);font-size:11px">1,250</span><div style="font-size:9px;color:var(--text-muted)">&rarr; 1,750</div></td>
+          <td><span style="font-size:10px;color:var(--green);font-weight:600">Valid</span></td>
+        </tr>
+        <tr style="background:var(--red-light)">
+          <td><input type="checkbox" style="accent-color:var(--primary)" /></td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text-muted)">4</td>
+          <td><select style="width:130px;border:1px solid var(--red-border);border-radius:4px;padding:4px 6px;font-size:12px;background:var(--red-light)"><option>&mdash; "Spice Mix" not found &mdash;</option></select></td>
+          <td><input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" value="2" /></td>
+          <td style="color:var(--text-muted);font-size:12px">pkt</td>
+          <td><input style="width:80px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" /></td>
+          <td><input style="width:100px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" type="date" /></td>
+          <td><input style="width:60px;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:12px" value="85" /></td>
+          <td style="font-family:var(--mono);font-size:12px">170</td>
+          <td style="color:var(--text-muted);font-size:11px;font-style:italic">N/A</td>
+          <td><span style="font-size:10px;color:var(--red);font-weight:600">No match</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="padding:6px 14px"><button style="font-size:11px;color:var(--text-sec);background:none;border:none;cursor:pointer;text-decoration:underline">+ Add row manually</button></div>
+  </div>
+</div>
+<div style="display:flex;gap:12px;align-items:flex-start;margin-top:4px">
+  <div style="flex:1">
+    <div style="background:var(--amber-light);border:1px solid var(--amber-border);border-radius:6px;padding:8px 12px;font-size:11px;color:#92400e">
+      <strong>Review:</strong><ul style="margin:4px 0 0 16px"><li>Row 2: Price 18% above last purchase</li><li>Row 4: Item not in inventory</li></ul>
+    </div>
+  </div>
+  <div style="width:260px;flex-shrink:0">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>3 valid rows</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>1 row with issues</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;border-top:1px solid var(--border);padding-top:6px;margin-top:6px"><span>Grand Total</span><span style="font-family:var(--mono)">Rs 4,000</span></div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;padding:10px;font-size:14px">Approve &amp; Submit (3 items)</button>
+    <div style="font-size:10px;color:var(--text-muted);text-align:center;margin-top:4px">Unchecked/invalid rows skipped</div>
+  </div>
+</div>
+</div><!-- end panel-manual -->
 
 <!-- ═══════════════ C4: WASTAGE REPORT ═══════════════ -->
 <div class="section-div">C4 — Wastage Report (All Roles)</div>
