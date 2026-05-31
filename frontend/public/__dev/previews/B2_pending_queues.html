@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>B2 — Pending Queues (Intelligent UI Preview)</title>
+<title>B2 — Pending Queues: Intelligent Approval Inbox</title>
 <style>
-:root{--bg:#fff;--surface:#fff;--surface2:#f4f4f5;--surface3:#fafafa;--border:#e4e4e7;--border-light:#f4f4f5;--text:#09090b;--text-sec:#52525b;--text-muted:#a1a1aa;--primary:#18181b;--primary-fg:#fafafa;--amber:#b45309;--amber-light:#fffbeb;--amber-border:#fde68a;--red:#dc2626;--red-light:#fef2f2;--red-border:#fecaca;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--mono:'SF Mono',Consolas,monospace;--sidebar-w:200px;}
+:root{--bg:#fff;--surface:#fff;--surface2:#f4f4f5;--surface3:#fafafa;--border:#e4e4e7;--border-light:#f4f4f5;--text:#09090b;--text-sec:#52525b;--text-muted:#a1a1aa;--primary:#18181b;--primary-fg:#fafafa;--amber:#b45309;--amber-light:#fffbeb;--amber-border:#fde68a;--red:#dc2626;--red-light:#fef2f2;--red-border:#fecaca;--green:#16a34a;--green-light:#f0fdf4;--green-border:#bbf7d0;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--mono:'SF Mono',Consolas,monospace;--sidebar-w:200px;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;}
+body{background:var(--surface2);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;}
 .shell{display:flex;min-height:100vh;}
 .sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);padding:16px 0;flex-shrink:0;position:sticky;top:0;height:100vh;}
 .sidebar .logo{padding:0 16px 16px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
@@ -15,78 +15,88 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .sidebar nav a{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:13px;color:var(--text-sec);text-decoration:none;}
 .sidebar nav a:hover{background:var(--surface2);}
 .sidebar nav a.active{background:var(--surface2);color:var(--text);font-weight:600;border-right:2px solid var(--primary);}
-.topbar{height:48px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;justify-content:space-between;}
+.topbar{height:48px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;justify-content:space-between;background:var(--surface);}
 .topbar .store-name{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
 .topbar .store-badge{font-size:10px;padding:2px 8px;border-radius:4px;background:var(--surface2);color:var(--text-sec);border:1px solid var(--border);font-weight:600;}
 .main{flex:1;display:flex;flex-direction:column;}
-.content{flex:1;padding:20px 28px 40px;max-width:1200px;}
-.preview-bar{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 12px;margin-bottom:16px;font-size:11px;color:var(--text-sec);}
+.content{flex:1;padding:20px 28px 40px;max-width:1100px;}
+.preview-bar{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 12px;margin-bottom:16px;font-size:11px;color:var(--text-sec);}
 
-/* Page header */
 .page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .page-hdr h1{font-size:20px;font-weight:700;}
 .page-hdr .right{display:flex;align-items:center;gap:12px;}
 .refresh-info{font-size:11px;color:var(--text-muted);}
-.refresh-btn{font-size:12px;color:var(--text-sec);border:1px solid var(--border);background:var(--surface);padding:5px 12px;border-radius:5px;cursor:pointer;font-weight:500;}
+.refresh-btn{font-size:12px;color:var(--text-sec);border:1px solid var(--border);background:var(--surface);padding:5px 12px;border-radius:5px;cursor:pointer;}
 
 /* Tabs */
-.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px;}
-.tab{padding:10px 16px;border:none;background:none;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;transition:all .15s;}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px;background:var(--surface);margin-left:-28px;margin-right:-28px;padding:0 28px;}
+.tab{padding:10px 16px;border:none;background:none;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;}
 .tab:hover{color:var(--text);}
 .tab.active{color:var(--text);border-bottom-color:var(--primary);font-weight:600;}
 .tab .count{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--surface2);color:var(--text-sec);}
 .tab.active .count{background:var(--primary);color:var(--primary-fg);}
 
-/* Table */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
-table{width:100%;border-collapse:collapse;}
-th{text-align:left;padding:8px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);font-weight:600;border-bottom:1px solid var(--border);background:var(--surface3);}
-td{padding:10px 14px;border-bottom:1px solid var(--border-light);vertical-align:middle;font-size:13px;}
-tr:last-child td{border-bottom:none;}
-tr:hover td{background:var(--surface3);cursor:pointer;}
+/* Sort bar */
+.sort-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font-size:12px;color:var(--text-muted);}
+.sort-bar select{font-size:11px;border:1px solid var(--border);border-radius:4px;padding:3px 8px;color:var(--text-sec);background:var(--surface);}
 
-/* Age badge — B2-01 */
+/* Transfer card */
+.t-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;overflow:hidden;}
+.t-card.stale{border-left:3px solid var(--red);}
+.t-card.aging{border-left:3px solid var(--amber);}
+
+.t-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border-light);}
+.t-header-left{display:flex;align-items:center;gap:12px;}
+.t-id{font-family:var(--mono);font-size:13px;font-weight:700;}
+.t-route{font-size:12px;color:var(--text-sec);}
+.t-route-type{font-size:10px;color:var(--text-muted);}
+.t-header-right{display:flex;align-items:center;gap:10px;}
+
+/* Age badge */
 .age{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;}
 .age.fresh{color:var(--text-muted);background:var(--surface2);}
 .age.aging{color:var(--amber);background:var(--amber-light);border:1px solid var(--amber-border);}
 .age.stale{color:var(--red);background:var(--red-light);border:1px solid var(--red-border);}
-.age .dot{width:5px;height:5px;border-radius:50%;}
-.age.fresh .dot{background:#d4d4d8;}
-.age.aging .dot{background:var(--amber);}
-.age.stale .dot{background:var(--red);}
 
-/* Status badge */
-.status{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;text-transform:capitalize;}
-.status.requested{background:#fffbeb;color:#92400e;}
-.status.approved{background:var(--surface2);color:var(--text-sec);}
-.status.dispatched{background:var(--surface2);color:var(--text-sec);}
+/* Fulfillment verdict */
+.verdict{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:4px;}
+.verdict.can{color:var(--text-sec);background:var(--surface2);}
+.verdict.partial{color:var(--amber);background:var(--amber-light);border:1px solid var(--amber-border);}
+.verdict.cannot{color:var(--red);background:var(--red-light);border:1px solid var(--red-border);}
 
-/* Items count */
-.items-count{font-family:var(--mono);font-size:12px;color:var(--text-sec);}
+/* Items table inside card */
+.t-items{width:100%;border-collapse:collapse;}
+.t-items th{text-align:left;padding:6px 16px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);font-weight:600;background:var(--surface3);border-bottom:1px solid var(--border-light);}
+.t-items td{padding:8px 16px;font-size:12px;border-bottom:1px solid var(--border-light);}
+.t-items tr:last-child td{border-bottom:none;}
 
-/* Quick actions — B2-06 */
-.quick-actions{display:flex;gap:4px;}
-.qbtn{font-size:11px;font-weight:500;padding:4px 10px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text-sec);cursor:pointer;transition:all .1s;}
-.qbtn:hover{background:var(--surface2);color:var(--text);}
-.qbtn.primary{background:var(--primary);color:var(--primary-fg);border-color:var(--primary);}
-.qbtn.primary:hover{opacity:.9;}
+.item-name{font-weight:600;font-size:12px;}
+.item-unit{color:var(--text-muted);font-size:11px;margin-left:3px;}
 
-/* From/To */
-.store-label{font-size:12px;}
-.store-type{font-size:10px;color:var(--text-muted);}
+.stock-val{font-size:12px;display:flex;align-items:center;gap:4px;}
+.stock-val .dot{width:5px;height:5px;border-radius:50%;}
+.stock-val.out{color:var(--red);font-weight:600;} .stock-val.out .dot{background:var(--red);}
+.stock-val.low{color:var(--amber);font-weight:600;} .stock-val.low .dot{background:var(--amber);}
+.stock-val.ok{color:var(--text-sec);} .stock-val.ok .dot{background:#d4d4d8;}
+.stock-label{font-size:10px;color:var(--text-muted);}
 
-/* Empty state — B2-08 */
-.empty{text-align:center;padding:40px 20px;}
+/* Action footer */
+.t-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface3);border-top:1px solid var(--border-light);}
+.t-footer-left{font-size:11px;color:var(--text-muted);}
+.t-footer-right{display:flex;gap:6px;}
+.btn{font-size:12px;font-weight:500;padding:6px 16px;border-radius:5px;border:1px solid var(--border);background:var(--surface);color:var(--text-sec);cursor:pointer;}
+.btn:hover{background:var(--surface2);}
+.btn-primary{background:var(--primary);color:var(--primary-fg);border-color:var(--primary);}
+.btn-primary:hover{opacity:.9;}
+.btn-danger{color:var(--red);border-color:var(--red-border);}
+.btn-danger:hover{background:var(--red-light);}
+
+/* Empty state */
+.empty{text-align:center;padding:40px 20px;background:var(--surface);border:1px solid var(--border);border-radius:8px;}
 .empty .title{font-size:14px;font-weight:600;margin-bottom:4px;}
 .empty .desc{font-size:12px;color:var(--text-muted);line-height:1.5;}
-.empty .action{margin-top:12px;}
-.empty .action a{font-size:12px;color:var(--text-sec);text-decoration:underline;cursor:pointer;}
 
-/* Sort control — B2-04 */
-.sort-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border-light);font-size:11px;color:var(--text-muted);}
-.sort-bar select{font-size:11px;border:1px solid var(--border);border-radius:3px;padding:2px 6px;color:var(--text-sec);background:var(--surface);}
-
-@media(max-width:900px){.sidebar{display:none;}}
+@media(max-width:900px){.sidebar{display:none;}.tabs{margin-left:-16px;margin-right:-16px;padding:0 16px;}.content{padding:16px;}}
 </style>
 </head>
 <body>
@@ -111,18 +121,16 @@ tr:hover td{background:var(--surface3);cursor:pointer;}
   </div>
 
   <div class="content">
-    <div class="preview-bar">PREVIEW — B2 Pending Queues — 10 intelligence elements (all Must Have)</div>
+    <div class="preview-bar">PREVIEW — B2 Pending Queues — Intelligent Approval Inbox (item-level visibility)</div>
 
-    <!-- B2-10: Page header with refresh info -->
     <div class="page-hdr">
       <h1>Pending Queues</h1>
       <div class="right">
-        <span class="refresh-info">Last refreshed: 30 seconds ago</span>
+        <span class="refresh-info">Updated 30s ago</span>
         <button class="refresh-btn">Refresh</button>
       </div>
     </div>
 
-    <!-- B2-07: Tab badge counts -->
     <div class="tabs">
       <button class="tab active">Approvals <span class="count">3</span></button>
       <button class="tab">Ready to Dispatch <span class="count">2</span></button>
@@ -130,113 +138,163 @@ tr:hover td{background:var(--surface3);cursor:pointer;}
       <button class="tab">My Requests <span class="count">0</span></button>
     </div>
 
-    <!-- Approval tab content -->
-    <div class="card">
-      <!-- B2-04: Sort control -->
-      <div class="sort-bar">
-        <span>3 transfers awaiting your approval</span>
-        <div>
-          Sort:
-          <select>
-            <option>Oldest first (default)</option>
-            <option>Newest first</option>
-          </select>
+    <div class="sort-bar">
+      <span>3 transfers awaiting approval · Oldest first</span>
+      <select><option>Oldest first</option><option>Newest first</option></select>
+    </div>
+
+    <!-- CARD 1: STALE (3 days), Can Fulfill -->
+    <div class="t-card stale">
+      <div class="t-header">
+        <div class="t-header-left">
+          <span class="t-id">#113</span>
+          <div>
+            <div class="t-route">DemoCentral1 → Kala Bahia Central</div>
+            <div class="t-route-type">Master Store requesting from you</div>
+          </div>
+        </div>
+        <div class="t-header-right">
+          <span class="verdict can">Can fulfill</span>
+          <span class="age stale">3 days ago</span>
         </div>
       </div>
 
-      <table>
+      <table class="t-items">
         <thead>
-          <tr>
-            <th>Transfer</th>
-            <th>From → To</th>
-            <th>Status</th>
-            <th>Items</th>
-            <th>Age</th>
-            <th>Actions</th>
-          </tr>
+          <tr><th>Item Requested</th><th>Qty Requested</th><th>Your Stock</th><th>After Approval</th></tr>
         </thead>
         <tbody>
-          <!-- Row 1: STALE — 3 days old (B2-01 + B2-02) -->
           <tr>
-            <td style="font-family:var(--mono);font-size:12px;">#113</td>
-            <td>
-              <div class="store-label">DemoCentral1 → Kala Bahia</div>
-              <div class="store-type">Master Store → Central Store</div>
-            </td>
-            <td><span class="status requested">Requested</span></td>
-            <td><span class="items-count">1 item</span></td>
-            <td><span class="age stale"><span class="dot"></span>3 days ago</span></td>
-            <td>
-              <div class="quick-actions">
-                <button class="qbtn primary">Approve</button>
-                <button class="qbtn">View</button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 2: AGING — 26 hours old -->
-          <tr>
-            <td style="font-family:var(--mono);font-size:12px;">#115</td>
-            <td>
-              <div class="store-label">DemoFranchise1 → DemoCentral1</div>
-              <div class="store-type">Outlet → Master Store</div>
-            </td>
-            <td><span class="status requested">Requested</span></td>
-            <td><span class="items-count">3 items</span></td>
-            <td><span class="age aging"><span class="dot"></span>26 hours ago</span></td>
-            <td>
-              <div class="quick-actions">
-                <button class="qbtn primary">Approve</button>
-                <button class="qbtn">View</button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 3: FRESH — 2 hours old -->
-          <tr>
-            <td style="font-family:var(--mono);font-size:12px;">#118</td>
-            <td>
-              <div class="store-label">DemoFranchise2 → DemoCentral1</div>
-              <div class="store-type">Outlet → Master Store</div>
-            </td>
-            <td><span class="status requested">Requested</span></td>
-            <td><span class="items-count">2 items</span></td>
-            <td><span class="age fresh"><span class="dot"></span>2 hours ago</span></td>
-            <td>
-              <div class="quick-actions">
-                <button class="qbtn primary">Approve</button>
-                <button class="qbtn">View</button>
-              </div>
-            </td>
+            <td><span class="item-name">Cooking Oil</span><span class="item-unit">ltr</span></td>
+            <td style="font-family:var(--mono)">5 ltr</td>
+            <td><div class="stock-val ok"><span class="dot"></span>24.82 ltr</div></td>
+            <td style="font-family:var(--mono);color:var(--text-sec)">19.82 ltr</td>
           </tr>
         </tbody>
       </table>
-    </div>
 
-    <!-- B2-08: My Requests empty state (role-specific) — shown as example below -->
-    <div style="margin-top:24px;">
-      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:8px;font-weight:600;">Example: Empty State (My Requests tab for Central)</div>
-      <div class="card">
-        <div class="empty">
-          <div class="title">No outgoing requests</div>
-          <div class="desc">As a Central Store, you don't submit stock requests — you fulfill them.<br>Check the Approvals tab for incoming requests from Master Stores and Outlets.</div>
-          <div class="action"><a href="#">Go to Approvals →</a></div>
+      <div class="t-footer">
+        <div class="t-footer-left">1 item · Requested by DemoCentral1</div>
+        <div class="t-footer-right">
+          <button class="btn btn-danger">Reject</button>
+          <button class="btn">View Details</button>
+          <button class="btn btn-primary">Approve All</button>
         </div>
       </div>
     </div>
 
-    <!-- Intelligence Legend -->
-    <div style="margin-top:24px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;color:var(--text-sec);">Intelligence Elements Applied</div>
+    <!-- CARD 2: AGING (26h), Partial Fulfill -->
+    <div class="t-card aging">
+      <div class="t-header">
+        <div class="t-header-left">
+          <span class="t-id">#115</span>
+          <div>
+            <div class="t-route">DemoFranchise1 → DemoCentral1</div>
+            <div class="t-route-type">Outlet requesting from you</div>
+          </div>
+        </div>
+        <div class="t-header-right">
+          <span class="verdict partial">Partial — 2 of 3 items</span>
+          <span class="age aging">26 hours</span>
+        </div>
+      </div>
+
+      <table class="t-items">
+        <thead>
+          <tr><th>Item Requested</th><th>Qty Requested</th><th>Your Stock</th><th>After Approval</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="item-name">Red Meat</span><span class="item-unit">gm</span></td>
+            <td style="font-family:var(--mono)">500 gm</td>
+            <td><div class="stock-val ok"><span class="dot"></span>1,250 gm</div></td>
+            <td style="font-family:var(--mono);color:var(--text-sec)">750 gm</td>
+          </tr>
+          <tr>
+            <td><span class="item-name">Patri</span><span class="item-unit">gm</span></td>
+            <td style="font-family:var(--mono)">800 gm</td>
+            <td><div class="stock-val ok"><span class="dot"></span>3,950 gm</div></td>
+            <td style="font-family:var(--mono);color:var(--text-sec)">3,150 gm</td>
+          </tr>
+          <tr>
+            <td><span class="item-name">Maida</span><span class="item-unit">kg</span></td>
+            <td style="font-family:var(--mono)">10 kg</td>
+            <td><div class="stock-val low"><span class="dot"></span>3.2 kg</div><div class="stock-label">Low — not enough</div></td>
+            <td style="font-family:var(--mono);color:var(--red)">-6.8 kg</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="t-footer">
+        <div class="t-footer-left">3 items · <span style="color:var(--amber)">Maida: insufficient stock (3.2 of 10 requested)</span></div>
+        <div class="t-footer-right">
+          <button class="btn btn-danger">Reject</button>
+          <button class="btn">View Details</button>
+          <button class="btn">Partial Approve</button>
+          <button class="btn btn-primary">Approve All</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3: FRESH (2h), Can Fulfill -->
+    <div class="t-card">
+      <div class="t-header">
+        <div class="t-header-left">
+          <span class="t-id">#118</span>
+          <div>
+            <div class="t-route">DemoFranchise2 → DemoCentral1</div>
+            <div class="t-route-type">Outlet requesting from you</div>
+          </div>
+        </div>
+        <div class="t-header-right">
+          <span class="verdict can">Can fulfill</span>
+          <span class="age fresh">2 hours</span>
+        </div>
+      </div>
+
+      <table class="t-items">
+        <thead>
+          <tr><th>Item Requested</th><th>Qty Requested</th><th>Your Stock</th><th>After Approval</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="item-name">Cooking Oil</span><span class="item-unit">ltr</span></td>
+            <td style="font-family:var(--mono)">3 ltr</td>
+            <td><div class="stock-val ok"><span class="dot"></span>24.82 ltr</div></td>
+            <td style="font-family:var(--mono);color:var(--text-sec)">21.82 ltr</td>
+          </tr>
+          <tr>
+            <td><span class="item-name">Red Meat</span><span class="item-unit">gm</span></td>
+            <td style="font-family:var(--mono)">300 gm</td>
+            <td><div class="stock-val ok"><span class="dot"></span>1,250 gm</div></td>
+            <td style="font-family:var(--mono);color:var(--text-sec)">950 gm</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="t-footer">
+        <div class="t-footer-left">2 items · Requested by DemoFranchise2</div>
+        <div class="t-footer-right">
+          <button class="btn btn-danger">Reject</button>
+          <button class="btn">View Details</button>
+          <button class="btn btn-primary">Approve All</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Intelligence legend -->
+    <div style="margin-top:20px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;color:var(--text-sec);">Intelligence in this view</div>
       <div style="font-size:11px;color:var(--text-sec);line-height:2;">
-        <div><strong>B2-01</strong> Age badges — gray (fresh), amber (>24h), red (>48h stale)</div>
-        <div><strong>B2-02</strong> Stale warning — #113 is 3 days old, shown as red "stale"</div>
-        <div><strong>B2-03</strong> Item count — "1 item", "3 items" (from `line_count` — no item names, API limitation)</div>
-        <div><strong>B2-04</strong> Sort control — "Oldest first" default, toggle to newest</div>
-        <div><strong>B2-06</strong> Quick-action buttons — "Approve" directly from row</div>
-        <div><strong>B2-07</strong> Tab badge counts — Approvals (3), Ready to Dispatch (2), Receives (1)</div>
-        <div><strong>B2-08</strong> Role-specific empty state — "As Central, you don't submit requests"</div>
-        <div><strong>B2-09</strong> Ready to Dispatch tab — separate tab with count badge</div>
-        <div><strong>B2-10</strong> Refresh indicator — "Last refreshed: 30 seconds ago"</div>
-        <div style="color:var(--text-muted);margin-top:4px;"><em>B2-05 (destination urgency) deferred — needs per-destination API call</em></div>
+        <div><strong>Item-level visibility</strong> — See exactly what was requested, quantities, and your stock per item</div>
+        <div><strong>Fulfillment verdict</strong> — "Can fulfill" / "Partial — 2 of 3" / "Can't fulfill" per transfer</div>
+        <div><strong>After-approval projection</strong> — "Your stock will be X after approving this"</div>
+        <div><strong>Insufficient stock highlight</strong> — Maida: requested 10, you have 3.2 → shows negative projection in red</div>
+        <div><strong>Age badges</strong> — Stale (red, 3 days), Aging (amber, 26h), Fresh (gray, 2h)</div>
+        <div><strong>Left border accent</strong> — Red = stale, Amber = aging, None = fresh</div>
+        <div><strong>Smart actions</strong> — "Partial Approve" only appears when stock is insufficient for some items</div>
+        <div><strong>Footer context</strong> — Item count + specific issue callout ("Maida: insufficient stock")</div>
+        <div style="margin-top:6px;color:var(--text-muted);font-size:10px"><em>Data source: batch-fetch getTransferDetails() + getStockInventory() on tab load (typically 3-10 transfers)</em></div>
       </div>
     </div>
 
