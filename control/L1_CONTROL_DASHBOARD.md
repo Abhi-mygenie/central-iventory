@@ -1,6 +1,6 @@
 # L1 — Control Dashboard (Project Status)
 
-> **Updated:** 2026-05-31 (post Flow B + C approval)
+> **Updated:** 2026-05-31 (ALL 24 screens approved)
 
 ---
 
@@ -9,26 +9,23 @@
 | Field | Value |
 |-------|-------|
 | **Branch** | `31_5_26` |
-| **Repo** | `parth-mygenie/central_inventory` |
-| **Active Sprint** | S1 — Governance Setup + Intelligent UI Freeze |
-| **Backend** | FastAPI proxy → `preprod.mygenie.online` |
-| **Frontend** | React 19 + Tailwind + Radix UI |
-| **Database** | MongoDB (token sessions only) |
+| **Active Sprint** | S1 — Governance + Intelligent UI Freeze |
+| **UI Freeze Status** | **ALL 24 SCREENS APPROVED** — Phase 5/6/7 pending |
 | **Dev Dashboard** | `/__dev/index.html` |
-| **UI Previews** | `/__dev/previews/*.html` |
+| **UI Previews** | `/__dev/previews/*.html` (10 files) |
 
-## Active Work: Intelligent UI Freeze
+## Intelligent UI Freeze — Complete Approval Record
 
-| Flow | Screens | Status |
-|------|:-------:|:------:|
-| Flow B — Transfer Lifecycle | 7 | APPROVED |
-| Flow C — Stock Operations | 4 | APPROVED |
-| Flow D — Stock Visibility | 4 | PENDING |
-| Flow E — Configuration | 8 | PENDING |
-| Flow A — Operations Hub | 1 | PENDING |
-| **Total** | **24** | **11/24 approved** |
+| Flow | Screens | Status | Preview |
+|------|:-------:|:------:|---------|
+| A — Operations Hub | 1 | APPROVED | `A1_operations_hub.html` |
+| B — Transfer Lifecycle | 7 | APPROVED | `B1-B8 *.html` |
+| C — Stock Operations | 4 | APPROVED | `C_stock_operations.html` |
+| D — Stock Visibility | 4 | APPROVED | `D_stock_visibility.html` |
+| E — Configuration | 8 | APPROVED | `E_configuration.html` |
+| **Total** | **24** | **24/24** | **10 HTML files** |
 
-## Backend Gaps (New — from UI Freeze)
+## Backend Gaps (from UI Freeze)
 
 | ID | Gap | Priority |
 |----|-----|:--------:|
@@ -38,15 +35,8 @@
 | G-015 | Excel/CSV parsing endpoint | P2 |
 | G-016 | Invoice number storage | P2 |
 
-## Quick Links
+## Next Steps
 
-| Layer | Path | Purpose |
-|-------|------|---------|
-| L0 Baseline | `control/L0_BASELINE_INDEX.md` | Frozen truth |
-| L1 Dashboard | `control/L1_CONTROL_DASHBOARD.md` | This file |
-| L6 Sprint Status | `control/L6_SPRINT_STATUS.md` | Sprint board |
-| L9 Open Gaps | `control/L9_OPEN_GAPS_REGISTER.md` | All gaps |
-| UI Freeze Progress | `control/sessions/INTELLIGENT_UI_FREEZE_MASTER_PROGRESS.md` | Master tracker |
-| Registry (SSOT) | `control/registry.json` | CR/BUG source of truth |
-| Dev Dashboard | `/__dev/index.html` | CR/BUG dashboard |
-| UI Previews | `/__dev/previews/` | Screen previews |
+1. Phase 5 — Slice Approval Gate (formal closure)
+2. Phase 6 — E2E Intelligence Review (end-to-end flow check)
+3. Phase 7 — Final Freeze Document (implementation-ready spec)

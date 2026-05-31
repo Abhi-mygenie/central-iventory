@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-31T18:03:17.477Z",
+  "generated_at": "2026-05-31T18:16:25.006Z",
   "project": "Central Inventory",
   "repo": "parth-mygenie/central_inventory",
   "branch": "31_5_26",
@@ -13,7 +13,7 @@
     "CLOSED": 14,
     "PLANNED": 3,
     "PROPOSED": 1,
-    "IN_PROGRESS": 1
+    "OWNER_REVIEW": 1
   },
   "bugs_by_status": {
     "ACCEPTED": 11,

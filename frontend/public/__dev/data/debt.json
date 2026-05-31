@@ -254,7 +254,7 @@
     "type": "CR",
     "id": "CR-019",
     "title": "Intelligent UI Freeze — Screen Intelligence Layer",
-    "status": "IN_PROGRESS",
+    "status": "OWNER_REVIEW",
     "severity": null,
     "sprint_key": "S1",
     "sprint_name": "Governance Setup",
