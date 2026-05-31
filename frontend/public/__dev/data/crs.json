@@ -1612,5 +1612,91 @@
       "Owner-Signoff: MISSING"
     ],
     "sprint_name": "Unassigned"
+  },
+  {
+    "type": "CR",
+    "id": "CR-019",
+    "title": "Intelligent UI Freeze — Screen Intelligence Layer",
+    "status": "IN_PROGRESS",
+    "severity": null,
+    "sprint_key": "S1",
+    "phase": "UI Freeze",
+    "files": [],
+    "notes": "Planning-only CR. Converting 22 screens into intelligent operational UI. Flow B (7 screens) + Flow C (4 screens) approved. Flow D/E/A pending. 7 HTML previews created. 5 backend gaps registered (G-012 to G-016).",
+    "artifact_refs": [
+      {
+        "artifact": 0,
+        "label": "Session-Start",
+        "status": "DONE",
+        "tags": [],
+        "paths": [
+          "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_0_1.md"
+        ]
+      },
+      {
+        "artifact": 1,
+        "label": "Intake",
+        "status": "DONE",
+        "tags": [],
+        "paths": [
+          "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_0_1.md"
+        ]
+      },
+      {
+        "artifact": 2,
+        "label": "Impact-Analysis",
+        "status": "DONE",
+        "tags": [],
+        "paths": [
+          "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_2_FLOW_B.md",
+          "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_3_FLOW_B.md"
+        ]
+      },
+      {
+        "artifact": 3,
+        "label": "Impl-Plan",
+        "status": "DONE",
+        "tags": [],
+        "paths": [
+          "control/sessions/INTELLIGENT_UI_FREEZE_MASTER_PROGRESS.md"
+        ]
+      },
+      {
+        "artifact": 4,
+        "label": "Code-Gate",
+        "status": "MISSING",
+        "tags": [],
+        "paths": []
+      },
+      {
+        "artifact": 5,
+        "label": "QA-Report",
+        "status": "MISSING",
+        "tags": [],
+        "paths": []
+      },
+      {
+        "artifact": 6,
+        "label": "Owner-Signoff",
+        "status": "PENDING",
+        "tags": [
+          "AWAITING-OWNER"
+        ],
+        "paths": []
+      }
+    ],
+    "completeness": {
+      "done": 4,
+      "total": 7,
+      "pct": 57
+    },
+    "doc_count": 5,
+    "is_debt": true,
+    "debt_reasons": [
+      "Code-Gate: MISSING",
+      "QA-Report: MISSING",
+      "Owner-Signoff: PENDING"
+    ],
+    "sprint_name": "Governance Setup"
   }
 ]

@@ -249,5 +249,21 @@
     ],
     "missing_count": 6,
     "pending_count": 0
+  },
+  {
+    "type": "CR",
+    "id": "CR-019",
+    "title": "Intelligent UI Freeze — Screen Intelligence Layer",
+    "status": "IN_PROGRESS",
+    "severity": null,
+    "sprint_key": "S1",
+    "sprint_name": "Governance Setup",
+    "debt_reasons": [
+      "Code-Gate: MISSING",
+      "QA-Report: MISSING",
+      "Owner-Signoff: PENDING"
+    ],
+    "missing_count": 2,
+    "pending_count": 1
   }
 ]

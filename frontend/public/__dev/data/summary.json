@@ -1,18 +1,19 @@
 {
-  "generated_at": "2026-05-31T15:01:29.376Z",
+  "generated_at": "2026-05-31T18:03:17.477Z",
   "project": "Central Inventory",
   "repo": "parth-mygenie/central_inventory",
   "branch": "31_5_26",
   "totals": {
-    "items": 33,
-    "crs": 18,
+    "items": 34,
+    "crs": 19,
     "bugs": 15,
-    "debt": 17
+    "debt": 18
   },
   "crs_by_status": {
     "CLOSED": 14,
     "PLANNED": 3,
-    "PROPOSED": 1
+    "PROPOSED": 1,
+    "IN_PROGRESS": 1
   },
   "bugs_by_status": {
     "ACCEPTED": 11,
@@ -26,7 +27,7 @@
     "INFO": 2
   },
   "debt_by_type": {
-    "CR": 17
+    "CR": 18
   },
   "sprints": [
     {
@@ -46,11 +47,11 @@
       "start": "2026-05-31",
       "end": null,
       "goal": "Establish governance layer, seed registries, build dev dashboard, clear doc debt.",
-      "cr_count": 0,
+      "cr_count": 1,
       "bug_count": 0
     }
   ],
-  "signoff_pending": 14,
+  "signoff_pending": 15,
   "owner_signoff_breakdown": {
     "pending": [
       "CR-001",
@@ -66,7 +67,8 @@
       "CR-011",
       "CR-012",
       "CR-013",
-      "CR-014"
+      "CR-014",
+      "CR-019"
     ],
     "done": [],
     "waived": [

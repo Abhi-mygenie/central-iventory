@@ -1,6 +1,6 @@
 # L1 — Control Dashboard (Project Status)
 
-> **Updated:** 2026-05-31
+> **Updated:** 2026-05-31 (post Flow B + C approval)
 
 ---
 
@@ -10,19 +10,33 @@
 |-------|-------|
 | **Branch** | `31_5_26` |
 | **Repo** | `parth-mygenie/central_inventory` |
-| **Active Sprint** | S1 — Governance Setup |
+| **Active Sprint** | S1 — Governance Setup + Intelligent UI Freeze |
 | **Backend** | FastAPI proxy → `preprod.mygenie.online` |
 | **Frontend** | React 19 + Tailwind + Radix UI |
-| **Database** | MongoDB (token sessions only — no business data local) |
+| **Database** | MongoDB (token sessions only) |
 | **Dev Dashboard** | `/__dev/index.html` |
+| **UI Previews** | `/__dev/previews/*.html` |
 
-## Service Health
+## Active Work: Intelligent UI Freeze
 
-| Service | Port | Status |
-|---------|------|--------|
-| Backend (uvicorn) | 8001 | Running |
-| Frontend (craco) | 3000 | Running |
-| MongoDB | 27017 | Running |
+| Flow | Screens | Status |
+|------|:-------:|:------:|
+| Flow B — Transfer Lifecycle | 7 | APPROVED |
+| Flow C — Stock Operations | 4 | APPROVED |
+| Flow D — Stock Visibility | 4 | PENDING |
+| Flow E — Configuration | 8 | PENDING |
+| Flow A — Operations Hub | 1 | PENDING |
+| **Total** | **24** | **11/24 approved** |
+
+## Backend Gaps (New — from UI Freeze)
+
+| ID | Gap | Priority |
+|----|-----|:--------:|
+| G-012 | request-catalog missing category | P1 |
+| G-013 | No PO number in transfer API | P0 |
+| G-014 | Invoice OCR/AI extraction endpoint | P1 |
+| G-015 | Excel/CSV parsing endpoint | P2 |
+| G-016 | Invoice number storage | P2 |
 
 ## Quick Links
 
@@ -30,20 +44,9 @@
 |-------|------|---------|
 | L0 Baseline | `control/L0_BASELINE_INDEX.md` | Frozen truth |
 | L1 Dashboard | `control/L1_CONTROL_DASHBOARD.md` | This file |
-| L2 Handover | `control/L2_HANDOVER_PROTOCOL.md` | Agent onboarding |
-| L3 CR Registry | `control/L3_CR_REGISTRY.md` | CR process + schema |
-| L4 Bug Tracker | `control/L4_BUG_TRACKER.md` | Bug process + schema |
-| L5 Env & Config | `control/L5_ENV_CONFIG_REGISTRY.md` | Environment variables |
 | L6 Sprint Status | `control/L6_SPRINT_STATUS.md` | Sprint board |
-| L7 File Ownership | `control/L7_FILE_OWNERSHIP.md` | File categories |
-| L8 Access Registry | `control/L8_ACCESS_REGISTRY.md` | Test accounts + keys |
-| L9 Open Gaps | `control/L9_OPEN_GAPS_REGISTER.md` | Consolidated gaps |
-| Registry (SSOT) | `control/registry.json` | Single source of truth |
-| Generator | `control/gen_dashboard_data.js` | Derive dashboard data |
-| Agent Prompt | `control/AGENT_PROMPT.md` | System prompt for agents |
-| Code Gate Policy | `control/CODE_GATE_POLICY.md` | Artifact gate rules |
-| Maintenance Rules | `control/MAINTENANCE_RULES.md` | When to update what |
-
-## Headline Counts (derived from registry.json)
-
-Run `node control/gen_dashboard_data.js` to regenerate. View at `/__dev/`.
+| L9 Open Gaps | `control/L9_OPEN_GAPS_REGISTER.md` | All gaps |
+| UI Freeze Progress | `control/sessions/INTELLIGENT_UI_FREEZE_MASTER_PROGRESS.md` | Master tracker |
+| Registry (SSOT) | `control/registry.json` | CR/BUG source of truth |
+| Dev Dashboard | `/__dev/index.html` | CR/BUG dashboard |
+| UI Previews | `/__dev/previews/` | Screen previews |

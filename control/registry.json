@@ -27,7 +27,7 @@
     {
       "type": "CR",
       "id": "CR-001",
-      "title": "Slice 1 — Read-only Screens (Hub, Hierarchy, Store Detail, Login)",
+      "title": "Slice 1 \u2014 Read-only Screens (Hub, Hierarchy, Store Detail, Login)",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -115,7 +115,7 @@
     {
       "type": "CR",
       "id": "CR-002",
-      "title": "Slice 2 — Pending Queues, Transfer Detail, Status Timeline",
+      "title": "Slice 2 \u2014 Pending Queues, Transfer Detail, Status Timeline",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -197,7 +197,7 @@
     {
       "type": "CR",
       "id": "CR-003",
-      "title": "Slice 3 — History & Ledger, Date/Status Filters",
+      "title": "Slice 3 \u2014 History & Ledger, Date/Status Filters",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -276,7 +276,7 @@
     {
       "type": "CR",
       "id": "CR-004",
-      "title": "Slice 4 — Transfer Write Flows (Dispatch, Request, Approve, Reject, Receive, Cancel)",
+      "title": "Slice 4 \u2014 Transfer Write Flows (Dispatch, Request, Approve, Reject, Receive, Cancel)",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -362,7 +362,7 @@
     {
       "type": "CR",
       "id": "CR-005",
-      "title": "Slice 5 — Stock Adjustment, Wastage, Source Selector, Seed Shutdown",
+      "title": "Slice 5 \u2014 Stock Adjustment, Wastage, Source Selector, Seed Shutdown",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -446,7 +446,7 @@
     {
       "type": "CR",
       "id": "CR-006",
-      "title": "P17 — Amend / Withdraw / Modification",
+      "title": "P17 \u2014 Amend / Withdraw / Modification",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -525,7 +525,7 @@
     {
       "type": "CR",
       "id": "CR-007",
-      "title": "P17-Settings — Operational Settings CRUD",
+      "title": "P17-Settings \u2014 Operational Settings CRUD",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -604,7 +604,7 @@
     {
       "type": "CR",
       "id": "CR-008",
-      "title": "P18 — Vendor Management CRUD",
+      "title": "P18 \u2014 Vendor Management CRUD",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -683,7 +683,7 @@
     {
       "type": "CR",
       "id": "CR-009",
-      "title": "P19 — Add Stock / Procurement",
+      "title": "P19 \u2014 Add Stock / Procurement",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -762,7 +762,7 @@
     {
       "type": "CR",
       "id": "CR-010",
-      "title": "P20 — Stock Inventory Summary (Self-Store)",
+      "title": "P20 \u2014 Stock Inventory Summary (Self-Store)",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -842,7 +842,7 @@
     {
       "type": "CR",
       "id": "CR-011",
-      "title": "P21 — Catalogue CRUD (Ingredient/Product/Recipe/Addon-Recipe)",
+      "title": "P21 \u2014 Catalogue CRUD (Ingredient/Product/Recipe/Addon-Recipe)",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -926,7 +926,7 @@
     {
       "type": "CR",
       "id": "CR-012",
-      "title": "P21-Gaps — Food Category + Addon CRUD + Ingredient Rename",
+      "title": "P21-Gaps \u2014 Food Category + Addon CRUD + Ingredient Rename",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -1005,7 +1005,7 @@
     {
       "type": "CR",
       "id": "CR-013",
-      "title": "P22 — Daily Consumption Report",
+      "title": "P22 \u2014 Daily Consumption Report",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -1085,7 +1085,7 @@
     {
       "type": "CR",
       "id": "CR-014",
-      "title": "P23 — Hierarchy Management + Bundle Push",
+      "title": "P23 \u2014 Hierarchy Management + Bundle Push",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -1165,7 +1165,7 @@
     {
       "type": "CR",
       "id": "CR-015",
-      "title": "P24 — FEFO Batch Stock Detail Panel",
+      "title": "P24 \u2014 FEFO Batch Stock Detail Panel",
       "status": "PLANNED",
       "severity": null,
       "sprint_key": null,
@@ -1233,7 +1233,7 @@
     {
       "type": "CR",
       "id": "CR-016",
-      "title": "P20-Phase2 — Stock Inventory Hierarchy Toggle",
+      "title": "P20-Phase2 \u2014 Stock Inventory Hierarchy Toggle",
       "status": "PLANNED",
       "severity": null,
       "sprint_key": null,
@@ -1297,7 +1297,7 @@
     {
       "type": "CR",
       "id": "CR-017",
-      "title": "P21-Smart — Smart Dispatch / Request Assistance",
+      "title": "P21-Smart \u2014 Smart Dispatch / Request Assistance",
       "status": "PROPOSED",
       "severity": null,
       "sprint_key": null,
@@ -1361,7 +1361,7 @@
     {
       "type": "CR",
       "id": "CR-018",
-      "title": "P25 — Wastage Report Enhancements",
+      "title": "P25 \u2014 Wastage Report Enhancements",
       "status": "PLANNED",
       "severity": null,
       "sprint_key": null,
@@ -2587,6 +2587,79 @@
           "tags": [
             "PRE-GOVERNANCE"
           ]
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-019",
+      "title": "Intelligent UI Freeze \u2014 Screen Intelligence Layer",
+      "status": "IN_PROGRESS",
+      "severity": null,
+      "sprint_key": "S1",
+      "phase": "UI Freeze",
+      "files": [],
+      "notes": "Planning-only CR. Converting 22 screens into intelligent operational UI. Flow B (7 screens) + Flow C (4 screens) approved. Flow D/E/A pending. 7 HTML previews created. 5 backend gaps registered (G-012 to G-016).",
+      "artifact_refs": [
+        {
+          "artifact": 0,
+          "label": "Session-Start",
+          "status": "DONE",
+          "tags": [],
+          "paths": [
+            "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_0_1.md"
+          ]
+        },
+        {
+          "artifact": 1,
+          "label": "Intake",
+          "status": "DONE",
+          "tags": [],
+          "paths": [
+            "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_0_1.md"
+          ]
+        },
+        {
+          "artifact": 2,
+          "label": "Impact-Analysis",
+          "status": "DONE",
+          "tags": [],
+          "paths": [
+            "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_2_FLOW_B.md",
+            "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_3_FLOW_B.md"
+          ]
+        },
+        {
+          "artifact": 3,
+          "label": "Impl-Plan",
+          "status": "DONE",
+          "tags": [],
+          "paths": [
+            "control/sessions/INTELLIGENT_UI_FREEZE_MASTER_PROGRESS.md"
+          ]
+        },
+        {
+          "artifact": 4,
+          "label": "Code-Gate",
+          "status": "MISSING",
+          "tags": [],
+          "paths": []
+        },
+        {
+          "artifact": 5,
+          "label": "QA-Report",
+          "status": "MISSING",
+          "tags": [],
+          "paths": []
+        },
+        {
+          "artifact": 6,
+          "label": "Owner-Signoff",
+          "status": "PENDING",
+          "tags": [
+            "AWAITING-OWNER"
+          ],
+          "paths": []
         }
       ]
     }
