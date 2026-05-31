@@ -20,6 +20,7 @@
 | G-009 | Partial dispatch | System Handover #1 | Dispatch subset of approved lines | P1 |
 | G-010 | Soft stock reservation on approval | System Handover #2 | Reservation mechanism | P1 |
 | G-011 | WebSocket infrastructure | OI-002 notifications | Real-time events | P2 |
+| G-012 | `request-catalog` missing category fields | B1 manual request mode has no category grouping/filter | Add `category_id`, `category_name` to `/inventory-transfer/request-catalog` response | P1 |
 
 ## Documentation Debt (DC Items from PROJECT_LEDGER)
 
