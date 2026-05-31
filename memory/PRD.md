@@ -1,7 +1,7 @@
 # Central Inventory — PRD
 
 ## Original Problem Statement
-Build a governance & control system for the Central Inventory project: (A) 10-layer Markdown control layer, (B) single-source-of-truth registry + generator, (C) hidden read-only Dev Control Dashboard. No app-behaviour code changes.
+Build a governance & control system + intelligent UI freeze for the Central Inventory project.
 
 ## Architecture & Tech Stack
 - **Frontend**: React 19, Tailwind CSS 3, Radix UI, craco
@@ -12,42 +12,34 @@ Build a governance & control system for the Central Inventory project: (A) 10-la
 ## What's Been Implemented
 
 ### Phase 1: Repo Pull & Run (May 31, 2026)
-- Cloned repo from GitHub (branch: 31_5_26)
-- Installed all dependencies, app running as-is
+- Cloned repo from GitHub (branch: 31_5_26), app running
 
 ### Phase 2: Governance & Control System (May 31, 2026)
+- 10-layer control layer, registry.json (33 items), generator + drift linter, dev dashboard at /__dev/
 
-**Pillar A — 10-Layer Markdown Control Layer** (`/app/control/`):
-- L0 Baseline Index, L1 Control Dashboard, L2 Handover Protocol
-- L3 CR Registry, L4 Bug Tracker, L5 Env & Config
-- L6 Sprint Status, L7 File Ownership, L8 Access Registry, L9 Open Gaps
-- Agent Prompt, Code Gate Policy, Maintenance Rules
-- Session-Start Template in `sessions/`
+### Phase 3: Intelligent UI Freeze (May 31, 2026 — IN PROGRESS)
+- Phase 0+1: Current state audit + screen inventory (22 screens, 120 gaps)
+- Phase 2: Flow B brainstorming — 61 elements, all approved as Must Have
+- Phase 3: API feasibility — 40 frontend-only, 15 feasible, 0 blocked
+- Phase 4 (in progress): Screen previews
+  - B1 Request Stock — APPROVED (Intelligent PO concept)
+  - B2 Pending Queues — APPROVED (Intelligent Approval Inbox with requester stock)
+  - B3 Transfer Detail — APPROVED (Store snapshot + approval impact)
+  - B5 Direct Dispatch — NEXT
+  - B6-B8 — PENDING
 
-**Pillar B — Single Source of Truth + Generator**:
-- `registry.json` seeded with 18 CRs + 15 BUGs (retroactive from 104 existing docs)
-- `gen_dashboard_data.js` generates summary, CRs, bugs, debt JSONs
-- `--check` drift linter (exits non-zero if stale)
-- 7-Artifact Closure Model enforced
-
-**Pillar C — Hidden Dev Control Dashboard**:
-- Static page at `/__dev/index.html` (zero React coupling)
-- 3 tabs: Closure Debt, Bug Tracker, CR Registry
-- Filters: search, sprint, severity, status
-- Expandable rows with artifact links
-- CSV export
-- Summary cards with headline counts
-
-## Sprints
-- **S0** (Pre-Governance): All historical work (Slices 1-5, P17-P24). CLOSED.
-- **S1** (Governance Setup): Current. Establishing control layer.
+### Backend Gaps Registered
+- G-012: request-catalog missing category fields (P1)
+- G-013: No PO number in transfer API (P0)
 
 ## Prioritized Backlog
-- P0: CR-015 (P24 FEFO Batch Stock Detail)
-- P1: CR-016 (P20 Hierarchy Toggle), CR-017 (Smart Dispatch)
-- P2: CR-018 (P25 Wastage Enhancements)
+- Complete Phase 4 for B5-B8
+- Phase 2 brainstorming for Flow C (Stock Operations) + Flow D (Stock Visibility)
+- Phase 5: Slice Approval Gate
+- Phase 6: E2E Intelligence Review
+- Phase 7: Final Freeze Document
 
 ## Next Tasks
-- Owner batch sign-off on S0 items (14 CRs pending signoff)
-- Assign CR-015 to Sprint 2
-- Clear DC-1 to DC-10 doc debt items
+- B5 Direct Dispatch preview
+- B6 Source Selector, B7 Receive Dialog, B8 Dispute Resolution
+- Flow C + D brainstorming
