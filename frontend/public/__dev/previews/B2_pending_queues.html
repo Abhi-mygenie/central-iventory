@@ -80,6 +80,11 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
 .stock-val.ok{color:var(--text-sec);} .stock-val.ok .dot{background:#d4d4d8;}
 .stock-label{font-size:10px;color:var(--text-muted);}
 
+/* Their stock (requester's real-time) */
+.their-stock{font-family:var(--mono);font-size:12px;color:var(--text-sec);}
+.their-stock.out{color:var(--red);font-weight:600;}
+.their-stock.low{color:var(--amber);font-weight:600;}
+
 /* Action footer */
 .t-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface3);border-top:1px solid var(--border-light);}
 
@@ -170,12 +175,13 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
 
       <table class="t-items">
         <thead>
-          <tr><th>Item Requested</th><th>Qty Requested</th><th>Your Stock</th><th>After Approval</th></tr>
+          <tr><th>Item Requested</th><th>Qty Requested</th><th>Their Stock</th><th>Your Stock</th><th>After Approval</th></tr>
         </thead>
         <tbody>
           <tr>
             <td><span class="item-name">Cooking Oil</span><span class="item-unit">ltr</span></td>
             <td style="font-family:var(--mono)">5 ltr</td>
+            <td><span class="their-stock">12.3 ltr</span></td>
             <td><div class="stock-val ok"><span class="dot"></span>24.82 ltr</div></td>
             <td style="font-family:var(--mono);color:var(--text-sec)">19.82 ltr</td>
           </tr>
@@ -218,24 +224,27 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
 
       <table class="t-items">
         <thead>
-          <tr><th>Item Requested</th><th>Qty Requested</th><th>Your Stock</th><th>After Approval</th></tr>
+          <tr><th>Item Requested</th><th>Qty Requested</th><th>Their Stock</th><th>Your Stock</th><th>After Approval</th></tr>
         </thead>
         <tbody>
           <tr>
             <td><span class="item-name">Red Meat</span><span class="item-unit">gm</span></td>
             <td style="font-family:var(--mono)">500 gm</td>
+            <td><span class="their-stock out">0 gm</span></td>
             <td><div class="stock-val ok"><span class="dot"></span>1,250 gm</div></td>
             <td style="font-family:var(--mono);color:var(--text-sec)">750 gm</td>
           </tr>
           <tr>
             <td><span class="item-name">Patri</span><span class="item-unit">gm</span></td>
             <td style="font-family:var(--mono)">800 gm</td>
+            <td><span class="their-stock out">0 gm</span></td>
             <td><div class="stock-val ok"><span class="dot"></span>3,950 gm</div></td>
             <td style="font-family:var(--mono);color:var(--text-sec)">3,150 gm</td>
           </tr>
           <tr>
             <td><span class="item-name">Maida</span><span class="item-unit">kg</span></td>
             <td style="font-family:var(--mono)">10 kg</td>
+            <td><span class="their-stock low">0.5 kg</span></td>
             <td><div class="stock-val low"><span class="dot"></span>3.2 kg</div><div class="stock-label">Low — not enough</div></td>
             <td style="font-family:var(--mono);color:var(--red)">-6.8 kg</td>
           </tr>
@@ -280,18 +289,20 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
 
       <table class="t-items">
         <thead>
-          <tr><th>Item Requested</th><th>Qty Requested</th><th>Your Stock</th><th>After Approval</th></tr>
+          <tr><th>Item Requested</th><th>Qty Requested</th><th>Their Stock</th><th>Your Stock</th><th>After Approval</th></tr>
         </thead>
         <tbody>
           <tr>
             <td><span class="item-name">Cooking Oil</span><span class="item-unit">ltr</span></td>
             <td style="font-family:var(--mono)">3 ltr</td>
+            <td><span class="their-stock out">0 ltr</span></td>
             <td><div class="stock-val ok"><span class="dot"></span>24.82 ltr</div></td>
             <td style="font-family:var(--mono);color:var(--text-sec)">21.82 ltr</td>
           </tr>
           <tr>
             <td><span class="item-name">Red Meat</span><span class="item-unit">gm</span></td>
             <td style="font-family:var(--mono)">300 gm</td>
+            <td><span class="their-stock low">150 gm</span></td>
             <td><div class="stock-val ok"><span class="dot"></span>1,250 gm</div></td>
             <td style="font-family:var(--mono);color:var(--text-sec)">950 gm</td>
           </tr>
