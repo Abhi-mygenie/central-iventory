@@ -172,6 +172,14 @@ body{background:var(--surface2);color:var(--text);font-family:var(--font);font-s
     <div class="sub">From: Kala Bahia Central → To: DemoFranchise1 · 3 items</div>
   </div>
   <div class="modal-body">
+    <!-- GAP-QA-04: Time since dispatch + GAP-QA-05: Request vs direct dispatch -->
+    <div style="display:flex;gap:12px;align-items:center;padding:8px 12px;background:var(--surface3);border:1px solid var(--border-light);border-radius:6px;margin-bottom:10px;font-size:11px;flex-wrap:wrap;">
+      <span style="color:var(--text-muted);">Dispatched:</span>
+      <span style="font-weight:600;">2 hours ago</span>
+      <span style="color:var(--text-muted);">(31 May, 5:23 PM)</span>
+      <span style="margin-left:auto;font-size:10px;padding:2px 8px;border-radius:3px;background:var(--green-light);color:var(--green);border:1px solid var(--green-border);">Fulfilling your request PO-XXXX</span>
+    </div>
+
     <div class="rcv-toggle"><input type="checkbox" checked /><label>Partial Receive</label></div>
 
     <div class="rcv-row">

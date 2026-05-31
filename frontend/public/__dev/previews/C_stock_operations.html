@@ -153,9 +153,12 @@ tr:last-child td{border-bottom:none;}
       </div>
     </div>
 
-    <!-- Impact preview -->
+    <!-- Impact preview + MI-03: Undo guidance -->
     <div class="impact-box ok">
       <strong>Impact:</strong> Cooking Oil decreases by 5 ltr (24.82 → 19.82). Reason: Counting Error. This cannot be undone.
+    </div>
+    <div style="font-size:10px;color:var(--text-muted);background:var(--surface3);border:1px solid var(--border-light);border-radius:4px;padding:6px 10px;margin-bottom:12px;">
+      Made a mistake? Adjustments cannot be reversed. If you entered wrong data, create an opposite adjustment (increase to undo a decrease, or vice versa) with reason "Correction for previous error".
     </div>
 
     <div class="btn-row">
@@ -208,6 +211,11 @@ tr:last-child td{border-bottom:none;}
     <div class="impact-box warn">
       ⚠ <strong>Anomaly:</strong> Wastage this month (450 + 200 = 650 gm) is <strong>3.2x above</strong> monthly average (200 gm). Review wastage patterns.
     </div>
+    <!-- MI-03: Undo guidance for wastage -->
+    <div style="font-size:10px;color:var(--text-muted);background:var(--surface3);border:1px solid var(--border-light);border-radius:4px;padding:6px 10px;margin-bottom:12px;">
+      Wastage records are permanent. If you enter wrong data, contact your Central Store manager to create a stock adjustment to correct the quantity.
+    </div>
+
 
     <div class="btn-row">
       <button class="btn">Cancel</button>

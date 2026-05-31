@@ -288,6 +288,61 @@ h1{font-size:22px;font-weight:700;margin-bottom:2px;}
   </div>
 </div>
 
+<!-- GAP-QA-02: Post-submit success confirmation -->
+<div class="card" style="border-left:3px solid var(--green);margin-bottom:16px;">
+  <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;">
+    <div style="width:36px;height:36px;border-radius:8px;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:var(--green);">&#10003;</div>
+    <div style="flex:1;">
+      <div style="font-size:14px;font-weight:600;">Request submitted successfully</div>
+      <div style="font-size:12px;color:var(--text-muted);">PO-XXXX &mdash; 3 items &middot; Red Meat 500 gm, Patri 800 gm, Maida 10 kg</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Sent to Kala Bahia Central for approval</div>
+    </div>
+    <button class="btn" style="font-size:11px;padding:5px 14px;">View Transfer &rarr;</button>
+  </div>
+</div>
+
+<!-- GAP-QA-01: Your Latest Request (for Outlet/Master Hub) -->
+<div class="section-div">A1 &mdash; Hub Intelligence: "Your Latest Request" (Outlet/Master view)</div>
+
+<div class="card" style="border-left:3px solid var(--amber);">
+  <div style="padding:12px 16px;display:flex;align-items:center;gap:12px;">
+    <div style="flex:1;">
+      <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Your Latest Request</div>
+      <div style="font-size:13px;font-weight:600;margin-top:4px;">PO-XXXX &mdash; 3 items to Kala Bahia Central</div>
+      <div style="font-size:11px;color:var(--amber);margin-top:2px;">Awaiting Approval &middot; Submitted 3 days ago</div>
+    </div>
+    <button class="btn" style="font-size:11px;padding:5px 14px;">Track &rarr;</button>
+  </div>
+</div>
+
+<!-- MI-06: Cross-Item Expiry Scan -->
+<div class="section-div">D1 &mdash; Cross-Item Expiry Scan (new intelligence)</div>
+
+<div class="card" style="border-left:3px solid var(--amber);">
+  <div class="card-head"><h2>Expiring This Week (across all items)</h2><span style="font-size:10px;color:var(--text-muted)">Next 7 days</span></div>
+  <table>
+    <thead><tr><th>Item</th><th>Batch</th><th>Qty</th><th>Expires</th><th>Days Left</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr style="background:var(--red-light);">
+        <td style="font-weight:600;">Red Meat <span style="font-size:10px;color:var(--text-muted)">gm</span></td>
+        <td class="mono" style="font-size:11px">BRD-2026-02 (#38)</td>
+        <td class="mono">200 gm</td>
+        <td style="font-size:11px">20 May 2026</td>
+        <td><span class="badge-s badge-danger">EXPIRED</span></td>
+        <td><button class="btn" style="font-size:10px;padding:3px 8px;color:var(--red);border-color:var(--red-border)">Record Wastage</button></td>
+      </tr>
+      <tr style="background:var(--amber-light);">
+        <td style="font-weight:600;">Red Meat <span style="font-size:10px;color:var(--text-muted)">gm</span></td>
+        <td class="mono" style="font-size:11px">BRD-2026-05 (#42)</td>
+        <td class="mono">800 gm</td>
+        <td style="font-size:11px">15 Jun 2026</td>
+        <td><span class="badge-s badge-warn">15 days</span></td>
+        <td><button class="btn" style="font-size:10px;padding:3px 8px;">Dispatch First</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <!-- Legend -->
 <div style="margin-top:20px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;">
   <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;color:var(--text-sec);">Intelligence Elements &mdash; Operations Hub</div>
