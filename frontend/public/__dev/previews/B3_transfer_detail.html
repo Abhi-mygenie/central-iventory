@@ -149,6 +149,85 @@ tr:last-child td{border-bottom:none;}
   </div>
 </div>
 
+<!-- Requester Store Health Panel -->
+<div class="card" style="border-left:3px solid var(--border);">
+  <div class="card-head" style="display:flex;justify-content:space-between;align-items:center;">
+    <span>Requester Store Snapshot — DemoFranchise1</span>
+    <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);">Real-time stock as of now</span>
+  </div>
+  <div class="card-body">
+    <!-- Health summary strip -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;">
+      <div style="text-align:center;padding:8px;background:var(--red-light);border-radius:6px;border:1px solid var(--red-border);">
+        <div style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--red);">3</div>
+        <div style="font-size:10px;color:#991b1b;">Out of Stock</div>
+      </div>
+      <div style="text-align:center;padding:8px;background:var(--amber-light);border-radius:6px;border:1px solid var(--amber-border);">
+        <div style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--amber);">1</div>
+        <div style="font-size:10px;color:#92400e;">Low Stock</div>
+      </div>
+      <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:6px;border:1px solid var(--border);">
+        <div style="font-size:20px;font-weight:700;font-family:var(--mono);">0</div>
+        <div style="font-size:10px;color:var(--text-muted);">Adequate</div>
+      </div>
+      <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:6px;border:1px solid var(--border);">
+        <div style="font-size:20px;font-weight:700;font-family:var(--mono);">4</div>
+        <div style="font-size:10px;color:var(--text-muted);">Total Items</div>
+      </div>
+    </div>
+    <!-- Full item list -->
+    <table style="font-size:12px;">
+      <thead>
+        <tr>
+          <th style="font-size:9px;padding:6px 12px;">Item</th>
+          <th style="font-size:9px;padding:6px 12px;">Category</th>
+          <th style="font-size:9px;padding:6px 12px;">Stock Level</th>
+          <th style="font-size:9px;padding:6px 12px;">Min Threshold</th>
+          <th style="font-size:9px;padding:6px 12px;">Status</th>
+          <th style="font-size:9px;padding:6px 12px;">In This Request?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px 12px;"><span style="font-weight:600;">Red Meat</span><span style="color:var(--text-muted);font-size:11px;margin-left:3px;">gm</span></td>
+          <td style="padding:6px 12px;font-size:11px;color:var(--text-muted);">Non Veg</td>
+          <td style="padding:6px 12px;"><span style="color:var(--red);font-weight:600;">0 gm</span></td>
+          <td style="padding:6px 12px;font-family:var(--mono);font-size:11px;">500 gm</td>
+          <td style="padding:6px 12px;"><span style="font-size:10px;font-weight:600;color:var(--red);background:var(--red-light);padding:2px 6px;border-radius:3px;border:1px solid var(--red-border);">OUT</span></td>
+          <td style="padding:6px 12px;font-size:11px;font-weight:600;">Yes — 500 gm</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;"><span style="font-weight:600;">Patri</span><span style="color:var(--text-muted);font-size:11px;margin-left:3px;">gm</span></td>
+          <td style="padding:6px 12px;font-size:11px;color:var(--text-muted);">Non Veg</td>
+          <td style="padding:6px 12px;"><span style="color:var(--red);font-weight:600;">0 gm</span></td>
+          <td style="padding:6px 12px;font-family:var(--mono);font-size:11px;">800 gm</td>
+          <td style="padding:6px 12px;"><span style="font-size:10px;font-weight:600;color:var(--red);background:var(--red-light);padding:2px 6px;border-radius:3px;border:1px solid var(--red-border);">OUT</span></td>
+          <td style="padding:6px 12px;font-size:11px;font-weight:600;">Yes — 800 gm</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;"><span style="font-weight:600;">Maida</span><span style="color:var(--text-muted);font-size:11px;margin-left:3px;">kg</span></td>
+          <td style="padding:6px 12px;font-size:11px;color:var(--text-muted);">Veggies</td>
+          <td style="padding:6px 12px;"><span style="color:var(--amber);font-weight:600;">0.5 kg</span></td>
+          <td style="padding:6px 12px;font-family:var(--mono);font-size:11px;">10 kg</td>
+          <td style="padding:6px 12px;"><span style="font-size:10px;font-weight:600;color:var(--amber);background:var(--amber-light);padding:2px 6px;border-radius:3px;border:1px solid var(--amber-border);">LOW</span></td>
+          <td style="padding:6px 12px;font-size:11px;font-weight:600;">Yes — 10 kg</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;"><span style="font-weight:600;">Cooking Oil</span><span style="color:var(--text-muted);font-size:11px;margin-left:3px;">ltr</span></td>
+          <td style="padding:6px 12px;font-size:11px;color:var(--text-muted);">Veggies</td>
+          <td style="padding:6px 12px;"><span style="color:var(--red);font-weight:600;">0 ltr</span></td>
+          <td style="padding:6px 12px;font-family:var(--mono);font-size:11px;">5 ltr</td>
+          <td style="padding:6px 12px;"><span style="font-size:10px;font-weight:600;color:var(--red);background:var(--red-light);padding:2px 6px;border-radius:3px;border:1px solid var(--red-border);">OUT</span></td>
+          <td style="padding:6px 12px;font-size:11px;color:var(--amber);">Not requested</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="font-size:11px;color:var(--amber);margin-top:8px;padding-top:8px;border-top:1px solid var(--border-light);">
+      ⚠ Cooking Oil is also out of stock at this outlet but was not included in this request.
+    </div>
+  </div>
+</div>
+
 <!-- B3-01/02: Approval Impact Summary -->
 <div class="impact-card">
   <div class="impact-head">Approval Impact on Your Stock</div>
