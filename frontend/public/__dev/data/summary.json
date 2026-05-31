@@ -1,0 +1,90 @@
+{
+  "generated_at": "2026-05-31T14:52:33.212Z",
+  "project": "Central Inventory",
+  "repo": "parth-mygenie/central_inventory",
+  "branch": "31_5_26",
+  "totals": {
+    "items": 33,
+    "crs": 18,
+    "bugs": 15,
+    "debt": 17
+  },
+  "crs_by_status": {
+    "CLOSED": 14,
+    "PLANNED": 3,
+    "PROPOSED": 1
+  },
+  "bugs_by_status": {
+    "ACCEPTED": 11,
+    "DEFERRED": 2,
+    "RESOLVED": 1,
+    "OPEN": 1
+  },
+  "bugs_by_severity": {
+    "LOW": 9,
+    "MEDIUM": 4,
+    "INFO": 2
+  },
+  "debt_by_type": {
+    "CR": 17
+  },
+  "sprints": [
+    {
+      "key": "S0",
+      "name": "Pre-Governance (Retroactive)",
+      "status": "closed",
+      "start": "2026-01-01",
+      "end": "2026-05-29",
+      "goal": "All work done before governance layer existed. Retroactively registered.",
+      "cr_count": 14,
+      "bug_count": 15
+    },
+    {
+      "key": "S1",
+      "name": "Governance Setup",
+      "status": "active",
+      "start": "2026-05-31",
+      "end": null,
+      "goal": "Establish governance layer, seed registries, build dev dashboard, clear doc debt.",
+      "cr_count": 0,
+      "bug_count": 0
+    }
+  ],
+  "signoff_pending": 14,
+  "owner_signoff_breakdown": {
+    "pending": [
+      "CR-001",
+      "CR-002",
+      "CR-003",
+      "CR-004",
+      "CR-005",
+      "CR-006",
+      "CR-007",
+      "CR-008",
+      "CR-009",
+      "CR-010",
+      "CR-011",
+      "CR-012",
+      "CR-013",
+      "CR-014"
+    ],
+    "done": [],
+    "waived": [
+      "BUG-001",
+      "BUG-002",
+      "BUG-003",
+      "BUG-004",
+      "BUG-005",
+      "BUG-006",
+      "BUG-007",
+      "BUG-008",
+      "BUG-009",
+      "BUG-010",
+      "BUG-011",
+      "BUG-012",
+      "BUG-013",
+      "BUG-014",
+      "BUG-015"
+    ]
+  }
+}
