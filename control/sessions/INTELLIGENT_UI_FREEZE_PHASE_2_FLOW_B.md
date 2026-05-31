@@ -2,7 +2,7 @@
 # Screen-by-Screen Intelligence Brainstorming
 
 > **Date:** 2026-05-31
-> **Status:** BRAINSTORM — awaiting owner MoSCoW prioritization per screen
+> **Status:** OWNER APPROVED — All 61 items marked MUST HAVE. Phase down to implementation phases will happen after screen previews.
 > **Flow:** B — Transfer Lifecycle (Request → Approve → Dispatch → Receive)
 > **Screens:** 10 (B1-B10)
 > **Constraint:** Zero code changes. Planning only.
@@ -275,20 +275,15 @@
 
 ---
 
-## OWNER DECISIONS NEEDED
+## OWNER DECISIONS — RECORDED 2026-05-31
 
-For each screen above, please review the intelligence elements and mark:
-- **Must Have** — Required for intelligent UI. Ship with the redesign.
-- **Should Have** — High value. Include if effort allows.
-- **Could Have** — Nice to have. Defer if needed.
-- **Defer** — Not now. Track for future.
-- **Reject** — Don't want this.
+**Owner decision: ALL MUST HAVE across all screens.**
 
-You can approve/modify the priorities I've suggested, or override per item.
+Screen-by-screen walkthrough completed. Owner approved all 61 elements as Must Have.
 
-**After your review, I'll proceed to:**
-1. Phase 3 — API feasibility verification for approved items
-2. Then continue Phase 2 for the next flow (Flow C or Flow D)
+Note: Phasing down to implementation sprints will happen after Phase 4 (screen previews). Owner wants to see actual screens before deciding what to defer to later phases.
+
+**Proceeding to:** Phase 3 — API Feasibility Verification for all 61 items.
 
 ---
 
