@@ -76,6 +76,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .item-table tr:last-child td{border-bottom:none;}
 .item-table tr:hover td{background:var(--surface3);}
 
+/* Category group row */
+.cat-row td{padding:8px 16px;background:var(--surface2);border-bottom:1px solid var(--border);}
+.cat-label{font-size:12px;font-weight:600;color:var(--text);}
+.cat-count{font-size:11px;color:var(--text-muted);margin-left:8px;}
+.cat-tag{font-size:10px;color:var(--text-muted);background:var(--surface2);border:1px solid var(--border);padding:1px 6px;border-radius:3px;}
+
 .item-name{font-size:13px;font-weight:600;}
 .item-unit{font-size:11px;color:var(--text-muted);margin-left:4px;}
 
@@ -192,6 +198,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
           <tr>
             <th style="width:30px"></th>
             <th>Item</th>
+            <th>Category</th>
             <th>Your Stock</th>
             <th>Source</th>
             <th>Order Qty</th>
@@ -199,9 +206,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
           </tr>
         </thead>
         <tbody>
+          <!-- Category group: Non Veg -->
+          <tr class="cat-row"><td colspan="7"><span class="cat-label">Non Veg</span><span class="cat-count">2 items</span></td></tr>
           <tr>
             <td><input type="checkbox" class="check" checked /></td>
             <td><span class="item-name">Red Meat</span><span class="item-unit">gm</span></td>
+            <td><span class="cat-tag">Non Veg</span></td>
             <td>
               <div class="stock-val out"><span class="dot"></span><strong>0 gm</strong></div>
               <div class="stock-label">Out of stock</div>
@@ -224,6 +234,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
           <tr>
             <td><input type="checkbox" class="check" checked /></td>
             <td><span class="item-name">Patri</span><span class="item-unit">gm</span></td>
+            <td><span class="cat-tag">Non Veg</span></td>
             <td>
               <div class="stock-val out"><span class="dot"></span><strong>0 gm</strong></div>
               <div class="stock-label">Out of stock</div>
@@ -240,9 +251,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
               <div class="sug"><span class="tag">Gap to min: 800</span></div>
             </td>
           </tr>
+          <!-- Category group: Veggies -->
+          <tr class="cat-row"><td colspan="7"><span class="cat-label">Veggies</span><span class="cat-count">1 item</span></td></tr>
           <tr>
             <td><input type="checkbox" class="check" checked /></td>
             <td><span class="item-name">Maida</span><span class="item-unit">kg</span></td>
+            <td><span class="cat-tag">Veggies</span></td>
             <td>
               <div class="stock-val low"><span class="dot"></span><strong>0.5 kg</strong></div>
               <div class="stock-label">Low stock</div>
