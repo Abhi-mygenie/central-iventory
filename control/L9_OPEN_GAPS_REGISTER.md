@@ -58,3 +58,6 @@
 | OI-014 | Low-Stock/Reorder Screen | Future | Still open |
 | OI-015 | Advanced Permissions | Phase 2 | Still open |
 | OI-016 | Lateral Master-to-Master | Open | Partially addressed by CR-007 (Settings) |
+| G-014 | Invoice OCR/AI extraction endpoint | C3 Upload Invoice tab needs AI extraction | New endpoint: file upload + OCR/AI extraction service (TBD) | P1 |
+| G-015 | Excel/CSV parsing endpoint | C3 Manual Entry Excel upload needs server-side parsing | New endpoint or frontend-only parsing (SheetJS) | P2 |
+| G-016 | Invoice number storage for duplicate detection | C3 duplicate invoice check | Store processed invoice numbers in DB | P2 |
