@@ -48,6 +48,7 @@ function IngredientsTab() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
+  const [recipeMap, setRecipeMap] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [addOpen, setAddOpen] = useState(false);
@@ -55,11 +56,21 @@ function IngredientsTab() {
   const load = useCallback(async () => {
     setLoading(true); setError(null);
     try {
-      const [invResp, catResp] = await Promise.all([
-        api.getStockInventory(), api.getStockItemCategories(),
+      const [invResp, catResp, recResp] = await Promise.all([
+        api.getStockInventory(), api.getStockItemCategories(), api.getRecipeList(),
       ]);
       setIngredients(invResp.data?.current_stocks || []);
       setCategories(catResp.data || []);
+      // B8: Build recipe cross-ref map
+      const recipes = recResp.data || [];
+      const rMap = {};
+      recipes.forEach(r => {
+        (r.ingredients || []).forEach(ing => {
+          const key = (ing.stock_title || ing.ingredient_name || "").toLowerCase();
+          if (key) rMap[key] = (rMap[key] || 0) + 1;
+        });
+      });
+      setRecipeMap(rMap);
     } catch (e) { setError(e?.message || "Failed to load"); console.warn("[catalogue]", e); }
     finally { setLoading(false); }
   }, []);
@@ -93,6 +104,7 @@ function IngredientsTab() {
               <TableHead className="text-xs text-right">Quantity</TableHead>
               <TableHead className="text-xs text-right">Min Alert</TableHead>
               <TableHead className="text-xs text-center">Status</TableHead>
+              <TableHead className="text-xs text-center">Recipes</TableHead>
               <TableHead className="text-xs text-center">Vendor</TableHead>
               <TableHead className="text-xs w-20">Actions</TableHead>
             </TableRow></TableHeader>
@@ -105,6 +117,9 @@ function IngredientsTab() {
                   <TableCell className="py-2 text-xs text-right tabular-nums text-muted-foreground">{item.min_qty_alert} {item.min_unit_alert}</TableCell>
                   <TableCell className="py-2 text-center">
                     {item.is_low_stock ? <Badge variant="destructive" className="text-[10px] px-1.5 py-0">Low</Badge> : <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-emerald-700 border-emerald-200 bg-emerald-50">OK</Badge>}
+                  </TableCell>
+                  <TableCell className="py-2 text-center text-xs tabular-nums" data-testid={`recipe-count-${item.id}`}>
+                    {recipeMap[(item.stock_title || "").toLowerCase()] || 0}
                   </TableCell>
                   <TableCell className="py-2 text-xs text-muted-foreground text-center">{item.vendor_name || "—"}</TableCell>
                   <TableCell className="py-2">

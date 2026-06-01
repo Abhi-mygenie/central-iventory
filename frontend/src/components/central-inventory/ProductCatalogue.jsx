@@ -51,12 +51,19 @@ function FoodsTab() {
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editFood, setEditFood] = useState(null);
+  const [recipeMap, setRecipeMap] = useState({});
 
   const load = useCallback(async () => {
     setLoading(true); setError(null);
     try {
-      const [fResp, cResp] = await Promise.all([api.getFoodsList(), api.getFoodCategories()]);
+      const [fResp, cResp, rResp] = await Promise.all([api.getFoodsList(), api.getFoodCategories(), api.getRecipeList()]);
       setFoods(fResp.data || []); setCategories(cResp.data || []);
+      // B6: Build food_name → has_recipe map from actual recipe data
+      const map = {};
+      (rResp.data || []).forEach(r => {
+        if (r.food_name) map[r.food_name.toLowerCase()] = true;
+      });
+      setRecipeMap(map);
     } catch (e) { setError(e?.message || "Failed"); }
     finally { setLoading(false); }
   }, []);
@@ -100,7 +107,7 @@ function FoodsTab() {
                 <TableCell className="py-2 text-xs text-muted-foreground">{f.category?.name || "—"}</TableCell>
                 <TableCell className="py-2 text-sm text-right tabular-nums">{f.price}</TableCell>
                 <TableCell className="py-2 text-center"><Badge variant={f.status === 1 ? "outline" : "secondary"} className="text-[10px] px-1.5 py-0">{f.status === 1 ? "Active" : "Inactive"}</Badge></TableCell>
-                <TableCell className="py-2 text-center"><Badge variant="outline" className="text-[10px] px-1.5 py-0">{f.has_recipe ? "Yes" : "—"}</Badge></TableCell>
+                <TableCell className="py-2 text-center"><Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${recipeMap[(f.name || "").toLowerCase()] ? "text-emerald-700 border-emerald-200 bg-emerald-50" : ""}`}>{recipeMap[(f.name || "").toLowerCase()] ? "Yes" : "—"}</Badge></TableCell>
                 <TableCell className="py-2 flex gap-1">
                   <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => { setEditFood(f); setDialogOpen(true); }} data-testid={`edit-food-${f.id}`}><Pencil className="h-3.5 w-3.5" /></Button>
                   <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive" data-testid={`del-food-${f.id}`}><Trash2 className="h-3.5 w-3.5" /></Button></AlertDialogTrigger>

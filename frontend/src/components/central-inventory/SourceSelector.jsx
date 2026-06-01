@@ -123,6 +123,7 @@ export default function SourceSelector({ fromRestaurantId, inventoryMasterId, va
         segments.length === 0 ? (
           <p className="text-[10px] text-amber-600" data-testid="no-segments-warning">No stock segments available for this item</p>
         ) : (
+          <>
           <Select
             value={value?.segment_id ? String(value.segment_id) : ""}
             onValueChange={(v) => onChange({ mode: "segment_id", segment_id: Number(v) })}
@@ -146,6 +147,19 @@ export default function SourceSelector({ fromRestaurantId, inventoryMasterId, va
               })}
             </SelectContent>
           </Select>
+          {value?.segment_id && (() => {
+            const sel = segments.find(s => s.segment_id === value.segment_id);
+            if (sel) {
+              const avail = sel.display_qty ?? sel.cal_quantity ?? 0;
+              return (
+                <p className="text-[10px] text-muted-foreground mt-0.5" data-testid="source-segment-avail">
+                  Available: <span className="font-semibold">{avail}</span> in this segment
+                </p>
+              );
+            }
+            return null;
+          })()}
+          </>
         )
       ) : (
         <div className="space-y-1">

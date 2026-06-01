@@ -74,6 +74,9 @@ export default function DisputeResolutionDialog({ open, onOpenChange, transfer, 
               <div>
                 <p className="text-xs font-medium">Accept</p>
                 <p className="text-[10px] text-muted-foreground">Finalize receive</p>
+                <p className="text-[9px] text-emerald-700 mt-1">
+                  Acknowledge the damage.{disputeLines.filter(dl => dl.rejected_qty > 0).map(dl => ` ${dl.rejected_qty} rejected`).join(",")} written off. No stock returns to sender. Transfer closes as partially received.
+                </p>
               </div>
             </div>
             <div className={`flex items-center gap-2 p-2 rounded-md border cursor-pointer flex-1 transition-colors ${!accept ? "border-rose-300 bg-rose-50" : "border-border"}`} onClick={() => setAccept(false)}>
@@ -81,6 +84,9 @@ export default function DisputeResolutionDialog({ open, onOpenChange, transfer, 
               <div>
                 <p className="text-xs font-medium">Reject</p>
                 <p className="text-[10px] text-muted-foreground">Re-receive needed</p>
+                <p className="text-[9px] text-rose-700 mt-1">
+                  Dispute the claim. Transfer reverts to "dispatched". Destination must re-receive. Use if damage claim is incorrect.
+                </p>
               </div>
             </div>
           </div>

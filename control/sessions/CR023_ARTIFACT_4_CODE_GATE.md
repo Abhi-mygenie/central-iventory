@@ -62,8 +62,8 @@ Only fix the 18 documented bugs. No "while I'm here" improvements. Any new issue
 | **2** | Restaurant names on PendingQueues, TransferDetail, HistoryLedger | B2, B3, B4 | AWAITING OWNER | COMPLETE |
 | **3** | TransferDetail Store Snapshot + Impact Summary | C1 | AWAITING OWNER | COMPLETE |
 | **4** | Consumption intelligence + DirectDispatch auto-detect | B9, C2 | AWAITING OWNER | COMPLETE |
-| **5** | ReceiveDialog + ApproveWaveDialog FEFO + HierarchySummary health | C3, C4, B5 | PENDING | NOT STARTED |
-| **6** | Catalogues + HierarchyMgmt + DisputeDialog + SourceSelector | B6, B7, B8, B11, C5, C6 | PENDING | NOT STARTED |
+| **5** | ReceiveDialog + ApproveWaveDialog FEFO + HierarchySummary health | C3, C4, B5 | AWAITING OWNER | COMPLETE |
+| **6** | Catalogues + HierarchyMgmt + DisputeDialog + SourceSelector | B6, B7, B8, B11, C5, C6 | AWAITING OWNER | COMPLETE |
 
 ---
 

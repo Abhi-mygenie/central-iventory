@@ -75,6 +75,16 @@ export default function ApproveWaveDialog({ open, onOpenChange, transfer, onSubm
       const la = { ...next[idx] };
       la.include = !la.include;
       if (la.include && la.masterId) fetchSegments(la.masterId);
+      // C4: Auto-select nearest-expiry segment (FEFO)
+      if (la.include && la.masterId && segmentsMap[la.masterId]?.length > 0) {
+        const sorted = [...segmentsMap[la.masterId]].sort((a, b) => {
+          if (!a.expiry_date) return 1;
+          if (!b.expiry_date) return -1;
+          return a.expiry_date.localeCompare(b.expiry_date);
+        });
+        la.segmentId = sorted[0].segment_id;
+        la.segmentQty = la.approvedQty;
+      }
       if (!la.include) { la.approvedQty = 0; la.segmentId = null; la.segmentQty = 0; }
       next[idx] = la;
       return next;
@@ -198,6 +208,7 @@ export default function ApproveWaveDialog({ open, onOpenChange, transfer, onSubm
                             <AlertCircle className="h-3 w-3" /> No segments available
                           </div>
                         ) : (
+                          <>
                           <Select
                             value={la.segmentId ? String(la.segmentId) : ""}
                             onValueChange={(v) => updateLine(idx, "segmentId", v)}
@@ -207,14 +218,47 @@ export default function ApproveWaveDialog({ open, onOpenChange, transfer, onSubm
                               <SelectValue placeholder="Select segment" />
                             </SelectTrigger>
                             <SelectContent>
-                              {segments.map((seg) => (
-                                <SelectItem key={seg.segment_id} value={String(seg.segment_id)}>
-                                  {seg.batch || `Seg #${seg.segment_id}`} — {seg.display_qty ?? seg.cal_quantity} avail
-                                  {seg.expiry_date ? ` (exp: ${seg.expiry_date})` : ""}
-                                </SelectItem>
-                              ))}
+                              {(() => {
+                                // C4: Sort segments by expiry (FEFO) and add badges
+                                const sorted = [...segments].sort((a, b) => {
+                                  if (!a.expiry_date) return 1;
+                                  if (!b.expiry_date) return -1;
+                                  return a.expiry_date.localeCompare(b.expiry_date);
+                                });
+                                return sorted.map((seg, sIdx) => {
+                                  const expiryDays = seg.expiry_date ? Math.ceil((new Date(seg.expiry_date) - new Date()) / (1000 * 60 * 60 * 24)) : null;
+                                  const isFefo = sIdx === 0 && seg.expiry_date;
+                                  return (
+                                    <SelectItem key={seg.segment_id} value={String(seg.segment_id)}>
+                                      <span className="flex items-center gap-1.5">
+                                        {seg.batch || `Seg #${seg.segment_id}`} — {seg.display_qty ?? seg.cal_quantity} avail
+                                        {expiryDays != null && expiryDays <= 30 && (
+                                          <span className="text-[8px] font-semibold px-1 py-0 rounded bg-amber-100 text-amber-700">Exp {expiryDays}d</span>
+                                        )}
+                                        {expiryDays != null && expiryDays > 30 && (
+                                          <span className="text-[8px] px-1 py-0 rounded bg-muted text-muted-foreground">Exp {expiryDays}d</span>
+                                        )}
+                                        {isFefo && <span className="text-[8px] font-semibold px-1 py-0 rounded bg-blue-100 text-blue-700">FEFO</span>}
+                                      </span>
+                                    </SelectItem>
+                                  );
+                                });
+                              })()}
                             </SelectContent>
                           </Select>
+                          {la.segmentId && la.approvedQty > 0 && (() => {
+                            const seg = segments.find(s => s.segment_id === la.segmentId);
+                            const availQty = seg ? (seg.display_qty ?? seg.cal_quantity ?? 0) : 0;
+                            if (la.approvedQty > availQty) {
+                              return (
+                                <p className="text-[9px] text-amber-600 flex items-center gap-1 mt-1" data-testid={`over-approve-warn-${idx}`}>
+                                  <AlertCircle className="h-3 w-3" /> Approved qty ({la.approvedQty}) exceeds segment availability ({availQty})
+                                </p>
+                              );
+                            }
+                            return null;
+                          })()}
+                          </>
                         )}
                       </div>
                     </div>

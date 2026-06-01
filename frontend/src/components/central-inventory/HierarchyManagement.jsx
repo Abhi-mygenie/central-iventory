@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useLoginContext } from "@/hooks/useLoginContext";
 import useHierarchyManagement from "@/hooks/useHierarchyManagement";
+import api from "@/services/api";
 import { LoadingState, EmptyState, ErrorState } from "@/components/common/StateDisplays";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -450,8 +451,34 @@ export default function HierarchyManagement() {
   const [tab, setTab] = useState("all");
   const [createOpen, setCreateOpen] = useState(false);
   const [pushTarget, setPushTarget] = useState(null);
+  const [pushStatusMap, setPushStatusMap] = useState({});
 
   useEffect(() => { fetchList(); }, [fetchList]);
+
+  // B11: Fetch push-form per child for real push status
+  useEffect(() => {
+    if (children.length === 0) return;
+    const toFetch = children.slice(0, 10);
+    Promise.allSettled(
+      toFetch.map((c) => api.getPushForm(c.id))
+    ).then((results) => {
+      const statusMap = {};
+      toFetch.forEach((child, idx) => {
+        const result = results[idx];
+        if (result.status === "fulfilled") {
+          const data = result.value?.data?.data || result.value?.data;
+          const sourceEntities = data?.source_entities || {};
+          const childExisting = data?.child_existing || {};
+          let totalSource = 0, totalChild = 0;
+          Object.values(sourceEntities).forEach(items => { totalSource += (Array.isArray(items) ? items.length : 0); });
+          Object.values(childExisting).forEach(items => { totalChild += (Array.isArray(items) ? items.length : 0); });
+          const behind = Math.max(0, totalSource - totalChild);
+          statusMap[child.id] = { behind, totalSource, totalChild, status: behind > 0 ? "stale" : "synced" };
+        }
+      });
+      setPushStatusMap(statusMap);
+    });
+  }, [children]);
 
   // Fetch nested franchises for master tree when children load
   useEffect(() => {
@@ -515,9 +542,9 @@ export default function HierarchyManagement() {
     : franchises;
 
   const renderChildRow = (child, isNested = false) => {
-    const createdDays = child.createdAt ? Math.floor((Date.now() - new Date(child.createdAt).getTime()) / (1000*60*60*24)) : null;
-    // Heuristic: if store was created > 14 days ago and we don't have explicit push date, mark as potentially stale
-    const isStale = createdDays !== null && createdDays > 14;
+    const ps = pushStatusMap[child.id];
+    const isStale = ps ? ps.status === "stale" : false;
+    const behindCount = ps ? ps.behind : null;
     return (
     <TableRow key={child.id} data-testid={`child-row-${child.id}`} className={isNested ? "bg-accent/10" : isStale ? "bg-amber-50/30" : ""}>
       <TableCell className="text-xs font-medium">
@@ -532,14 +559,18 @@ export default function HierarchyManagement() {
         {child.createdAt ? format(new Date(child.createdAt), "d MMM yyyy") : "—"}
       </TableCell>
       <TableCell>
-        {isStale ? (
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200" data-testid={`push-stale-${child.id}`}>
-            Stale — push recommended
-          </span>
+        {ps ? (
+          isStale ? (
+            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200" data-testid={`push-stale-${child.id}`}>
+              Stale — {behindCount} item{behindCount !== 1 ? "s" : ""} behind
+            </span>
+          ) : (
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200" data-testid={`push-synced-${child.id}`}>
+              Synced
+            </span>
+          )
         ) : (
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200" data-testid={`push-synced-${child.id}`}>
-            Synced
-          </span>
+          <span className="text-[10px] text-muted-foreground">—</span>
         )}
       </TableCell>
       <TableCell>

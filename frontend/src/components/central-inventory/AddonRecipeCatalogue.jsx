@@ -88,8 +88,12 @@ export default function AddonRecipeCatalogue() {
                 <TableCell className="py-2 text-sm text-right tabular-nums">{r.addon_price}</TableCell>
                 <TableCell className="py-2 text-center"><Badge variant="outline" className="text-[10px]">{r.ingredients?.length || 0}</Badge></TableCell>
                 <TableCell className="py-2 text-center">
-                  <Badge variant="outline" className={`text-[10px] ${(r.ingredients?.length || 0) > 0 ? "text-emerald-700 border-emerald-200 bg-emerald-50" : "text-amber-700 border-amber-200 bg-amber-50"}`}>
-                    {(r.ingredients?.length || 0) > 0 ? "Yes" : "No"}
+                  <Badge variant="outline" className={`text-[10px] ${
+                    (r.ingredients?.length || 0) > 0
+                      ? (r.ingredients.every(i => i.purchase_price != null && Number(i.purchase_price) > 0) ? "text-emerald-700 border-emerald-200 bg-emerald-50" : "text-amber-700 border-amber-200 bg-amber-50")
+                      : ""
+                  }`}>
+                    {(r.ingredients?.length || 0) === 0 ? "No ingredients" : (r.ingredients.every(i => i.purchase_price != null && Number(i.purchase_price) > 0) ? "Yes" : "Partial")}
                   </Badge>
                 </TableCell>
                 <TableCell className="py-2 flex gap-1">

@@ -106,16 +106,31 @@ export default function ReceiveDialog({ open, onOpenChange, transfer, onSubmit, 
 
           {/* Line items summary */}
           <div className="border rounded-md divide-y">
-            {lines.map((line, idx) => (
+            {lines.map((line, idx) => {
+              const ld = lineData[idx];
+              const dispatched = ld?.dispatched ?? line.quantity ?? 0;
+              const requested = line.requestedDisplayQty ?? line.quantity ?? 0;
+              const hasMismatch = dispatched !== requested && line.requestedDisplayQty != null;
+              return (
               <div key={line.id || `line-${idx}`} className="p-2.5 space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-medium">{lineData[idx]?.stock_title || line.stock_title || "Item"}</span>
+                  <span className="text-xs font-medium">{ld?.stock_title || line.stock_title || "Item"}</span>
                   <span className="text-xs text-muted-foreground">
-                    {lineData[idx]?.dispatched ?? line.quantity} {lineData[idx]?.unit || line.unit}
-                    {line.dispatchedDisplayTotal != null && line.dispatchedDisplayTotal !== line.quantity && (
-                      <span className="text-[10px] text-indigo-600 ml-1">(dispatched)</span>
-                    )}
+                    {dispatched} {ld?.unit || line.unit}
                   </span>
+                </div>
+                {/* C3: Dispatched vs Requested comparison */}
+                <div className="flex items-center gap-3 text-[10px]" data-testid={`receive-comparison-${idx}`}>
+                  <span className="text-muted-foreground">Dispatched: <span className="font-semibold text-foreground">{dispatched} {line.unit}</span></span>
+                  <span className="text-muted-foreground">Requested: <span className="font-semibold text-foreground">{requested} {line.unit}</span></span>
+                  {hasMismatch && (
+                    <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200">
+                      {dispatched < requested ? `${Math.round((requested - dispatched) * 100) / 100} less than requested` : `${Math.round((dispatched - requested) * 100) / 100} more than requested`}
+                    </span>
+                  )}
+                  {!hasMismatch && line.requestedDisplayQty != null && (
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 border border-emerald-200">Match</span>
+                  )}
                 </div>
                 {isPartial && (
                   <div className="grid grid-cols-2 gap-2">
@@ -180,7 +195,20 @@ export default function ReceiveDialog({ open, onOpenChange, transfer, onSubmit, 
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
+          </div>
+
+          {/* C3: After receiving summary */}
+          <div className="bg-emerald-50/50 border border-emerald-200 rounded-md px-3 py-2" data-testid="receive-summary">
+            <p className="text-[10px] font-medium text-emerald-800 mb-1">After receiving:</p>
+            <div className="flex flex-wrap gap-x-4 gap-y-0.5">
+              {lineData.filter(ld => ld.dispatched > 0).map((ld) => (
+                <span key={ld.line_id} className="text-[10px] text-emerald-700">
+                  {ld.stock_title} → <span className="font-semibold">+{isPartial ? ld.accepted_qty : ld.dispatched} {ld.unit}</span>
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* Partial toggle */}
