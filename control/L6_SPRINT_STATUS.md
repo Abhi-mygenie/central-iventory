@@ -47,9 +47,17 @@
 
 ## Closed Sprints
 
+### S2 — Intelligent UI Implementation
+- **Period:** 2026-06-01
+- **CRs:** CR-021 (Implementation, CLOSED), CR-022 (Code Review Fixes, CLOSED)
+- **BUGs:** BUG-016 (display_qty TypeError, RESOLVED)
+- **Tests:** 55/55 PASS across 4 iterations (27-30)
+- **Governance Note:** CR-021 and CR-022 registered retroactively. Work completed before registration — gap documented.
+
 ### S1 — Governance Setup + Intelligent UI Freeze
 - **Period:** 2026-05-31
 - **Deliverables:** 10-layer control, registry.json, dev dashboard, 7-phase UI freeze, 9 HTML previews, 24/24 screens approved
+- **CRs:** CR-019 (UI Freeze, CLOSED)
 - **Status:** CLOSED
 
 ### S0 — Pre-Governance (Retroactive)

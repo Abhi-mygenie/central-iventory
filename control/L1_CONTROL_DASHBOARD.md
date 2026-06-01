@@ -80,18 +80,23 @@ All IG items completed on 2026-06-01 (iteration_30, 5/5 PASS):
 | G-015 | Excel/CSV parsing endpoint | P2 |
 | G-016 | Invoice number storage | P2 |
 
-## Bug Fixed During Implementation
+## Governance Registration
 
-| ID | Issue | File | Sprint |
-|----|-------|------|:------:|
-| BUG-016 | display_qty string not converted to Number for arithmetic | StockAdjustmentForm.jsx, WastageEntryForm.jsx | C |
+| ID | Title | Sprint | Status | Artifacts |
+|----|-------|:------:|:------:|:---------:|
+| CR-019 | Intelligent UI Freeze (Planning) | S1 | **CLOSED** | 7/7 DONE |
+| CR-021 | Intelligence Implementation (Sprint A+B+C + Polish) | S2 | **CLOSED** (Owner Signoff Pending) | 6/7 DONE, 1 PENDING |
+| CR-022 | Code Quality Review Fixes | S2 | **CLOSED** (Owner Signoff Pending) | 4/7 DONE, 3 WAIVED |
+| BUG-016 | display_qty String Arithmetic TypeError | S2 | **RESOLVED** | 3/7 DONE, 4 WAIVED |
+
+**Note:** CR-021 and CR-022 were registered retroactively. Work was completed before CR registration — governance gap documented in session artifacts.
 
 ## Registry
 
 | Type | Count |
 |------|:-----:|
-| CRs | 20 (14 closed, 1 in progress, 4 planned, 1 proposed) |
-| BUGs | 16 (11 accepted, 2 deferred, 1 resolved, 1 open, 1 fixed) |
+| CRs | 22 (15 closed, 2 pending owner signoff, 4 planned, 1 proposed) |
+| BUGs | 16 (11 accepted, 2 deferred, 2 resolved, 1 open) |
 
 ## Quick Links
 

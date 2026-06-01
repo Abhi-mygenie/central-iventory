@@ -1301,5 +1301,89 @@
     "is_debt": false,
     "debt_reasons": [],
     "sprint_name": "Pre-Governance (Retroactive)"
+  },
+  {
+    "type": "BUG",
+    "id": "BUG-016",
+    "title": "display_qty string causes TypeError in arithmetic operations",
+    "status": "RESOLVED",
+    "severity": "HIGH",
+    "sprint_key": "S2",
+    "phase": "Sprint C",
+    "files": [
+      "StockAdjustmentForm.jsx",
+      "WastageEntryForm.jsx"
+    ],
+    "notes": "POS API returns display_qty as string. Arithmetic without Number() wrapper caused toFixed() TypeError. Fixed by wrapping in Number().",
+    "artifact_refs": [
+      {
+        "artifact": 0,
+        "label": "Session-Start",
+        "status": "DONE",
+        "tags": [
+          "RETROACTIVE"
+        ],
+        "paths": [
+          "control/sessions/BUG016_SESSION_START.md"
+        ]
+      },
+      {
+        "artifact": 1,
+        "label": "Intake",
+        "status": "DONE",
+        "tags": [],
+        "paths": [
+          "control/sessions/BUG016_SESSION_START.md"
+        ]
+      },
+      {
+        "artifact": 2,
+        "label": "Impact-Analysis",
+        "status": "WAIVED",
+        "tags": [],
+        "paths": []
+      },
+      {
+        "artifact": 3,
+        "label": "Impl-Plan",
+        "status": "WAIVED",
+        "tags": [],
+        "paths": []
+      },
+      {
+        "artifact": 4,
+        "label": "Code-Gate",
+        "status": "WAIVED",
+        "tags": [],
+        "paths": []
+      },
+      {
+        "artifact": 5,
+        "label": "QA-Report",
+        "status": "DONE",
+        "tags": [],
+        "paths": [
+          "test_reports/iteration_29.json"
+        ]
+      },
+      {
+        "artifact": 6,
+        "label": "Owner-Signoff",
+        "status": "WAIVED",
+        "tags": [
+          "BUG-FIX"
+        ],
+        "paths": []
+      }
+    ],
+    "completeness": {
+      "done": 7,
+      "total": 7,
+      "pct": 100
+    },
+    "doc_count": 3,
+    "is_debt": false,
+    "debt_reasons": [],
+    "sprint_name": "Intelligent UI Implementation"
   }
 ]

@@ -2,9 +2,9 @@
   "meta": {
     "project": "Central Inventory",
     "repo": "parth-mygenie/central_inventory",
-    "branch": "31_5_26",
+    "branch": "10-may",
     "schema_version": "1.0",
-    "last_updated": "2026-05-31",
+    "last_updated": "2026-06-01",
     "generator": "control/gen_dashboard_data.js"
   },
   "sprints": {
@@ -17,17 +17,24 @@
     },
     "S1": {
       "name": "Governance Setup",
-      "status": "active",
+      "status": "closed",
       "start": "2026-05-31",
-      "end": null,
+      "end": "2026-05-31",
       "goal": "Establish governance layer, seed registries, build dev dashboard, clear doc debt."
+    },
+    "S2": {
+      "name": "Intelligent UI Implementation",
+      "status": "closed",
+      "start": "2026-06-01",
+      "end": "2026-06-01",
+      "goal": "Implement intelligence layer across all screens per Phase 7 frozen spec. Sprint A+B+C + polish + code review fixes."
     }
   },
   "items": [
     {
       "type": "CR",
       "id": "CR-001",
-      "title": "Slice 1 \u2014 Read-only Screens (Hub, Hierarchy, Store Detail, Login)",
+      "title": "Slice 1 — Read-only Screens (Hub, Hierarchy, Store Detail, Login)",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -115,7 +122,7 @@
     {
       "type": "CR",
       "id": "CR-002",
-      "title": "Slice 2 \u2014 Pending Queues, Transfer Detail, Status Timeline",
+      "title": "Slice 2 — Pending Queues, Transfer Detail, Status Timeline",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -197,7 +204,7 @@
     {
       "type": "CR",
       "id": "CR-003",
-      "title": "Slice 3 \u2014 History & Ledger, Date/Status Filters",
+      "title": "Slice 3 — History & Ledger, Date/Status Filters",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -276,7 +283,7 @@
     {
       "type": "CR",
       "id": "CR-004",
-      "title": "Slice 4 \u2014 Transfer Write Flows (Dispatch, Request, Approve, Reject, Receive, Cancel)",
+      "title": "Slice 4 — Transfer Write Flows (Dispatch, Request, Approve, Reject, Receive, Cancel)",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -362,7 +369,7 @@
     {
       "type": "CR",
       "id": "CR-005",
-      "title": "Slice 5 \u2014 Stock Adjustment, Wastage, Source Selector, Seed Shutdown",
+      "title": "Slice 5 — Stock Adjustment, Wastage, Source Selector, Seed Shutdown",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -446,7 +453,7 @@
     {
       "type": "CR",
       "id": "CR-006",
-      "title": "P17 \u2014 Amend / Withdraw / Modification",
+      "title": "P17 — Amend / Withdraw / Modification",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -525,7 +532,7 @@
     {
       "type": "CR",
       "id": "CR-007",
-      "title": "P17-Settings \u2014 Operational Settings CRUD",
+      "title": "P17-Settings — Operational Settings CRUD",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -604,7 +611,7 @@
     {
       "type": "CR",
       "id": "CR-008",
-      "title": "P18 \u2014 Vendor Management CRUD",
+      "title": "P18 — Vendor Management CRUD",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -683,7 +690,7 @@
     {
       "type": "CR",
       "id": "CR-009",
-      "title": "P19 \u2014 Add Stock / Procurement",
+      "title": "P19 — Add Stock / Procurement",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -762,7 +769,7 @@
     {
       "type": "CR",
       "id": "CR-010",
-      "title": "P20 \u2014 Stock Inventory Summary (Self-Store)",
+      "title": "P20 — Stock Inventory Summary (Self-Store)",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -842,7 +849,7 @@
     {
       "type": "CR",
       "id": "CR-011",
-      "title": "P21 \u2014 Catalogue CRUD (Ingredient/Product/Recipe/Addon-Recipe)",
+      "title": "P21 — Catalogue CRUD (Ingredient/Product/Recipe/Addon-Recipe)",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -926,7 +933,7 @@
     {
       "type": "CR",
       "id": "CR-012",
-      "title": "P21-Gaps \u2014 Food Category + Addon CRUD + Ingredient Rename",
+      "title": "P21-Gaps — Food Category + Addon CRUD + Ingredient Rename",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -1005,7 +1012,7 @@
     {
       "type": "CR",
       "id": "CR-013",
-      "title": "P22 \u2014 Daily Consumption Report",
+      "title": "P22 — Daily Consumption Report",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -1085,7 +1092,7 @@
     {
       "type": "CR",
       "id": "CR-014",
-      "title": "P23 \u2014 Hierarchy Management + Bundle Push",
+      "title": "P23 — Hierarchy Management + Bundle Push",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -1165,7 +1172,7 @@
     {
       "type": "CR",
       "id": "CR-015",
-      "title": "P24 \u2014 FEFO Batch Stock Detail Panel",
+      "title": "P24 — FEFO Batch Stock Detail Panel",
       "status": "PLANNED",
       "severity": null,
       "sprint_key": null,
@@ -1233,7 +1240,7 @@
     {
       "type": "CR",
       "id": "CR-016",
-      "title": "P20-Phase2 \u2014 Stock Inventory Hierarchy Toggle",
+      "title": "P20-Phase2 — Stock Inventory Hierarchy Toggle",
       "status": "PLANNED",
       "severity": null,
       "sprint_key": null,
@@ -1297,7 +1304,7 @@
     {
       "type": "CR",
       "id": "CR-017",
-      "title": "P21-Smart \u2014 Smart Dispatch / Request Assistance",
+      "title": "P21-Smart — Smart Dispatch / Request Assistance",
       "status": "PROPOSED",
       "severity": null,
       "sprint_key": null,
@@ -1361,7 +1368,7 @@
     {
       "type": "CR",
       "id": "CR-018",
-      "title": "P25 \u2014 Wastage Report Enhancements",
+      "title": "P25 — Wastage Report Enhancements",
       "status": "PLANNED",
       "severity": null,
       "sprint_key": null,
@@ -2593,13 +2600,13 @@
     {
       "type": "CR",
       "id": "CR-019",
-      "title": "Intelligent UI Freeze \u2014 Screen Intelligence Layer",
-      "status": "OWNER_REVIEW",
+      "title": "Intelligent UI Freeze — Screen Intelligence Layer",
+      "status": "CLOSED",
       "severity": null,
       "sprint_key": "S1",
       "phase": "UI Freeze",
       "files": [],
-      "notes": "ALL 24 screens approved across 5 flows. 10 HTML previews created. 5 backend gaps (G-012 to G-016). Ready for Phase 5 (Slice Approval Gate) \u2192 Phase 6 (E2E Review) \u2192 Phase 7 (Final Freeze).",
+      "notes": "ALL 24 screens approved. Phase 7 frozen. Implementation handed off to CR-021.",
       "artifact_refs": [
         {
           "artifact": 0,
@@ -2641,25 +2648,31 @@
         {
           "artifact": 4,
           "label": "Code-Gate",
-          "status": "MISSING",
+          "status": "DONE",
           "tags": [],
-          "paths": []
+          "paths": [
+            "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_7_FINAL_FREEZE.md"
+          ]
         },
         {
           "artifact": 5,
           "label": "QA-Report",
-          "status": "MISSING",
+          "status": "DONE",
           "tags": [],
-          "paths": []
+          "paths": [
+            "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_6_QA_REVIEW.md"
+          ]
         },
         {
           "artifact": 6,
           "label": "Owner-Signoff",
-          "status": "PENDING",
+          "status": "DONE",
           "tags": [
-            "AWAITING-OWNER"
+            "OWNER-APPROVED"
           ],
-          "paths": []
+          "paths": [
+            "control/sessions/ui_review/OWNER_UI_APPROVAL_CHECKLIST.md"
+          ]
         }
       ]
     },
@@ -2721,6 +2734,304 @@
           "label": "Owner-Signoff",
           "status": "MISSING",
           "tags": [],
+          "paths": []
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-021",
+      "title": "Intelligent UI Implementation — Sprint A+B+C + Polish",
+      "status": "CLOSED",
+      "severity": null,
+      "sprint_key": "S2",
+      "phase": "Implementation",
+      "files": [
+        "OperationsHub.jsx",
+        "StockInventorySummary.jsx",
+        "StockDetailPanel.jsx",
+        "HistoryLedger.jsx",
+        "StatusTimeline.jsx",
+        "PendingQueues.jsx",
+        "TransferDetail.jsx",
+        "ReceiveDialog.jsx",
+        "ApproveWaveDialog.jsx",
+        "DisputeResolutionDialog.jsx",
+        "SourceSelector.jsx",
+        "StockAdjustmentForm.jsx",
+        "WastageEntryForm.jsx",
+        "OperationalSettings.jsx",
+        "VendorManagement.jsx",
+        "WastageReport.jsx",
+        "IngredientCatalogue.jsx",
+        "DailyConsumptionReport.jsx",
+        "HierarchyManagement.jsx",
+        "DirectDispatchForm.jsx",
+        "RequestStockForm.jsx",
+        "useStockIntelligence.js",
+        "StockIntelligenceBar.jsx",
+        "PostSubmitConfirmation.jsx",
+        "StoreHealthStrip.jsx",
+        "FulfillmentVerdict.jsx",
+        "formatters.js"
+      ],
+      "notes": "Retroactive registration. 22 screens upgraded, 6 new files, 20 modified. 55/55 tests PASS. Governance gap: work started without CR registration.",
+      "artifact_refs": [
+        {
+          "artifact": 0,
+          "label": "Session-Start",
+          "status": "DONE",
+          "tags": [
+            "RETROACTIVE"
+          ],
+          "paths": [
+            "control/sessions/CR021_SESSION_START.md"
+          ]
+        },
+        {
+          "artifact": 1,
+          "label": "Intake",
+          "status": "DONE",
+          "tags": [
+            "RETROACTIVE"
+          ],
+          "paths": [
+            "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_7_FINAL_FREEZE.md"
+          ]
+        },
+        {
+          "artifact": 2,
+          "label": "Impact-Analysis",
+          "status": "DONE",
+          "tags": [
+            "RETROACTIVE"
+          ],
+          "paths": [
+            "control/sessions/ui_review/UI_UX_FINAL_DESIGN_REVIEW_REPORT.md"
+          ]
+        },
+        {
+          "artifact": 3,
+          "label": "Impl-Plan",
+          "status": "DONE",
+          "tags": [
+            "RETROACTIVE"
+          ],
+          "paths": [
+            "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_7_FINAL_FREEZE.md"
+          ]
+        },
+        {
+          "artifact": 4,
+          "label": "Code-Gate",
+          "status": "DONE",
+          "tags": [
+            "RETROACTIVE"
+          ],
+          "paths": [
+            "control/sessions/ui_review/OWNER_UI_APPROVAL_CHECKLIST.md"
+          ]
+        },
+        {
+          "artifact": 5,
+          "label": "QA-Report",
+          "status": "DONE",
+          "tags": [],
+          "paths": [
+            "test_reports/iteration_27.json",
+            "test_reports/iteration_28.json",
+            "test_reports/iteration_29.json",
+            "test_reports/iteration_30.json"
+          ]
+        },
+        {
+          "artifact": 6,
+          "label": "Owner-Signoff",
+          "status": "PENDING",
+          "tags": [
+            "AWAITING-OWNER"
+          ],
+          "paths": []
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-022",
+      "title": "Code Quality Review Fixes — Security + React Patterns",
+      "status": "CLOSED",
+      "severity": null,
+      "sprint_key": "S2",
+      "phase": "Code Review",
+      "files": [
+        "test_central_inventory_api.py",
+        "test_p12_p14_contract.py",
+        "test_p17_p18_p19_features.py",
+        "test_p21_catalogue.py",
+        "test_p21_catalogue_gaps.py",
+        "test_p25_wastage_report.py",
+        "test_source_selector_flow.py",
+        "test_request_stock_flow.py",
+        "test_p20_stock_inventory.py",
+        "test_p17_lifecycle.py",
+        "test_slice4_write_apis.py",
+        "useWriteAction.js",
+        "useLoginContext.js",
+        "api.js",
+        "seed_data.py",
+        "StateDisplays.jsx",
+        "ReceiveDialog.jsx",
+        "DisputeResolutionDialog.jsx",
+        "DirectDispatchForm.jsx",
+        "RequestStockForm.jsx",
+        "WastageReport.jsx",
+        "StockDetailPanel.jsx",
+        "IngredientComposer.jsx",
+        "TransferDetail.jsx",
+        "StoreDetail.jsx"
+      ],
+      "notes": "Retroactive registration. Hardcoded secrets removed, array-index keys fixed, stale closure fixed, empty catches logged.",
+      "artifact_refs": [
+        {
+          "artifact": 0,
+          "label": "Session-Start",
+          "status": "DONE",
+          "tags": [
+            "RETROACTIVE"
+          ],
+          "paths": [
+            "control/sessions/CR022_SESSION_START.md"
+          ]
+        },
+        {
+          "artifact": 1,
+          "label": "Intake",
+          "status": "DONE",
+          "tags": [
+            "RETROACTIVE"
+          ],
+          "paths": [
+            "control/sessions/CR022_SESSION_START.md"
+          ]
+        },
+        {
+          "artifact": 2,
+          "label": "Impact-Analysis",
+          "status": "WAIVED",
+          "tags": [
+            "LOW-RISK-FIXES"
+          ],
+          "paths": []
+        },
+        {
+          "artifact": 3,
+          "label": "Impl-Plan",
+          "status": "WAIVED",
+          "tags": [
+            "LOW-RISK-FIXES"
+          ],
+          "paths": []
+        },
+        {
+          "artifact": 4,
+          "label": "Code-Gate",
+          "status": "WAIVED",
+          "tags": [
+            "LOW-RISK-FIXES"
+          ],
+          "paths": []
+        },
+        {
+          "artifact": 5,
+          "label": "QA-Report",
+          "status": "DONE",
+          "tags": [],
+          "paths": [
+            "test_reports/iteration_30.json"
+          ]
+        },
+        {
+          "artifact": 6,
+          "label": "Owner-Signoff",
+          "status": "PENDING",
+          "tags": [
+            "AWAITING-OWNER"
+          ],
+          "paths": []
+        }
+      ]
+    },
+    {
+      "type": "BUG",
+      "id": "BUG-016",
+      "title": "display_qty string causes TypeError in arithmetic operations",
+      "status": "RESOLVED",
+      "severity": "HIGH",
+      "sprint_key": "S2",
+      "phase": "Sprint C",
+      "files": [
+        "StockAdjustmentForm.jsx",
+        "WastageEntryForm.jsx"
+      ],
+      "notes": "POS API returns display_qty as string. Arithmetic without Number() wrapper caused toFixed() TypeError. Fixed by wrapping in Number().",
+      "artifact_refs": [
+        {
+          "artifact": 0,
+          "label": "Session-Start",
+          "status": "DONE",
+          "tags": [
+            "RETROACTIVE"
+          ],
+          "paths": [
+            "control/sessions/BUG016_SESSION_START.md"
+          ]
+        },
+        {
+          "artifact": 1,
+          "label": "Intake",
+          "status": "DONE",
+          "tags": [],
+          "paths": [
+            "control/sessions/BUG016_SESSION_START.md"
+          ]
+        },
+        {
+          "artifact": 2,
+          "label": "Impact-Analysis",
+          "status": "WAIVED",
+          "tags": [],
+          "paths": []
+        },
+        {
+          "artifact": 3,
+          "label": "Impl-Plan",
+          "status": "WAIVED",
+          "tags": [],
+          "paths": []
+        },
+        {
+          "artifact": 4,
+          "label": "Code-Gate",
+          "status": "WAIVED",
+          "tags": [],
+          "paths": []
+        },
+        {
+          "artifact": 5,
+          "label": "QA-Report",
+          "status": "DONE",
+          "tags": [],
+          "paths": [
+            "test_reports/iteration_29.json"
+          ]
+        },
+        {
+          "artifact": 6,
+          "label": "Owner-Signoff",
+          "status": "WAIVED",
+          "tags": [
+            "BUG-FIX"
+          ],
           "paths": []
         }
       ]

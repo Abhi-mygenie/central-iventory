@@ -1617,12 +1617,12 @@
     "type": "CR",
     "id": "CR-019",
     "title": "Intelligent UI Freeze — Screen Intelligence Layer",
-    "status": "OWNER_REVIEW",
+    "status": "CLOSED",
     "severity": null,
     "sprint_key": "S1",
     "phase": "UI Freeze",
     "files": [],
-    "notes": "ALL 24 screens approved across 5 flows. 10 HTML previews created. 5 backend gaps (G-012 to G-016). Ready for Phase 5 (Slice Approval Gate) → Phase 6 (E2E Review) → Phase 7 (Final Freeze).",
+    "notes": "ALL 24 screens approved. Phase 7 frozen. Implementation handed off to CR-021.",
     "artifact_refs": [
       {
         "artifact": 0,
@@ -1664,39 +1664,41 @@
       {
         "artifact": 4,
         "label": "Code-Gate",
-        "status": "MISSING",
+        "status": "DONE",
         "tags": [],
-        "paths": []
+        "paths": [
+          "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_7_FINAL_FREEZE.md"
+        ]
       },
       {
         "artifact": 5,
         "label": "QA-Report",
-        "status": "MISSING",
+        "status": "DONE",
         "tags": [],
-        "paths": []
+        "paths": [
+          "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_6_QA_REVIEW.md"
+        ]
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
-        "status": "PENDING",
+        "status": "DONE",
         "tags": [
-          "AWAITING-OWNER"
+          "OWNER-APPROVED"
         ],
-        "paths": []
+        "paths": [
+          "control/sessions/ui_review/OWNER_UI_APPROVAL_CHECKLIST.md"
+        ]
       }
     ],
     "completeness": {
-      "done": 4,
+      "done": 7,
       "total": 7,
-      "pct": 57
+      "pct": 100
     },
-    "doc_count": 5,
-    "is_debt": true,
-    "debt_reasons": [
-      "Code-Gate: MISSING",
-      "QA-Report: MISSING",
-      "Owner-Signoff: PENDING"
-    ],
+    "doc_count": 8,
+    "is_debt": false,
+    "debt_reasons": [],
     "sprint_name": "Governance Setup"
   },
   {
@@ -1777,5 +1779,250 @@
       "Owner-Signoff: MISSING"
     ],
     "sprint_name": "Unassigned"
+  },
+  {
+    "type": "CR",
+    "id": "CR-021",
+    "title": "Intelligent UI Implementation — Sprint A+B+C + Polish",
+    "status": "CLOSED",
+    "severity": null,
+    "sprint_key": "S2",
+    "phase": "Implementation",
+    "files": [
+      "OperationsHub.jsx",
+      "StockInventorySummary.jsx",
+      "StockDetailPanel.jsx",
+      "HistoryLedger.jsx",
+      "StatusTimeline.jsx",
+      "PendingQueues.jsx",
+      "TransferDetail.jsx",
+      "ReceiveDialog.jsx",
+      "ApproveWaveDialog.jsx",
+      "DisputeResolutionDialog.jsx",
+      "SourceSelector.jsx",
+      "StockAdjustmentForm.jsx",
+      "WastageEntryForm.jsx",
+      "OperationalSettings.jsx",
+      "VendorManagement.jsx",
+      "WastageReport.jsx",
+      "IngredientCatalogue.jsx",
+      "DailyConsumptionReport.jsx",
+      "HierarchyManagement.jsx",
+      "DirectDispatchForm.jsx",
+      "RequestStockForm.jsx",
+      "useStockIntelligence.js",
+      "StockIntelligenceBar.jsx",
+      "PostSubmitConfirmation.jsx",
+      "StoreHealthStrip.jsx",
+      "FulfillmentVerdict.jsx",
+      "formatters.js"
+    ],
+    "notes": "Retroactive registration. 22 screens upgraded, 6 new files, 20 modified. 55/55 tests PASS. Governance gap: work started without CR registration.",
+    "artifact_refs": [
+      {
+        "artifact": 0,
+        "label": "Session-Start",
+        "status": "DONE",
+        "tags": [
+          "RETROACTIVE"
+        ],
+        "paths": [
+          "control/sessions/CR021_SESSION_START.md"
+        ]
+      },
+      {
+        "artifact": 1,
+        "label": "Intake",
+        "status": "DONE",
+        "tags": [
+          "RETROACTIVE"
+        ],
+        "paths": [
+          "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_7_FINAL_FREEZE.md"
+        ]
+      },
+      {
+        "artifact": 2,
+        "label": "Impact-Analysis",
+        "status": "DONE",
+        "tags": [
+          "RETROACTIVE"
+        ],
+        "paths": [
+          "control/sessions/ui_review/UI_UX_FINAL_DESIGN_REVIEW_REPORT.md"
+        ]
+      },
+      {
+        "artifact": 3,
+        "label": "Impl-Plan",
+        "status": "DONE",
+        "tags": [
+          "RETROACTIVE"
+        ],
+        "paths": [
+          "control/sessions/INTELLIGENT_UI_FREEZE_PHASE_7_FINAL_FREEZE.md"
+        ]
+      },
+      {
+        "artifact": 4,
+        "label": "Code-Gate",
+        "status": "DONE",
+        "tags": [
+          "RETROACTIVE"
+        ],
+        "paths": [
+          "control/sessions/ui_review/OWNER_UI_APPROVAL_CHECKLIST.md"
+        ]
+      },
+      {
+        "artifact": 5,
+        "label": "QA-Report",
+        "status": "DONE",
+        "tags": [],
+        "paths": [
+          "test_reports/iteration_27.json",
+          "test_reports/iteration_28.json",
+          "test_reports/iteration_29.json",
+          "test_reports/iteration_30.json"
+        ]
+      },
+      {
+        "artifact": 6,
+        "label": "Owner-Signoff",
+        "status": "PENDING",
+        "tags": [
+          "AWAITING-OWNER"
+        ],
+        "paths": []
+      }
+    ],
+    "completeness": {
+      "done": 6,
+      "total": 7,
+      "pct": 86
+    },
+    "doc_count": 9,
+    "is_debt": true,
+    "debt_reasons": [
+      "Owner-Signoff: PENDING"
+    ],
+    "sprint_name": "Intelligent UI Implementation"
+  },
+  {
+    "type": "CR",
+    "id": "CR-022",
+    "title": "Code Quality Review Fixes — Security + React Patterns",
+    "status": "CLOSED",
+    "severity": null,
+    "sprint_key": "S2",
+    "phase": "Code Review",
+    "files": [
+      "test_central_inventory_api.py",
+      "test_p12_p14_contract.py",
+      "test_p17_p18_p19_features.py",
+      "test_p21_catalogue.py",
+      "test_p21_catalogue_gaps.py",
+      "test_p25_wastage_report.py",
+      "test_source_selector_flow.py",
+      "test_request_stock_flow.py",
+      "test_p20_stock_inventory.py",
+      "test_p17_lifecycle.py",
+      "test_slice4_write_apis.py",
+      "useWriteAction.js",
+      "useLoginContext.js",
+      "api.js",
+      "seed_data.py",
+      "StateDisplays.jsx",
+      "ReceiveDialog.jsx",
+      "DisputeResolutionDialog.jsx",
+      "DirectDispatchForm.jsx",
+      "RequestStockForm.jsx",
+      "WastageReport.jsx",
+      "StockDetailPanel.jsx",
+      "IngredientComposer.jsx",
+      "TransferDetail.jsx",
+      "StoreDetail.jsx"
+    ],
+    "notes": "Retroactive registration. Hardcoded secrets removed, array-index keys fixed, stale closure fixed, empty catches logged.",
+    "artifact_refs": [
+      {
+        "artifact": 0,
+        "label": "Session-Start",
+        "status": "DONE",
+        "tags": [
+          "RETROACTIVE"
+        ],
+        "paths": [
+          "control/sessions/CR022_SESSION_START.md"
+        ]
+      },
+      {
+        "artifact": 1,
+        "label": "Intake",
+        "status": "DONE",
+        "tags": [
+          "RETROACTIVE"
+        ],
+        "paths": [
+          "control/sessions/CR022_SESSION_START.md"
+        ]
+      },
+      {
+        "artifact": 2,
+        "label": "Impact-Analysis",
+        "status": "WAIVED",
+        "tags": [
+          "LOW-RISK-FIXES"
+        ],
+        "paths": []
+      },
+      {
+        "artifact": 3,
+        "label": "Impl-Plan",
+        "status": "WAIVED",
+        "tags": [
+          "LOW-RISK-FIXES"
+        ],
+        "paths": []
+      },
+      {
+        "artifact": 4,
+        "label": "Code-Gate",
+        "status": "WAIVED",
+        "tags": [
+          "LOW-RISK-FIXES"
+        ],
+        "paths": []
+      },
+      {
+        "artifact": 5,
+        "label": "QA-Report",
+        "status": "DONE",
+        "tags": [],
+        "paths": [
+          "test_reports/iteration_30.json"
+        ]
+      },
+      {
+        "artifact": 6,
+        "label": "Owner-Signoff",
+        "status": "PENDING",
+        "tags": [
+          "AWAITING-OWNER"
+        ],
+        "paths": []
+      }
+    ],
+    "completeness": {
+      "done": 6,
+      "total": 7,
+      "pct": 86
+    },
+    "doc_count": 3,
+    "is_debt": true,
+    "debt_reasons": [
+      "Owner-Signoff: PENDING"
+    ],
+    "sprint_name": "Intelligent UI Implementation"
   }
 ]
