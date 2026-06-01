@@ -3050,7 +3050,25 @@
       "severity": null,
       "sprint_key": "S3",
       "phase": "Code Gate PASSED \u2192 Batch 1 Implementation",
-      "files": [],
+      "files": [
+        "hooks/useRestaurantMap.js",
+        "OperationsHub.jsx",
+        "PendingQueues.jsx",
+        "TransferDetail.jsx",
+        "HistoryLedger.jsx",
+        "DailyConsumptionReport.jsx",
+        "DirectDispatchForm.jsx",
+        "ReceiveDialog.jsx",
+        "ApproveWaveDialog.jsx",
+        "HierarchySummary.jsx",
+        "IngredientCatalogue.jsx",
+        "ProductCatalogue.jsx",
+        "RecipeCatalogue.jsx",
+        "AddonRecipeCatalogue.jsx",
+        "HierarchyManagement.jsx",
+        "DisputeResolutionDialog.jsx",
+        "SourceSelector.jsx"
+      ],
       "notes": "Fix 18 API-mismatch bugs from audit. Proper control gate this time.",
       "artifact_refs": [
         {

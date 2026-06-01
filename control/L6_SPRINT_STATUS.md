@@ -1,15 +1,37 @@
 # L6 — Sprint Status
 
-> **Updated:** 2026-06-01 (Session closing)
+> **Updated:** 2026-06-01 (CR-023 Code Gate passed)
 > **Source of truth for items:** `control/registry.json`
 
 ---
 
-## No Active Sprint
+## Active Sprint: S3 — API Reality Check & Intelligence Gap Fix
 
-All planned work is complete. Next work requires backend team deliverables (G-013, G-014, G-015).
+- **Period:** 2026-06-01 → ongoing
+- **CRs:** CR-023 (IN_PROGRESS — Code Gate passed, Batch 1 next)
+- **Scope:** Fix 18 API-mismatch bugs found in CR-021 audit
+- **Data:** ChocolateHut 158 items seeded, stock + transfers + wastage
+- **Execution:** 6 batches, owner smoke test mandatory after each
+- **Artifacts:** 0-4 DONE, 5 (QA) PENDING, 6 (Owner Signoff) PENDING
+- **New gap registered:** G-017 (Vendor purchase history — backend blocked)
+
+### S3 Batch Tracker
+
+| Batch | Bugs | Status |
+|:-----:|------|:------:|
+| 1 | A1, B1 (Hub store health) | NEXT |
+| 2 | B2, B3, B4 (restaurant names) | BLOCKED |
+| 3 | C1 (TransferDetail snapshot) | BLOCKED |
+| 4 | B9, C2 (consumption + dispatch) | BLOCKED |
+| 5 | C3, C4, B5 (dialogs + hierarchy) | BLOCKED |
+| 6 | B6-B8, B11, C5, C6 (catalogues + polish) | BLOCKED |
 
 ## Closed Sprints
+
+### S2 — Intelligent UI Implementation (AUDIT NOTE)
+- **Audit finding:** 55/55 tests only covered implemented subset. 18 bugs missed.
+- **Actual status:** 13 screens fully done, 7 partial, 4 not done
+- **Control gate bypassed:** CR-021 registered retroactively, Artifacts 0-4 skipped
 
 ### S2 — Intelligent UI Implementation
 - **Period:** 2026-06-01

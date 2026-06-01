@@ -1,6 +1,6 @@
 # L7 — File Ownership (Frozen vs Active)
 
-> **Updated:** 2026-06-01 (Session closing — all implementation complete)
+> **Updated:** 2026-06-01 (CR-023 in progress — Batch 1 next)
 
 ---
 
@@ -72,3 +72,27 @@
 | Approval inbox | `FulfillmentVerdict.jsx`, `StoreHealthStrip.jsx` |
 | Catalogue screens | `useCatalogueCrud.js` |
 | All screens | `screenVisibility.js` (nav gating) |
+
+## Files Planned for CR-023 S3 (16 modified + 1 new)
+
+| File | Batch | Bugs | Change |
+|------|:-----:|------|--------|
+| `hooks/useRestaurantMap.js` **(NEW)** | 1 | B2,B3,B4 | Shared restaurant ID→name resolver |
+| `OperationsHub.jsx` | 1 | A1, B1 | Fix field name + compute store health via hierarchy-detail |
+| `PendingQueues.jsx` | 2 | B2 | Use restaurant map for names |
+| `TransferDetail.jsx` | 2+3 | B3, C1 | Names + Store Snapshot + Impact Summary |
+| `HistoryLedger.jsx` | 2 | B4 | Use restaurant map for names |
+| `DailyConsumptionReport.jsx` | 4 | B9 | Compute avg_daily, days_of_cover, trend |
+| `DirectDispatchForm.jsx` | 4 | C2 | "What This Store Needs" auto-detect table |
+| `ReceiveDialog.jsx` | 5 | C3 | Dispatched vs requested comparison |
+| `ApproveWaveDialog.jsx` | 5 | C4 | FEFO badges + auto-select |
+| `HierarchySummary.jsx` | 5 | B5 | Health columns via hierarchy-detail |
+| `IngredientCatalogue.jsx` | 6 | B8 | "Used in recipes" cross-ref |
+| `ProductCatalogue.jsx` | 6 | B6 | Fix has_recipe via recipe cross-ref |
+| `RecipeCatalogue.jsx` | 6 | B7 | Derive cost_mapped from ingredients |
+| `AddonRecipeCatalogue.jsx` | 6 | B7 | Same |
+| `HierarchyManagement.jsx` | 6 | B11 | Push status via push-form per child |
+| `DisputeResolutionDialog.jsx` | 6 | C5 | Impact explanation text |
+| `SourceSelector.jsx` | 6 | C6 | "Remaining after" display |
+
+**DEFERRED:** `VendorManagement.jsx` — B10 blocked on G-017 (backend gap)

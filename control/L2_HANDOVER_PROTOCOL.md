@@ -68,11 +68,18 @@ Full list: `control/L8_ACCESS_REGISTRY.md` and `memory/test_credentials.md`
 
 ### What's Left for Next Agent
 
-1. **Owner signoff** on CR-021 + CR-022
-2. **Backend team** delivers G-013 (PO numbers), G-014 (Invoice OCR), G-015 (Excel parsing)
-3. When G-014 ready → wire up Upload Invoice tab AI extraction in `AddStockPurchaseForm.jsx`
-4. When G-015 ready → wire up Excel import parsing
-5. When G-013 ready → replace `formatPO()` with real PO numbers from API
+1. **CR-023 is IN PROGRESS** — fixing 18 API-mismatch bugs in 6 batches. Owner smoke test required after each batch.
+2. Current batch: **Batch 1** — `useRestaurantMap` hook + OperationsHub Store Health Grid
+3. Read `control/sessions/CR023_ARTIFACT_4_CODE_GATE.md` for batch tracker + smoke test instructions
+4. **Owner signoff** still pending on CR-021 + CR-022
+5. **Backend team** delivers G-013 (PO numbers), G-014 (Invoice OCR), G-015 (Excel parsing), G-017 (Vendor history)
+
+### Data Context
+
+- **Previous demo data deleted** (Cooking Oil, Maida, Patri, Red Meat, demo foods/recipes)
+- **ChocolateHut data seeded** — 158 inventory items, 163 with stock, 67 low-stock, 7 categories
+- **Stores preserved** — same 10-store hierarchy (Central + 3 Masters + 6 Franchises)
+- **Vendors preserved** — 12 existing vendors
 
 ### Governance Rules
 
@@ -82,12 +89,14 @@ Every CR/BUG follows the **7-Artifact Closure Model** (`CODE_GATE_POLICY.md`):
 4 Code-Gate → 5 QA Report → 6 Owner Signoff
 ```
 
-**CRITICAL:** Register a CR in `registry.json` BEFORE starting work. Previous session had a governance gap — work started without CR registration.
+**CRITICAL:** Register a CR in `registry.json` BEFORE starting work. Previous session had a governance gap — work started without CR registration. CR-023 follows the gate properly.
+
+**CRITICAL:** Owner smoke test is MANDATORY after every batch in CR-023. Do not proceed to next batch without approval.
 
 ## Branch Info
 
 | Field | Value |
 |-------|-------|
-| Current branch | `10-may` |
+| Current branch | `01-june` |
 | Repo | `Abhi-mygenie/central-iventory` |
-| Deploy URL | `https://deploy-workflow-14.preview.emergentagent.com` |
+| Deploy URL | `https://deploy-inventory.preview.emergentagent.com` |

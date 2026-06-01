@@ -18,7 +18,7 @@
 
 | Variable | Value | Purpose | Protected? |
 |----------|-------|---------|:----------:|
-| `REACT_APP_BACKEND_URL` | `https://deploy-workflow-14.preview.emergentagent.com` | Backend API URL | YES |
+| `REACT_APP_BACKEND_URL` | `https://deploy-inventory.preview.emergentagent.com` | Backend API URL | YES |
 | `WDS_SOCKET_PORT` | `443` | WebSocket dev server port | YES |
 | `ENABLE_HEALTH_CHECK` | `false` | Health check plugin toggle | NO |
 
@@ -41,3 +41,5 @@
 | 2026-06-01 | PREPROD_API_BASE_V1/V2 added to backend .env | Deployment | Moved from code defaults |
 | 2026-06-01 | Frontend .env updated for deploy-workflow-14 | Platform | New preview URL |
 | 2026-06-01 | Test credentials moved to env vars | CR-022 | Security fix |
+| 2026-06-01 | Redeployed on `deploy-inventory` — new preview URL | CR-023 | Code pulled from `01-june` branch |
+| 2026-06-01 | Backend proxy fix: DELETE method now forwards JSON body | CR-023 | `server.py` line 155 — `http.request("DELETE", ...)` with json param |
