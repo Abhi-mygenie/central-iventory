@@ -142,7 +142,7 @@ async def proxy_v2(path: str, request: Request):
     async with httpx.AsyncClient(timeout=30.0) as http:
         method = request.method.lower()
         body = None
-        if method in ("post", "put"):
+        if method in ("post", "put", "delete"):
             try:
                 body = await request.json()
             except Exception:
@@ -151,7 +151,11 @@ async def proxy_v2(path: str, request: Request):
         kwargs = {"headers": headers}
         if method in ("post", "put", "patch") and body is not None:
             kwargs["json"] = body
-        resp = await getattr(http, method)(target_url, **kwargs)
+        if method == "delete" and body is not None:
+            # httpx.delete() doesn't support json/content — use generic request()
+            resp = await http.request("DELETE", target_url, json=body, headers=headers)
+        else:
+            resp = await getattr(http, method)(target_url, **kwargs)
 
     try:
         content = resp.json()
