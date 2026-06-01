@@ -1,39 +1,56 @@
 # L6 — Sprint Status
 
-> **Updated:** 2026-05-31 (Phase 7 frozen)
+> **Updated:** 2026-06-01 (Sprint A+B+C complete)
 > **Source of truth for items:** `control/registry.json`
 
 ---
 
 ## Active Sprint
 
-### S1 — Governance Setup + Intelligent UI Freeze
-- **Start:** 2026-05-31
-- **End:** TBD (implementation sprints next)
-- **Goal:** Establish governance layer, execute intelligent UI freeze, prepare for implementation.
+### S2 — Intelligent UI Implementation
+- **Start:** 2026-06-01
+- **End:** 2026-06-01 (all 3 sub-sprints completed in single session)
+- **Goal:** Implement intelligence layer across all screens per Phase 7 frozen spec.
 
-**Completed in S1:**
-- 10-layer control layer created (L0-L9)
-- registry.json seeded: 20 CRs + 15 BUGs = 35 items
-- Dev dashboard live at `/__dev/index.html`
-- gen_dashboard_data.js generator + --check drift linter
-- **UI Freeze Phase 0+1** — audit + screen inventory (22 screens, ~120 gaps)
-- **UI Freeze Phase 2** — intelligence brainstorming for all 5 flows (100+ elements)
-- **UI Freeze Phase 3** — API feasibility verified (40 frontend-only, 15 feasible, 0 blocked)
-- **UI Freeze Phase 4** — 10 HTML previews created, all 24 screens approved screen-by-screen
-- **UI Freeze Phase 5** — slice approval gate (inline per flow)
-- **UI Freeze Phase 6** — E2E QA review, 8 gaps found and fixed
-- **UI Freeze Phase 7** — Final Freeze document created. FROZEN.
-- 5 backend gaps registered (G-012 to G-016)
-- CR-019 (UI Freeze) in OWNER_REVIEW
-- CR-020 (Daily Intelligence Digest) registered as PROPOSED for future
+**Sprint A — Foundation Intelligence (COMPLETE, 21/21 PASS):**
+- OperationsHub.jsx — full rewrite (greeting, NBA banners, KPIs, stock health, store grid, quick actions, activity feed)
+- StockInventorySummary.jsx — +3 columns (Expiry Risk, Pending, Days of Cover), Export CSV
+- StockDetailPanel.jsx — +% of Total, Action column, FEFO dispatch-first badge, reorder suggestion
+- HistoryLedger.jsx — PO/Ref column (PO-XXXX format), Export CSV
+- StatusTimeline.jsx — relative timestamps, durations, lifecycle total, stale detection
+- NEW: useStockIntelligence.js hook, StockIntelligenceBar.jsx component
+- NEW: formatPO() utility in formatters.js
 
-**Next after S1:**
-- Implementation Sprint A: Read-only intelligence (3-4 days)
-- Implementation Sprint B: Transfer flow intelligence (5-6 days)
-- Implementation Sprint C: Operations + config intelligence (4-5 days)
+**Sprint B — Transfer Flow Intelligence (COMPLETE, 18/18 PASS):**
+- PendingQueues.jsx — full rewrite: table → card-based approval inbox with item-level table, age badges, fulfillment verdicts, sort control
+- TransferDetail.jsx — PO format title, "Created X days ago" relative time
+- ReceiveDialog.jsx — PO format, dispatch time context
+- ApproveWaveDialog.jsx — PO format
+- DisputeResolutionDialog.jsx — PO format
+- SourceSelector.jsx — FEFO badges on segments, expired segments disabled
+- NEW: PostSubmitConfirmation.jsx, StoreHealthStrip.jsx, FulfillmentVerdict.jsx
+
+**Sprint C — Operations + Config Intelligence (COMPLETE, 11/11 PASS):**
+- StockAdjustmentForm.jsx — stock context bar, impact preview, undo guidance
+- WastageEntryForm.jsx — stock context, undo guidance
+- OperationalSettings.jsx — "High impact" badge, "Affects all stores" badge
+- VendorManagement.jsx — Status column (Active/Inactive detection >60 days)
+- WastageReport.jsx — Export CSV button
+- BUG FIX: display_qty string → Number() conversion for arithmetic
+
+**Remaining polish (deferred to next session):**
+- Catalogue screens: "Used in X recipes" cross-ref columns
+- DailyConsumptionReport: days-of-cover column
+- HierarchyManagement: push status (Synced/Stale)
+- RequestStockForm: Intelligent PO auto-detect tab
+- DirectDispatchForm: destination needs auto-detect
 
 ## Closed Sprints
+
+### S1 — Governance Setup + Intelligent UI Freeze
+- **Period:** 2026-05-31
+- **Deliverables:** 10-layer control, registry.json, dev dashboard, 7-phase UI freeze, 9 HTML previews, 24/24 screens approved
+- **Status:** CLOSED
 
 ### S0 — Pre-Governance (Retroactive)
 - **Period:** 2026-01-01 → 2026-05-29

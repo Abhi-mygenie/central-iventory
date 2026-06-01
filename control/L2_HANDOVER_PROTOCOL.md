@@ -1,6 +1,6 @@
 # L2 — Handover Protocol (Agent Onboarding)
 
-> **Rule:** Updated on every branch change or credential rotation.
+> **Updated:** 2026-06-01 (Sprint A+B+C implementation complete)
 
 ---
 
@@ -15,6 +15,8 @@ A new agent MUST read these in order before writing any code:
 5. **`control/L5_ENV_CONFIG_REGISTRY.md`** — environment setup
 6. **`control/L6_SPRINT_STATUS.md`** — what's active, what to work on
 7. **`control/CODE_GATE_POLICY.md`** — artifact requirements before coding
+8. **`control/sessions/INTELLIGENT_UI_FREEZE_PHASE_7_FINAL_FREEZE.md`** — frozen implementation spec
+9. **`control/sessions/ui_review/UI_UX_FINAL_DESIGN_REVIEW_REPORT.md`** — UI/UX review findings
 
 ## Critical Architecture Facts
 
@@ -37,6 +39,23 @@ The frontend has a mandatory mapping layer at `frontend/src/lib/terminology.js`.
 - Generic V2 catch-all (`/api/proxy/v2/{path}`)
 - Zero business logic
 
+### PO Number Format
+
+Transfers use `formatPO(id)` from `lib/formatters.js` which converts transfer ID to `PO-XXXX` format (last 4 digits, zero-padded). Example: transfer #129 → PO-0129. This is a temporary frontend-only identifier until backend implements G-013 (real PO numbers).
+
+### Intelligence Layer (Sprint A+B+C)
+
+All intelligence is **frontend-computed** from existing API data. No backend changes were made. Key patterns:
+- `useStockIntelligence.js` — shared hook for stock health, stale approvals, activity
+- `StockIntelligenceBar.jsx` — reusable 6-metric health strip
+- `FulfillmentVerdict.jsx` — can/partial/can't fulfill badge
+- Age badges — red (>72h stale), amber (24-72h aging), gray (fresh)
+- Impact previews — stock before/after projections in forms
+
+### API Data Quirk
+
+POS API returns `display_qty` as a **string**, not a number. Always wrap in `Number()` before arithmetic operations. This caused BUG-016 during Sprint C.
+
 ### Governance Discipline
 
 Every CR or BUG follows the **7-Artifact Closure Model** (see `CODE_GATE_POLICY.md`):
@@ -51,6 +70,7 @@ Before coding, fill `control/sessions/SESSION_START_TEMPLATE.md` (Artifact #0).
 
 | Field | Value |
 |-------|-------|
-| Current branch | `31_5_26` |
-| Previous branch | `29_5_26_1` |
-| Repo | `parth-mygenie/central_inventory` |
+| Current branch | `10-may` (deployed from GitHub) |
+| Previous branch | `31_5_26` |
+| Repo | `Abhi-mygenie/central-iventory` |
+| Deploy URL | `https://deploy-workflow-14.preview.emergentagent.com` |
