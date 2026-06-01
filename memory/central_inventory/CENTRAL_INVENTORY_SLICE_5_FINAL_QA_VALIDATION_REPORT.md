@@ -38,7 +38,7 @@ All 57 QA checks evaluated. 55 pass, 0 fail, 2 not_tested_with_reason. Zero bloc
 
 | Field | Value |
 |-------|-------|
-| App URL | `https://11b3ad51-b77b-4abc-a5b7-a5ddbd4dd1f3.preview.emergentagent.com` |
+| App URL | `https://api-sync-staging.preview.emergentagent.com` |
 | Roles tested | Central (`abhishek@kalabahia.com`), Master (`owner@democentral1.com`), Outlet (`owner@demofranchise1.com`) |
 | Screenshots captured | Yes — 8 screenshots across all roles and screens |
 | Safe mutation testing | No — live stock-changing APIs not called |

@@ -99,4 +99,4 @@ Every CR/BUG follows the **7-Artifact Closure Model** (`CODE_GATE_POLICY.md`):
 |-------|-------|
 | Current branch | `01-june` |
 | Repo | `Abhi-mygenie/central-iventory` |
-| Deploy URL | `https://deploy-inventory.preview.emergentagent.com` |
+| Deploy URL | `https://api-sync-staging.preview.emergentagent.com` |

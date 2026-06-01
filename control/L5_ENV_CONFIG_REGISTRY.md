@@ -18,7 +18,7 @@
 
 | Variable | Value | Purpose | Protected? |
 |----------|-------|---------|:----------:|
-| `REACT_APP_BACKEND_URL` | `https://deploy-inventory.preview.emergentagent.com` | Backend API URL | YES |
+| `REACT_APP_BACKEND_URL` | `https://api-sync-staging.preview.emergentagent.com` | Backend API URL | YES |
 | `WDS_SOCKET_PORT` | `443` | WebSocket dev server port | YES |
 | `ENABLE_HEALTH_CHECK` | `false` | Health check plugin toggle | NO |
 

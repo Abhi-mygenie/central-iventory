@@ -9,7 +9,7 @@
 | Field | Value |
 |-------|-------|
 | **Branch** | `01-june` (deployed from GitHub) |
-| **Deploy URL** | `https://deploy-inventory.preview.emergentagent.com` |
+| **Deploy URL** | `https://api-sync-staging.preview.emergentagent.com` |
 | **Active Sprint** | **S3 — CR-023: API Reality Check & Intelligence Gap Fix** |
 | **UI Freeze Status** | PHASE 7 FROZEN — Implementation **PARTIAL** (see audit below) |
 | **Implementation Status** | 13/24 screens fully done, 7 partial, 4 not done — 18 bugs found |

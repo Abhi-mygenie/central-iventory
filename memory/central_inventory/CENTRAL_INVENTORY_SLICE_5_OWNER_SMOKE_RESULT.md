@@ -31,7 +31,7 @@ All 44 owner smoke checks pass across 3 roles. 0 failures. 2 items not tested (l
 
 | Field | Value |
 |-------|-------|
-| App URL | `https://11b3ad51-b77b-4abc-a5b7-a5ddbd4dd1f3.preview.emergentagent.com` |
+| App URL | `https://api-sync-staging.preview.emergentagent.com` |
 | Roles tested | Central (`abhishek@kalabahia.com`), Master (`owner@democentral1.com`), Outlet (`owner@demofranchise1.com`) |
 | Screenshots captured | 7 screenshots across all roles and screens |
 | Mutation tests performed | No — no safe test data available |

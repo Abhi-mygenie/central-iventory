@@ -2,7 +2,7 @@
 # P23 — Hierarchy Management (Create / View / Bundle Push) — API Validation Curls (29 May 2026)
 # Actors: Master (rid=1), Central (rid=782), Franchise (rid=784)
 
-API_URL="https://883ea7d7-c3b2-4008-86f7-2329f15c5d87.preview.emergentagent.com/api"
+API_URL="https://api-sync-staging.preview.emergentagent.com/api"
 
 # ══════════════════════════════════════════════════════════════════
 # HIERARCHY LIST — GET /franchise/list

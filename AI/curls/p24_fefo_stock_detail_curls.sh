@@ -2,7 +2,7 @@
 # P24 — FEFO Consumption + Batch-Accurate Stock Summary — API Validation Curls (29 May 2026)
 # Actors: Master/killua (rid=1), DemoFranchise3 (rid=785), DemoFranchise2 (rid=784)
 
-API_URL="https://883ea7d7-c3b2-4008-86f7-2329f15c5d87.preview.emergentagent.com/api"
+API_URL="https://api-sync-staging.preview.emergentagent.com/api"
 
 # ══════════════════════════════════════════════════════════════════
 # STOCK INVENTORY LIST (unchanged) — GET /inventory/stock-inventory
