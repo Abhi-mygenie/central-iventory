@@ -3049,7 +3049,7 @@
       "status": "IN_PROGRESS",
       "severity": null,
       "sprint_key": "S3",
-      "phase": "Phase 1: Impl Plan DONE \u2192 Code Gate next",
+      "phase": "Code Gate PASSED \u2192 Batch 1 Implementation",
       "files": [],
       "notes": "Fix 18 API-mismatch bugs from audit. Proper control gate this time.",
       "artifact_refs": [
@@ -3080,8 +3080,8 @@
         {
           "artifact": 4,
           "label": "Code-Gate",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR023_ARTIFACT_4_CODE_GATE.md"
         },
         {
           "artifact": 5,
