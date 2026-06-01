@@ -137,13 +137,17 @@ export default function HierarchySummary() {
             <div className="space-y-2">
               {/* Header */}
               <div className="grid grid-cols-12 gap-2 px-3 py-2 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-                <div className="col-span-5">Store</div>
+                <div className="col-span-4">Store</div>
                 <div className="col-span-2 text-right">Sent</div>
                 <div className="col-span-2 text-right">Received</div>
-                <div className="col-span-3 text-right">Transactions</div>
+                <div className="col-span-2 text-right">Transactions</div>
+                <div className="col-span-2 text-right">Health</div>
               </div>
 
-              {filteredStores.map((store, idx) => (
+              {filteredStores.map((store, idx) => {
+                const txnCount = store.transaction_count ?? 0;
+                const hasActivity = txnCount > 0;
+                return (
                 <Card
                   key={store.restaurant_id || idx}
                   data-testid={`store-row-${store.restaurant_id || idx}`}
@@ -159,7 +163,7 @@ export default function HierarchySummary() {
                 >
                   <CardContent className="py-2.5 px-3">
                     <div className="grid grid-cols-12 gap-2 items-center">
-                      <div className="col-span-5 flex items-center gap-2 min-w-0">
+                      <div className="col-span-4 flex items-center gap-2 min-w-0">
                         <span className="text-sm font-medium truncate">
                           {store.restaurant_name || "Unnamed Store"}
                         </span>
@@ -171,13 +175,21 @@ export default function HierarchySummary() {
                       <div className="col-span-2 text-right">
                         <span className="text-sm tabular-nums">{store.received_quantity ?? 0}</span>
                       </div>
-                      <div className="col-span-3 text-right">
-                        <span className="text-sm tabular-nums">{store.transaction_count ?? 0}</span>
+                      <div className="col-span-2 text-right">
+                        <span className="text-sm tabular-nums">{txnCount}</span>
+                      </div>
+                      <div className="col-span-2 text-right">
+                        {hasActivity ? (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span>
+                        ) : (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">No activity</span>
+                        )}
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                );
+              })}
             </div>
           )}
         </TabsContent>

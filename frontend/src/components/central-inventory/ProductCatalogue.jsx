@@ -91,6 +91,7 @@ function FoodsTab() {
           <Table><TableHeader><TableRow>
             <TableHead className="text-xs">Name</TableHead><TableHead className="text-xs">Category</TableHead>
             <TableHead className="text-xs text-right">Price</TableHead><TableHead className="text-xs text-center">Status</TableHead>
+            <TableHead className="text-xs text-center">Has Recipe</TableHead>
             <TableHead className="text-xs w-24">Actions</TableHead>
           </TableRow></TableHeader>
             <TableBody>{filtered.map(f => (
@@ -99,6 +100,7 @@ function FoodsTab() {
                 <TableCell className="py-2 text-xs text-muted-foreground">{f.category?.name || "—"}</TableCell>
                 <TableCell className="py-2 text-sm text-right tabular-nums">{f.price}</TableCell>
                 <TableCell className="py-2 text-center"><Badge variant={f.status === 1 ? "outline" : "secondary"} className="text-[10px] px-1.5 py-0">{f.status === 1 ? "Active" : "Inactive"}</Badge></TableCell>
+                <TableCell className="py-2 text-center"><Badge variant="outline" className="text-[10px] px-1.5 py-0">{f.has_recipe ? "Yes" : "—"}</Badge></TableCell>
                 <TableCell className="py-2 flex gap-1">
                   <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => { setEditFood(f); setDialogOpen(true); }} data-testid={`edit-food-${f.id}`}><Pencil className="h-3.5 w-3.5" /></Button>
                   <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive" data-testid={`del-food-${f.id}`}><Trash2 className="h-3.5 w-3.5" /></Button></AlertDialogTrigger>

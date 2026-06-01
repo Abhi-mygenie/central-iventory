@@ -75,6 +75,10 @@ export default function StoreDetail() {
   const transactions = data.transactions || [];
   const childStores = data.restaurants || [];
 
+  // Stock health computed from summary
+  const lowStockCount = stockSummary.filter(s => s.is_low_stock).length;
+  const totalStockItems = stockSummary.length;
+
   return (
     <div data-testid="store-detail">
       {/* Header */}
@@ -110,6 +114,30 @@ export default function StoreDetail() {
           )}
         </div>
       </div>
+
+      {/* Stock health summary strip */}
+      {stockSummary.length > 0 && (
+        <div className="grid grid-cols-3 gap-3 mb-4" data-testid="store-health-summary">
+          <Card>
+            <CardContent className="py-3 px-4 text-center">
+              <p className="text-xl font-bold tabular-nums">{totalStockItems}</p>
+              <p className="text-[10px] text-muted-foreground uppercase">Total Items</p>
+            </CardContent>
+          </Card>
+          <Card className={lowStockCount > 0 ? "border-red-200 bg-red-50/30" : ""}>
+            <CardContent className="py-3 px-4 text-center">
+              <p className={`text-xl font-bold tabular-nums ${lowStockCount > 0 ? "text-red-600" : ""}`}>{lowStockCount}</p>
+              <p className="text-[10px] text-muted-foreground uppercase">{lowStockCount > 0 ? "Low Stock" : "All Stocked"}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="py-3 px-4 text-center">
+              <p className="text-xl font-bold tabular-nums">{transactions.length}</p>
+              <p className="text-[10px] text-muted-foreground uppercase">Recent Transfers</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Child stores navigation */}
       {childStores.length > 0 && (

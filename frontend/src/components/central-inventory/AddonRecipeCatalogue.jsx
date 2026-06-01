@@ -78,6 +78,7 @@ export default function AddonRecipeCatalogue() {
           <Table><TableHeader><TableRow>
             <TableHead className="text-xs">Addon</TableHead><TableHead className="text-xs">Recipe Name</TableHead>
             <TableHead className="text-xs text-right">Price</TableHead><TableHead className="text-xs text-center">Ingredients</TableHead>
+            <TableHead className="text-xs text-center">Cost Mapped</TableHead>
             <TableHead className="text-xs w-24">Actions</TableHead>
           </TableRow></TableHeader>
             <TableBody>{recipes.map(r => (
@@ -86,6 +87,11 @@ export default function AddonRecipeCatalogue() {
                 <TableCell className="py-2 text-xs text-muted-foreground">{r.name}</TableCell>
                 <TableCell className="py-2 text-sm text-right tabular-nums">{r.addon_price}</TableCell>
                 <TableCell className="py-2 text-center"><Badge variant="outline" className="text-[10px]">{r.ingredients?.length || 0}</Badge></TableCell>
+                <TableCell className="py-2 text-center">
+                  <Badge variant="outline" className={`text-[10px] ${(r.ingredients?.length || 0) > 0 ? "text-emerald-700 border-emerald-200 bg-emerald-50" : "text-amber-700 border-amber-200 bg-amber-50"}`}>
+                    {(r.ingredients?.length || 0) > 0 ? "Yes" : "No"}
+                  </Badge>
+                </TableCell>
                 <TableCell className="py-2 flex gap-1">
                   <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => { setEditRecipe(r); setDialogOpen(true); }} data-testid={`edit-arec-${r.recipe_id}`}><Pencil className="h-3.5 w-3.5" /></Button>
                   <AlertDialog><AlertDialogTrigger asChild><Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive" data-testid={`del-arec-${r.recipe_id}`}><Trash2 className="h-3.5 w-3.5" /></Button></AlertDialogTrigger>
