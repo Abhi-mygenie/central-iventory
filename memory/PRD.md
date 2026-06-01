@@ -1,38 +1,31 @@
 # Central Inventory — PRD
 
 ## Original Problem Statement
-Implement Sprint A (Foundation Intelligence) of the Intelligent UI for Central Inventory — 5 read-only screens + PO number display.
+Implement Intelligent UI for Central Inventory. Sprint A (read-only) + Sprint B (transfer flow) complete.
 
-## Architecture & Tech Stack
-- **Frontend**: React 19, Tailwind CSS 3, Radix UI, Craco, shadcn/ui
-- **Backend**: FastAPI proxy → preprod.mygenie.online POS API
-- **Database**: MongoDB (session storage)
+## Sprint A — COMPLETE (June 1, 2026) — 21/21 tests PASS
+- Operations Hub intelligence, Stock Inventory new columns, Stock Detail FEFO enhancements, History PO format + Export CSV, StatusTimeline relative timestamps + stale detection
+- New: useStockIntelligence hook, StockIntelligenceBar, formatPO utility
 
-## Sprint A — COMPLETE (June 1, 2026)
-
-### Files Created (2)
-| File | Purpose |
-|------|---------|
-| `hooks/useStockIntelligence.js` | Shared intelligence: low stock, stale approvals, ready-to-dispatch, today's activity |
-| `components/common/StockIntelligenceBar.jsx` | Reusable 6-metric stock health strip |
+## Sprint B — COMPLETE (June 1, 2026) — 18/18 tests PASS
+### Files Created (3)
+- `components/common/PostSubmitConfirmation.jsx` — Success card for write actions
+- `components/common/StoreHealthStrip.jsx` — Compact store health display
+- `components/common/FulfillmentVerdict.jsx` — Can fulfill / Partial / Can't fulfill badge
 
 ### Files Modified (6)
-| File | Changes |
-|------|---------|
-| `lib/formatters.js` | Added `formatPO()` — converts transfer ID to PO-XXXX format |
-| `OperationsHub.jsx` | Full rewrite: greeting, NBA banners, KPI cards, stock health bar, store health grid, quick actions, activity feed, latest request card |
-| `StockInventorySummary.jsx` | Added Expiry Risk, Pending, Days of Cover columns + Export CSV button |
-| `StockDetailPanel.jsx` | Added % of Total column, Action column (wastage/dispatch), FEFO "Dispatch first" badge, reorder suggestion in consumption section |
-| `HistoryLedger.jsx` | PO/Ref column (PO-0129 format), Export CSV button, ledger references use PO format |
-| `StatusTimeline.jsx` | Relative timestamps, duration between steps, total lifecycle, stale detection badge |
+- `PendingQueues.jsx` — **Full rewrite**: table → card-based approval inbox with item-level visibility, PO format, age badges, fulfillment verdicts, sort control, After Approval projections
+- `TransferDetail.jsx` — PO format title (PO-0113), "Created X days ago" relative time
+- `ReceiveDialog.jsx` — PO format title, dispatch time context ("Dispatched: 2 hours ago")
+- `ApproveWaveDialog.jsx` — PO format title
+- `DisputeResolutionDialog.jsx` — PO format title
+- `SourceSelector.jsx` — FEFO badges on segments, expired segments disabled with [EXPIRED] label
 
-### Test Results: 21/21 PASS (iteration_27)
-- Hub: greeting, NBA banners, KPIs, stock health, quick actions all working
-- Inventory: new columns (Expiry Risk, Pending, Days of Cover), Export CSV
-- Detail: batch % of Total, Action column, FEFO label, reorder suggestion
-- History: PO format, Export CSV, ledger PO refs
-- Timeline: relative timestamps, durations, lifecycle, stale detection
-- Login + navigation all functional
+### Key Features
+- Card-based approval inbox with 4-column item table (Requested, Qty, Your Stock, After Approval)
+- Age badges: red (>72h stale), amber (24-72h aging), gray (fresh)
+- Fulfillment verdict: "Can fulfill" / "Partial — 2 of 3 items" / "Can't fulfill"
+- PO-XXXX format everywhere (queues, detail, history, all dialogs)
 
 ## Test Credentials
 - Central: abhishek@kalabahia.com / Qplazm@10
@@ -40,12 +33,9 @@ Implement Sprint A (Foundation Intelligence) of the Intelligent UI for Central I
 - Outlet: owner@demofranchise1.com / Qplazm@10
 
 ## Next Steps
-1. **Sprint B**: Transfer flow intelligence (5-6 days) — Request Stock, Pending Queues, Transfer Detail, Direct Dispatch, Source Selector, Receive/Approve/Dispute modals
-2. **Sprint C**: Operations + config intelligence (4-5 days) — Stock Adjustment, Wastage, Procurement, Settings, Vendors, Catalogues
-3. Backend team: G-013 PO number, G-012 catalog category
+1. **Sprint C** (4-5 days): Operations + config intelligence — Stock Adjustment, Wastage, Procurement, Settings, Vendors, Catalogues, Consumption Report, Hierarchy Management
+2. Backend team: G-013 PO number, G-012 catalog category
 
 ## Backlog
-- P0: G-013 PO number generation (backend)
-- P1: G-012 Catalog category, G-014 Invoice OCR
-- P2: G-015 Excel parsing, G-016 Invoice storage
-- Future: CR-020 Daily Intelligence Digest, CR-015 FEFO Batch Detail
+- P0: G-013 PO number (backend), P1: G-012/G-014, P2: G-015/G-016
+- Future: CR-020 Daily Digest, CR-015 FEFO Detail, CR-016 Hierarchy Toggle
