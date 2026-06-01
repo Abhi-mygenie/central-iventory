@@ -1,6 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useLoginContext } from "@/hooks/useLoginContext";
 import useConsumptionReport from "@/hooks/useConsumptionReport";
+import api from "@/services/api";
 import DateRangePicker from "@/components/common/DateRangePicker";
 import { LoadingState, EmptyState, ErrorState } from "@/components/common/StateDisplays";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -94,7 +95,7 @@ function KPICards({ summary, byRestaurant, appliedIds, dateRange, scope }) {
 
 /* ── Ingredient Summary Table ─────────────────────────────────── */
 
-function IngredientSummaryTable({ summary, scope, isMultiStore, onDrillDown }) {
+function IngredientSummaryTable({ summary, scope, isMultiStore, onDrillDown, stockInventory, dateRange }) {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState("ingredient_name");
   const [sortDir, setSortDir] = useState("asc");
@@ -139,6 +140,26 @@ function IngredientSummaryTable({ summary, scope, isMultiStore, onDrillDown }) {
     </TableHead>
   );
 
+  // B9: Compute date range days for avg daily calculation
+  const dateRangeDays = useMemo(() => {
+    if (dateRange && dateRange.length === 2) {
+      const d0 = new Date(dateRange[0] + "T00:00:00");
+      const d1 = new Date(dateRange[1] + "T00:00:00");
+      const diff = Math.max(1, Math.round((d1 - d0) / (1000 * 60 * 60 * 24)) + 1);
+      return diff;
+    }
+    return 7;
+  }, [dateRange]);
+
+  // B9: Build stock inventory lookup by lowercase stock_title
+  const stockLookup = useMemo(() => {
+    const map = {};
+    (stockInventory || []).forEach((s) => {
+      map[(s.stock_title || "").toLowerCase()] = s;
+    });
+    return map;
+  }, [stockInventory]);
+
   if (summary.length === 0) return null;
 
   return (
@@ -173,13 +194,26 @@ function IngredientSummaryTable({ summary, scope, isMultiStore, onDrillDown }) {
               <TableHead className="text-xs">Opening</TableHead>
               <SortHeader k="total_consumed">Consumed</SortHeader>
               <TableHead className="text-xs">Closing</TableHead>
+              <TableHead className="text-xs text-right">Current Stock</TableHead>
               <TableHead className="text-xs text-right">Days of Cover</TableHead>
+              <TableHead className="text-xs">Trend</TableHead>
               {isMultiStore && <TableHead className="text-xs">Store</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.map((row, i) => {
               const closingNeg = parseQtyValue(row.closing_stock) < 0;
+              const consumed = parseQtyValue(row.total_consumed);
+              // B9: Cross-join with stock inventory for current stock
+              const stockItem = stockLookup[(row.ingredient_name || "").toLowerCase()];
+              const currentStock = stockItem ? stockItem.display_qty : null;
+              const currentUnit = stockItem?.display_unit || "";
+              // B9: Compute avg daily and days of cover using actual date range
+              const avgDaily = consumed > 0 ? consumed / dateRangeDays : 0;
+              const daysOfCover = (currentStock != null && avgDaily > 0) ? Math.round(currentStock / avgDaily) : null;
+              // B9: Trend (simple: if consumed > 1.5x average, "above avg")
+              const avgExpected = avgDaily * dateRangeDays;
+              const isAboveAvg = consumed > 0 && consumed > avgExpected * 1.5;
               return (
                 <TableRow
                   key={`${row.ingredient_id}-${row.restaurant_id || 0}-${i}`}
@@ -197,17 +231,30 @@ function IngredientSummaryTable({ summary, scope, isMultiStore, onDrillDown }) {
                       {closingNeg && <AlertTriangle className="h-3 w-3 text-amber-500" />}
                     </span>
                   </TableCell>
+                  <TableCell className="text-xs font-mono text-right" data-testid={`current-stock-${row.ingredient_id}`}>
+                    {currentStock != null ? (
+                      <span className={currentStock === 0 ? "text-red-600 font-semibold" : ""}>{currentStock} {currentUnit}</span>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-xs font-mono text-right" data-testid={`days-cover-${row.ingredient_id}`}>
-                    {(() => {
-                      const consumed = parseQtyValue(row.total_consumed);
-                      const closing = parseQtyValue(row.closing_stock);
-                      if (consumed > 0 && closing > 0) {
-                        const avgDaily = consumed / 7;
-                        const days = Math.round(closing / avgDaily);
-                        return <span className={days < 3 ? "text-red-600 font-semibold" : days < 7 ? "text-amber-600" : "text-muted-foreground"}>~{days}d</span>;
-                      }
-                      return <span className="text-muted-foreground">—</span>;
-                    })()}
+                    {daysOfCover != null ? (
+                      <span className={daysOfCover < 3 ? "text-red-600 font-semibold" : daysOfCover < 7 ? "text-amber-600" : "text-muted-foreground"}>~{daysOfCover}d</span>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    {consumed > 0 ? (
+                      isAboveAvg ? (
+                        <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200">Above Avg</span>
+                      ) : (
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 border border-emerald-200">Normal</span>
+                      )
+                    ) : (
+                      <span className="text-muted-foreground text-[9px]">—</span>
+                    )}
                   </TableCell>
                   {isMultiStore && (
                     <TableCell className="text-xs text-muted-foreground">
@@ -219,7 +266,7 @@ function IngredientSummaryTable({ summary, scope, isMultiStore, onDrillDown }) {
             })}
             {filtered.length === 0 && (
               <TableRow>
-                <TableCell colSpan={isMultiStore ? 7 : 6} className="text-center text-xs text-muted-foreground py-6">
+                <TableCell colSpan={isMultiStore ? 9 : 8} className="text-center text-xs text-muted-foreground py-6">
                   No ingredients match "{search}"
                 </TableCell>
               </TableRow>
@@ -494,6 +541,9 @@ export default function DailyConsumptionReport() {
   // Drill-down state
   const [drillIngredient, setDrillIngredient] = useState(null);
 
+  // B9: Stock inventory for cross-join intelligence
+  const [stockInventory, setStockInventory] = useState([]);
+
   const handleGenerate = () => {
     setDrillIngredient(null);
     setHasFetched(true);
@@ -503,6 +553,10 @@ export default function DailyConsumptionReport() {
       restaurantIds: selectedStores,
       includeHierarchy: canMultiStore ? includeHierarchy : undefined,
     });
+    // B9: Fetch stock inventory for Current Stock / Days of Cover
+    api.getStockInventory().then((resp) => {
+      setStockInventory(resp.data?.current_stocks || []);
+    }).catch(() => setStockInventory([]));
   };
 
   const handleDrillDown = (row) => {
@@ -604,6 +658,8 @@ export default function DailyConsumptionReport() {
                 scope={scope}
                 isMultiStore={isMultiStore}
                 onDrillDown={handleDrillDown}
+                stockInventory={stockInventory}
+                dateRange={dateRange}
               />
 
               {drillIngredient && (

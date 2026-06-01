@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginContext } from "@/hooks/useLoginContext";
 import { useWriteAction } from "@/hooks/useWriteAction";
@@ -12,8 +12,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { LoadingState, PermissionDenied } from "@/components/common/StateDisplays";
-import { ArrowLeft, Plus, Trash2, Loader2, Truck } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2, Truck, AlertTriangle, Package } from "lucide-react";
 
 export default function DirectDispatchForm() {
   const navigate = useNavigate();
@@ -25,6 +27,11 @@ export default function DirectDispatchForm() {
   const [selectedDest, setSelectedDest] = useState("");
   const [rows, setRows] = useState([{ itemId: "", quantity: "", unit: "", sourceSelector: null }]);
   const [loadingData, setLoadingData] = useState(true);
+
+  // C2: Destination store stock + own stock for "What This Store Needs"
+  const [destStock, setDestStock] = useState([]);
+  const [ownStock, setOwnStock] = useState([]);
+  const [destLoading, setDestLoading] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -47,6 +54,49 @@ export default function DirectDispatchForm() {
       .finally(() => { if (!cancelled) setLoadingData(false); });
     return () => { cancelled = true; };
   }, []);
+
+  // C2: Fetch destination store stock + own stock when dest changes
+  useEffect(() => {
+    if (!selectedDest) { setDestStock([]); return; }
+    let cancelled = false;
+    setDestLoading(true);
+    Promise.allSettled([
+      api.getHierarchyDetail({ storeRestaurantId: Number(selectedDest) }),
+      api.getStockInventory(),
+    ]).then(([detailResp, stockResp]) => {
+      if (cancelled) return;
+      if (detailResp.status === "fulfilled") {
+        const data = detailResp.value?.data?.data || detailResp.value?.data;
+        setDestStock(data?.child_stock_summary || []);
+      }
+      if (stockResp.status === "fulfilled") {
+        setOwnStock(stockResp.value?.data?.current_stocks || []);
+      }
+    }).finally(() => { if (!cancelled) setDestLoading(false); });
+    return () => { cancelled = true; };
+  }, [selectedDest]);
+
+  // C2: Compute "What This Store Needs" — items where dest stock < min threshold
+  const storeNeeds = useMemo(() => {
+    if (!destStock.length) return [];
+    return destStock
+      .map((item) => {
+        const qty = parseFloat(item.display_quantity) || 0;
+        const minQty = parseFloat(item.min_qty_alert) || 0;
+        const gap = minQty > 0 ? Math.max(0, minQty - qty) : 0;
+        const ownItem = ownStock.find(s => (s.stock_title || "").toLowerCase() === (item.stock_title || "").toLowerCase());
+        return {
+          ...item,
+          currentQty: qty,
+          minQty,
+          gap,
+          ownQty: ownItem?.display_qty ?? 0,
+          ownUnit: ownItem?.display_unit || item.unit || "",
+        };
+      })
+      .filter((item) => item.gap > 0 || item.currentQty === 0)
+      .sort((a, b) => b.gap - a.gap);
+  }, [destStock, ownStock]);
 
   if (!canDo("dispatch")) return <PermissionDenied />;
   if (loadingData) return <LoadingState lines={4} />;
@@ -138,6 +188,63 @@ export default function DirectDispatchForm() {
           })()}
         </CardContent>
       </Card>
+
+      {/* C2: What This Store Needs — auto-detect from destination stock gaps */}
+      {selectedDest && !destLoading && storeNeeds.length > 0 && (
+        <Card className="mb-4 border-l-[3px] border-l-amber-500" data-testid="store-needs-section">
+          <CardHeader className="py-2.5 px-4">
+            <CardTitle className="text-xs font-medium uppercase tracking-wider flex items-center gap-1.5 text-amber-700">
+              <AlertTriangle className="h-3.5 w-3.5" />
+              What This Store Needs ({storeNeeds.length} item{storeNeeds.length !== 1 ? "s" : ""})
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="py-0 px-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-[10px]">Item</TableHead>
+                    <TableHead className="text-[10px] text-right">Their Stock</TableHead>
+                    <TableHead className="text-[10px] text-right">Min Threshold</TableHead>
+                    <TableHead className="text-[10px] text-right">Gap</TableHead>
+                    <TableHead className="text-[10px] text-right">Your Stock</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {storeNeeds.map((item, idx) => {
+                    const isOut = item.currentQty === 0;
+                    return (
+                      <TableRow key={idx} data-testid={`needs-row-${idx}`} className={isOut ? "bg-red-50/30" : ""}>
+                        <TableCell className="text-xs font-medium">
+                          {item.stock_title} <span className="text-muted-foreground">{item.unit}</span>
+                          {isOut && <Badge variant="destructive" className="ml-1.5 text-[8px] px-1 py-0">OUT</Badge>}
+                        </TableCell>
+                        <TableCell className={`text-xs text-right tabular-nums ${isOut ? "text-red-600 font-semibold" : "text-amber-600"}`}>
+                          {item.currentQty} {item.unit}
+                        </TableCell>
+                        <TableCell className="text-xs text-right tabular-nums text-muted-foreground">{item.minQty} {item.unit}</TableCell>
+                        <TableCell className="text-xs text-right tabular-nums font-semibold text-amber-700">{item.gap > 0 ? item.gap : "—"} {item.gap > 0 ? item.unit : ""}</TableCell>
+                        <TableCell className={`text-xs text-right tabular-nums ${item.ownQty === 0 ? "text-red-600" : ""}`}>{item.ownQty} {item.ownUnit}</TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+            <p className="text-[10px] text-muted-foreground px-4 py-2 border-t border-border/50">
+              Items below minimum threshold at the destination store. Consider dispatching these items.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+      {selectedDest && destLoading && (
+        <Card className="mb-4">
+          <CardContent className="py-4 px-4 text-center">
+            <Loader2 className="h-4 w-4 animate-spin mx-auto mb-1 text-muted-foreground" />
+            <p className="text-xs text-muted-foreground">Analyzing destination stock...</p>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="mb-4">
         <CardHeader className="py-2.5 px-4"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground">Items</CardTitle></CardHeader>
