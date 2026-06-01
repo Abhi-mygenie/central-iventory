@@ -3049,7 +3049,7 @@
       "status": "IN_PROGRESS",
       "severity": null,
       "sprint_key": "S3",
-      "phase": "Phase 1: Seed + Impact Analysis",
+      "phase": "Phase 1: Impact Analysis DONE \u2192 Impl Plan next",
       "files": [],
       "notes": "Fix 18 API-mismatch bugs from audit. Proper control gate this time.",
       "artifact_refs": [
@@ -3068,8 +3068,8 @@
         {
           "artifact": 2,
           "label": "Impact-Analysis",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR023_ARTIFACT_2_IMPACT_ANALYSIS.md"
         },
         {
           "artifact": 3,
