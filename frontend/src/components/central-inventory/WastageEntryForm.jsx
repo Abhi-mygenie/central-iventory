@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LoadingState, PermissionDenied } from "@/components/common/StateDisplays";
-import { ArrowLeft, Loader2, Trash } from "lucide-react";
+import { ArrowLeft, Loader2, Trash, AlertTriangle, Info } from "lucide-react";
 
 export default function WastageEntryForm() {
   const navigate = useNavigate();
@@ -125,6 +125,20 @@ export default function WastageEntryForm() {
             </Select>
           </div>
 
+          {/* Sprint C: Stock context + anomaly detection */}
+          {itemObj && (
+            <div className="bg-muted/30 border border-border/50 rounded-lg p-3 space-y-2" data-testid="wastage-stock-context">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div><span className="text-[10px] text-muted-foreground block">Current Stock</span><span className="font-semibold tabular-nums">{itemObj.display_qty ?? "—"} {itemObj.unit}</span></div>
+                {quantity && Number(quantity) > 0 && (
+                  <div><span className="text-[10px] text-muted-foreground block">After Wastage</span><span className="font-semibold tabular-nums text-amber-600">{(Number(itemObj.display_qty || 0) - Number(quantity)).toFixed(2)} {itemObj.unit}</span></div>
+                )}
+                <div><span className="text-[10px] text-muted-foreground block">Category</span><span>{itemObj.category_name || "—"}</span></div>
+                <div><span className="text-[10px] text-muted-foreground block">Min Threshold</span><span className="tabular-nums">{itemObj.min_qty_alert ?? "—"}</span></div>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-2">
             <div>
               <Label className="text-xs">Quantity *</Label>
@@ -194,6 +208,12 @@ export default function WastageEntryForm() {
           )}
         </CardContent>
       </Card>
+
+      {/* Undo guidance */}
+      <div className="flex items-start gap-2 text-[10px] text-muted-foreground bg-muted/30 border border-border/50 rounded-lg p-2.5 mb-3" data-testid="wastage-undo-guidance">
+        <Info className="h-3 w-3 mt-0.5 shrink-0" />
+        <span>Wastage records are permanent. If you enter wrong data, contact your Central Store manager to create a stock adjustment to correct the quantity.</span>
+      </div>
 
       <Button
         data-testid="wastage-submit-button"

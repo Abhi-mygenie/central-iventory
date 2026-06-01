@@ -139,18 +139,31 @@ export default function VendorManagement() {
                       <TableHead className="text-[10px]">Contact Person</TableHead>
                       <TableHead className="text-[10px]">Phone</TableHead>
                       <TableHead className="text-[10px]">Email</TableHead>
-                      <TableHead className="text-[10px]">GST</TableHead>
+                      <TableHead className="text-[10px]">Status</TableHead>
                       {canEdit && <TableHead className="text-[10px]">Actions</TableHead>}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filtered.map((v) => (
-                      <TableRow key={v.id} data-testid={`vendor-row-${v.id}`}>
+                    {filtered.map((v) => {
+                      const createdDays = v.created_at ? Math.floor((Date.now() - new Date(v.created_at).getTime()) / (1000*60*60*24)) : null;
+                      const isInactive = createdDays !== null && createdDays > 60;
+                      return (
+                      <TableRow key={v.id} data-testid={`vendor-row-${v.id}`} className={isInactive ? "bg-amber-50/30" : ""}>
                         <TableCell className="text-xs font-medium">{v.vendor_name}</TableCell>
                         <TableCell className="text-xs text-muted-foreground">{v.contact_person_name || "—"}</TableCell>
                         <TableCell className="text-xs">{v.contact_number || "—"}</TableCell>
                         <TableCell className="text-xs text-muted-foreground">{v.email || "—"}</TableCell>
-                        <TableCell className="text-xs font-mono">{v.gst_no || "—"}</TableCell>
+                        <TableCell>
+                          {isInactive ? (
+                            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200" data-testid={`vendor-inactive-${v.id}`}>
+                              Inactive {createdDays}d
+                            </span>
+                          ) : (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200" data-testid={`vendor-active-${v.id}`}>
+                              Active
+                            </span>
+                          )}
+                        </TableCell>
                         {canEdit && (
                           <TableCell>
                             <div className="flex gap-1">
@@ -164,7 +177,8 @@ export default function VendorManagement() {
                           </TableCell>
                         )}
                       </TableRow>
-                    ))}
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </CardContent>

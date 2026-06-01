@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LoadingState, PermissionDenied } from "@/components/common/StateDisplays";
-import { ArrowLeft, Loader2, Scale } from "lucide-react";
+import { ArrowLeft, Loader2, Scale, AlertTriangle, Info } from "lucide-react";
 
 export default function StockAdjustmentForm() {
   const navigate = useNavigate();
@@ -168,6 +168,43 @@ export default function StockAdjustmentForm() {
               </Select>
             </div>
 
+            {/* Sprint C: Stock context + impact preview */}
+            {itemObj && (
+              <div className="bg-muted/30 border border-border/50 rounded-lg p-3 space-y-2" data-testid="stock-context">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                  <div><span className="text-[10px] text-muted-foreground block">Current Stock</span><span className="font-semibold tabular-nums">{itemObj.display_qty ?? "—"} {itemObj.unit}</span></div>
+                  <div><span className="text-[10px] text-muted-foreground block">Min Threshold</span><span className="tabular-nums">{itemObj.min_qty_alert ?? "—"} {itemObj.min_unit_alert || itemObj.unit}</span></div>
+                  <div><span className="text-[10px] text-muted-foreground block">Category</span><span>{itemObj.category_name || "—"}</span></div>
+                  {quantity && Number(quantity) > 0 && (
+                    <div>
+                      <span className="text-[10px] text-muted-foreground block">After Adjustment</span>
+                      <span className={`font-semibold tabular-nums ${
+                        adjustType === "decrease" && Number(itemObj.display_qty || 0) - Number(quantity) < 0 ? "text-red-600" : "text-amber-600"
+                      }`}>
+                        {adjustType === "increase"
+                          ? (Number(itemObj.display_qty || 0) + Number(quantity)).toFixed(2)
+                          : (Number(itemObj.display_qty || 0) - Number(quantity)).toFixed(2)
+                        } {itemObj.unit}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {quantity && Number(quantity) > 0 && (
+                  <div className={`text-[10px] px-2 py-1.5 rounded ${
+                    adjustType === "decrease" && Number(itemObj.display_qty || 0) - Number(quantity) < 0
+                      ? "bg-red-50 text-red-700 border border-red-200"
+                      : "bg-muted text-muted-foreground"
+                  }`} data-testid="impact-preview">
+                    <strong>Impact:</strong> {itemObj.stock_title} {adjustType === "increase" ? "increases" : "decreases"} by {quantity} {unit} ({itemObj.display_qty ?? 0} → {
+                      adjustType === "increase"
+                        ? (Number(itemObj.display_qty || 0) + Number(quantity)).toFixed(2)
+                        : (Number(itemObj.display_qty || 0) - Number(quantity)).toFixed(2)
+                    }). Reason: {finalReason || "—"}. This cannot be undone.
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <Label className="text-xs">Quantity *</Label>
@@ -235,15 +272,22 @@ export default function StockAdjustmentForm() {
       )}
 
       {adjustType && (
-        <Button
-          data-testid="adjustment-submit-button"
-          onClick={() => setShowConfirm(true)}
-          disabled={!isValid || submitting}
-          className="w-full"
-        >
-          {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-          {adjustType === "increase" ? "Increase Stock" : "Decrease Stock"}
-        </Button>
+        <>
+          {/* Undo guidance */}
+          <div className="flex items-start gap-2 text-[10px] text-muted-foreground bg-muted/30 border border-border/50 rounded-lg p-2.5 mb-3" data-testid="undo-guidance">
+            <Info className="h-3 w-3 mt-0.5 shrink-0" />
+            <span>Made a mistake? Adjustments cannot be reversed. Create an opposite adjustment (increase to undo a decrease, or vice versa) with reason "Correction for previous error".</span>
+          </div>
+          <Button
+            data-testid="adjustment-submit-button"
+            onClick={() => setShowConfirm(true)}
+            disabled={!isValid || submitting}
+            className="w-full"
+          >
+            {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+            {adjustType === "increase" ? "Increase Stock" : "Decrease Stock"}
+          </Button>
+        </>
       )}
 
       <ConfirmActionDialog

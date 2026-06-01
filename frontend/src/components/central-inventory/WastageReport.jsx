@@ -41,6 +41,7 @@ import {
   AlertTriangle,
   RefreshCw,
   ClipboardList,
+  Download,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -212,6 +213,26 @@ export default function WastageReport() {
           >
             <RefreshCw className={`h-3.5 w-3.5 mr-1 ${loading ? "animate-spin" : ""}`} />
             Refresh
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 text-xs"
+            data-testid="export-wastage-csv"
+            onClick={() => {
+              const rows = [["Date","Item","Qty","Unit","Reason","Type","Source"]];
+              entries.forEach(e => {
+                rows.push([e.waste_date||"", e.stock_title||"", e.wastage_quantity||"", e.unit||"", e.waste_reason||"", e.waste_type||"", e.source_type||""]);
+              });
+              const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+              const blob = new Blob([csv], { type: "text/csv" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a"); a.href=url; a.download="wastage_report.csv"; a.click();
+              URL.revokeObjectURL(url);
+            }}
+          >
+            <Download className="h-3.5 w-3.5 mr-1" />
+            CSV
           </Button>
           <DateRangePicker dateRange={dateRange} onDateRangeChange={setDateRange} />
         </div>

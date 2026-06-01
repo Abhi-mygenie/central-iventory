@@ -149,6 +149,11 @@ export default function OperationalSettings() {
                   <GroupIcon className="h-3.5 w-3.5" />
                   {group.label}
                   {isMasterLocked && <Lock className="h-3 w-3 text-amber-500 ml-1" />}
+                  {group.masterOnly && isTopLevel && (
+                    <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200 ml-auto normal-case tracking-normal" data-testid={`affects-all-${group.id}`}>
+                      Affects all stores
+                    </span>
+                  )}
                 </CardTitle>
                 {group.description && <p className="text-[10px] text-muted-foreground mt-0.5">{group.description}</p>}
               </CardHeader>
@@ -163,6 +168,7 @@ export default function OperationalSettings() {
                         <div className="flex items-center gap-2">
                           <Label className="text-xs font-medium">{setting.label}</Label>
                           <InheritedBadge storedSettings={stored} settingKey={setting.key} sourceId={sourceId} />
+                          {setting.danger && <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-red-100 text-red-700 border border-red-200" data-testid={`impact-${setting.key}`}>High impact</span>}
                           {saving === setting.key && <Loader2 className="h-3 w-3 animate-spin text-blue-500" />}
                         </div>
                         {setting.description && (
