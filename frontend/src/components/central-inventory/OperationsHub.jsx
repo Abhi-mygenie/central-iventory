@@ -1,327 +1,453 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginContext } from "@/hooks/useLoginContext";
-import { useStockInventory } from "@/hooks/useStockInventory";
+import { useStockIntelligence } from "@/hooks/useStockIntelligence";
 import api from "@/services/api";
-import ContextSelector from "./ContextSelector";
+import { formatRelativeTime } from "@/lib/formatters";
+import { mapRestaurantType } from "@/lib/terminology";
+import StockIntelligenceBar from "@/components/common/StockIntelligenceBar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
-  CheckCircle2,
-  Inbox,
-  SendHorizonal,
-  Truck,
-  ArrowRight,
-  ClipboardList,
-  Network,
-  Package,
   AlertTriangle,
+  ArrowRight,
+  ArrowDownLeft,
+  ArrowUpRight,
+  Clock,
+  Package,
+  Truck,
+  Send,
+  Minus,
+  RefreshCw,
 } from "lucide-react";
 import { LoadingState, ErrorState } from "@/components/common/StateDisplays";
 
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+function AgeBadge({ createdAt }) {
+  if (!createdAt) return null;
+  const ms = Date.now() - new Date(createdAt).getTime();
+  const hours = ms / (1000 * 60 * 60);
+  const days = Math.floor(hours / 24);
+  if (days >= 3) return <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-red-100 text-red-700 border border-red-200">{days} days ago</span>;
+  if (hours >= 24) return <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200">{Math.floor(hours)}h ago</span>;
+  return <span className="text-[10px] px-2 py-0.5 rounded bg-muted text-muted-foreground">{Math.floor(hours)}h ago</span>;
+}
+
 /**
- * SCR-01 Operations Hub — Slice 2
+ * SCR-01 Operations Hub — Sprint A Intelligence Upgrade
  *
- * Enhancements:
- * - KPI placeholder removed (Item 12)
- * - Ready to Dispatch count card (Item 1)
- * - Context selector updates hub data in-place (Item 11)
- * - P20: Stock Inventory KPI cards
+ * Sections:
+ * 1. Greeting + role context
+ * 2. Next Best Actions (prioritized banners)
+ * 3. Priority KPI cards
+ * 4. Your Stock Health strip
+ * 5. Store Health Grid (Central only — across hierarchy)
+ * 6. Quick Actions (role-gated)
+ * 7. Today's Activity feed
+ * 8. Your Latest Request (Outlet/Master only)
  */
 export default function OperationsHub() {
   const navigate = useNavigate();
-  const { restaurantType, isTopLevel, canDo, restaurantId } = useLoginContext();
-  const { totalItems, lowStockCount, loading: stockLoading } = useStockInventory();
+  const {
+    restaurantType, isTopLevel, isMiddleLevel, isBottomLevel,
+    canDo, restaurantId, userLevelLabel, user,
+  } = useLoginContext();
 
-  const [queues, setQueues] = useState(null);
-  const [readyToDispatchCount, setReadyToDispatchCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [activeStoreId, setActiveStoreId] = useState(null);
-  const [activeStoreName, setActiveStoreName] = useState(null);
+  const {
+    totalItems, lowStockCount, lowStockItems,
+    approvalPendingCount, receivePendingCount, myRequestsCount,
+    staleApprovals, staleApprovalCount,
+    readyToDispatchCount,
+    todayActivity,
+    loading, error, refresh, recentHistory,
+  } = useStockIntelligence();
 
-  const fetchQueues = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const resp = await api.getPendingQueues();
-      const data = resp.data?.data || resp.data;
-
-      // If a different store context is active, filter data for that store
-      if (activeStoreId && String(activeStoreId) !== String(restaurantId)) {
-        const aid = String(activeStoreId);
-        const filtered = {
-          approval_pending: (data.approval_pending || []).filter(
-            (t) => String(t.from_restaurant_id) === aid || String(t.to_restaurant_id) === aid
-          ),
-          receive_pending: (data.receive_pending || []).filter(
-            (t) => String(t.to_restaurant_id) === aid
-          ),
-          my_requests: (data.my_requests || []).filter(
-            (t) => String(t.to_restaurant_id) === aid
-          ),
-        };
-        setQueues(filtered);
-      } else {
-        setQueues(data);
-      }
-
-      // Fetch ready to dispatch count
-      if (canDo("dispatch")) {
-        try {
-          const histResp = await api.getTransferHistory();
-          const histData = histResp.data?.data || histResp.data;
-          const histItems = Array.isArray(histData) ? histData : [];
-          const sourceId = activeStoreId ? String(activeStoreId) : String(restaurantId);
-          // P16: Include partially_approved and partially_received (follow-up dispatch waves)
-          const dispatchReady = histItems.filter(
-            (t) => ["approved", "partially_approved", "partially_received"].includes(t.status) &&
-                   String(t.from_restaurant_id) === sourceId
-          );
-          setReadyToDispatchCount(dispatchReady.length);
-        } catch {
-          setReadyToDispatchCount(0);
-        }
-      }
-    } catch (err) {
-      setError(err?.response?.data?.message || "Failed to load pending queues");
-    } finally {
-      setLoading(false);
-    }
-  }, [activeStoreId, restaurantId, canDo]);
+  // Store health grid (Central only — fetch hierarchy detail per child)
+  const [storeHealth, setStoreHealth] = useState([]);
+  const [storeHealthLoading, setStoreHealthLoading] = useState(false);
 
   useEffect(() => {
-    fetchQueues();
-  }, [fetchQueues]);
+    if (!isTopLevel) return;
+    let cancelled = false;
+    (async () => {
+      setStoreHealthLoading(true);
+      try {
+        const resp = await api.getHierarchySummary({ storeType: "franchise" });
+        const data = resp.data?.data || resp.data;
+        const children = data?.children || data?.child_stores || [];
+        if (!cancelled) setStoreHealth(Array.isArray(children) ? children : []);
+      } catch {
+        // Silently fail — grid just won't show
+      } finally {
+        if (!cancelled) setStoreHealthLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [isTopLevel]);
 
-  const handleStoreChange = (storeId, storeName) => {
-    setActiveStoreId(storeId);
-    setActiveStoreName(storeName || null);
-  };
+  // Latest request (for Outlet/Master)
+  const latestRequest = useMemo(() => {
+    if (isTopLevel) return null;
+    const myReqs = recentHistory.filter(
+      (t) => t.type === "request" && String(t.to_restaurant_id) === String(restaurantId)
+    );
+    return myReqs.length > 0 ? myReqs[0] : null;
+  }, [recentHistory, isTopLevel, restaurantId]);
 
-  const handleResetContext = () => {
-    setActiveStoreId(null);
-    setActiveStoreName(null);
-  };
-
-  const approvalCount = queues?.approval_pending?.length || 0;
-  const receiveCount = queues?.receive_pending?.length || 0;
-  const myRequestsCount = queues?.my_requests?.length || 0;
-  const isViewingOther = activeStoreId && String(activeStoreId) !== String(restaurantId);
+  const storeName = user?.restaurant_name || userLevelLabel;
 
   return (
     <div data-testid="operations-hub">
-      <ContextSelector
-        activeStoreId={activeStoreId}
-        activeStoreName={activeStoreName}
-        onStoreChange={handleStoreChange}
-        onReset={handleResetContext}
-        isViewingOther={isViewingOther}
-      />
-
-      <h1 className="text-lg font-bold mb-4" data-testid="operations-hub-title">
-        Operations Hub
-      </h1>
+      {/* Greeting */}
+      <div className="mb-5">
+        <h1 className="text-xl font-bold" data-testid="operations-hub-title">
+          {getGreeting()}, {mapRestaurantType(restaurantType).replace(" Store", "")}
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          {isTopLevel
+            ? "Here's what needs your attention across the hierarchy"
+            : "Here's your store status and pending actions"}
+        </p>
+      </div>
 
       {loading ? (
-        <LoadingState lines={3} />
+        <LoadingState lines={4} />
       ) : error ? (
-        <ErrorState message={error} onRetry={fetchQueues} />
+        <ErrorState message={error} onRetry={refresh} />
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-            {/* Approval pending — parent roles only */}
+          {/* ── Next Best Actions ─────────────────────────── */}
+          {staleApprovalCount > 0 && canDo("approve") && (
+            <div
+              data-testid="nba-stale-approvals"
+              className="flex items-center gap-3 p-3 mb-3 rounded-lg border-l-[3px] border-l-red-500 bg-red-50 border border-red-200 cursor-pointer hover:bg-red-100/60 transition-colors"
+              onClick={() => navigate("/queues")}
+            >
+              <div className="h-9 w-9 rounded-lg bg-red-100 flex items-center justify-center shrink-0">
+                <AlertTriangle className="h-5 w-5 text-red-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold">{staleApprovalCount} approval request{staleApprovalCount > 1 ? "s" : ""} stale (&gt;24 hours)</p>
+                <p className="text-xs text-muted-foreground">
+                  {staleApprovals[0] && `Oldest: ${formatRelativeTime(staleApprovals[0].created_at)}`}
+                </p>
+              </div>
+              <Button variant="default" size="sm" className="shrink-0 text-xs">Review Approvals</Button>
+            </div>
+          )}
+
+          {readyToDispatchCount > 0 && canDo("dispatch") && (
+            <div
+              data-testid="nba-ready-dispatch"
+              className="flex items-center gap-3 p-3 mb-3 rounded-lg border-l-[3px] border-l-amber-500 bg-amber-50 border border-amber-200 cursor-pointer hover:bg-amber-100/60 transition-colors"
+              onClick={() => navigate("/queues")}
+            >
+              <div className="h-9 w-9 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                <Truck className="h-5 w-5 text-amber-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold">{readyToDispatchCount} transfer{readyToDispatchCount > 1 ? "s" : ""} ready to dispatch</p>
+                <p className="text-xs text-muted-foreground">Approved transfers awaiting your dispatch. Stock already committed.</p>
+              </div>
+              <Button variant="outline" size="sm" className="shrink-0 text-xs">Dispatch Now</Button>
+            </div>
+          )}
+
+          {lowStockCount > 0 && !isTopLevel && (
+            <div
+              data-testid="nba-low-stock"
+              className="flex items-center gap-3 p-3 mb-3 rounded-lg border-l-[3px] border-l-red-500 bg-red-50 border border-red-200 cursor-pointer hover:bg-red-100/60 transition-colors"
+              onClick={() => navigate("/inventory")}
+            >
+              <div className="h-9 w-9 rounded-lg bg-red-100 flex items-center justify-center shrink-0">
+                <Package className="h-5 w-5 text-red-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold">{lowStockCount} item{lowStockCount > 1 ? "s" : ""} below minimum threshold</p>
+                <p className="text-xs text-muted-foreground">
+                  {lowStockItems[0] && `${lowStockItems[0].stock_title}: ${lowStockItems[0].display_qty} ${lowStockItems[0].display_unit}`}
+                </p>
+              </div>
+              {canDo("request-stock") && (
+                <Button variant="outline" size="sm" className="shrink-0 text-xs" onClick={(e) => { e.stopPropagation(); navigate("/request/new"); }}>Request Stock</Button>
+              )}
+            </div>
+          )}
+
+          {/* ── Priority KPI Cards ────────────────────────── */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
             {canDo("approve") && (
               <Card
-                data-testid="card-approval-pending"
-                className="cursor-pointer hover:shadow-md transition-shadow"
+                data-testid="kpi-stale-approvals"
+                className={`cursor-pointer hover:shadow-md transition-shadow ${staleApprovalCount > 0 ? "border-l-[3px] border-l-red-500" : ""}`}
                 onClick={() => navigate("/queues")}
               >
-                <CardContent className="py-4 px-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-                    <CheckCircle2 className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-2xl font-bold">{approvalCount}</p>
-                    <p className="text-xs text-muted-foreground">Pending Approvals</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Ready to Dispatch — dispatch-capable roles only (Item 1) */}
-            {canDo("dispatch") && (
-              <Card
-                data-testid="card-ready-to-dispatch"
-                className="cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => navigate("/queues")}
-              >
-                <CardContent className="py-4 px-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-green-50 flex items-center justify-center shrink-0">
-                    <Truck className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-2xl font-bold">{readyToDispatchCount}</p>
-                    <p className="text-xs text-muted-foreground">Ready to Dispatch</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Receive pending */}
-            <Card
-              data-testid="card-receive-pending"
-              className="cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => navigate("/queues")}
-            >
-              <CardContent className="py-4 px-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
-                  <Inbox className="h-5 w-5 text-indigo-600" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-2xl font-bold">{receiveCount}</p>
-                  <p className="text-xs text-muted-foreground">Pending Receives</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* My requests — hide for Central (they don't request) */}
-            {!isTopLevel && (
-              <Card
-                data-testid="card-my-requests"
-                className="cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => navigate("/queues")}
-              >
-                <CardContent className="py-4 px-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-                    <SendHorizonal className="h-5 w-5 text-amber-600" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-2xl font-bold">{myRequestsCount}</p>
-                    <p className="text-xs text-muted-foreground">My Requests</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-
-          {/* P20: Stock Inventory KPI cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-            <Card
-              data-testid="card-stock-items"
-              className="cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => navigate("/inventory")}
-            >
-              <CardContent className="py-4 px-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
-                  <Package className="h-5 w-5 text-slate-600" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-2xl font-bold">{stockLoading ? "—" : totalItems}</p>
-                  <p className="text-xs text-muted-foreground">Stock Items</p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-              </CardContent>
-            </Card>
-
-            <Card
-              data-testid="card-low-stock"
-              className={`cursor-pointer hover:shadow-md transition-shadow ${!stockLoading && lowStockCount > 0 ? "border-red-200 bg-red-50/30" : ""}`}
-              onClick={() => navigate("/inventory")}
-            >
-              <CardContent className="py-4 px-4 flex items-center gap-3">
-                <div className={`h-10 w-10 rounded-lg flex items-center justify-center shrink-0 ${!stockLoading && lowStockCount > 0 ? "bg-red-100" : "bg-emerald-50"}`}>
-                  {!stockLoading && lowStockCount > 0 ? (
-                    <AlertTriangle className="h-5 w-5 text-red-600" />
-                  ) : (
-                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                <CardContent className="py-3 px-4">
+                  <p className={`text-2xl font-bold tabular-nums ${staleApprovalCount > 0 ? "text-red-600" : ""}`}>
+                    {staleApprovalCount}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">Stale Approvals</p>
+                  {staleApprovals[0] && (
+                    <p className="text-[10px] text-muted-foreground mt-1 pt-1 border-t border-border truncate">
+                      Oldest: {formatRelativeTime(staleApprovals[0].created_at)}
+                    </p>
                   )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className={`text-2xl font-bold ${!stockLoading && lowStockCount > 0 ? "text-red-700" : ""}`}>
-                    {stockLoading ? "—" : lowStockCount}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {!stockLoading && lowStockCount > 0 ? "Low Stock" : "All Stocked"}
-                  </p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-              </CardContent>
-            </Card>
-          </div>
+                </CardContent>
+              </Card>
+            )}
 
-          {/* Quick actions */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-            <Card
-              data-testid="quick-action-hierarchy"
-              className="cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => navigate("/hierarchy")}
-            >
-              <CardContent className="py-3 px-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Network className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">View Hierarchy</span>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground" />
-              </CardContent>
-            </Card>
+            {canDo("dispatch") && (
+              <Card
+                data-testid="kpi-ready-dispatch"
+                className={`cursor-pointer hover:shadow-md transition-shadow ${readyToDispatchCount > 0 ? "border-l-[3px] border-l-amber-500" : ""}`}
+                onClick={() => navigate("/queues")}
+              >
+                <CardContent className="py-3 px-4">
+                  <p className={`text-2xl font-bold tabular-nums ${readyToDispatchCount > 0 ? "text-amber-600" : ""}`}>
+                    {readyToDispatchCount}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">Ready to Dispatch</p>
+                  <p className="text-[10px] text-muted-foreground mt-1 pt-1 border-t border-border">
+                    Stock committed, awaiting ship
+                  </p>
+                </CardContent>
+              </Card>
+            )}
 
             <Card
-              data-testid="quick-action-queues"
+              data-testid="kpi-pending-receives"
               className="cursor-pointer hover:shadow-md transition-shadow"
               onClick={() => navigate("/queues")}
             >
-              <CardContent className="py-3 px-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <ClipboardList className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">Pending Queues</span>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              <CardContent className="py-3 px-4">
+                <p className="text-2xl font-bold tabular-nums">{receivePendingCount}</p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">Pending Receives</p>
+                <p className="text-[10px] text-muted-foreground mt-1 pt-1 border-t border-border">
+                  {receivePendingCount > 0 ? "Incoming shipments" : "No incoming shipments"}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card
+              data-testid="kpi-low-stock"
+              className={`cursor-pointer hover:shadow-md transition-shadow ${lowStockCount > 0 ? "border-l-[3px] border-l-red-500" : ""}`}
+              onClick={() => navigate("/inventory")}
+            >
+              <CardContent className="py-3 px-4">
+                <p className={`text-2xl font-bold tabular-nums ${lowStockCount > 0 ? "text-red-600" : ""}`}>
+                  {lowStockCount}
+                </p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">Low Stock Items</p>
+                {lowStockItems[0] && (
+                  <p className="text-[10px] text-muted-foreground mt-1 pt-1 border-t border-border truncate">
+                    {lowStockItems[0].stock_title}: {lowStockItems[0].display_qty} {lowStockItems[0].display_unit}
+                  </p>
+                )}
               </CardContent>
             </Card>
           </div>
 
-          {/* Quick actions — now ENABLED (Slice 4) */}
-          <div className="flex flex-wrap gap-2">
-            {canDo("dispatch") && (
-              <Button data-testid="action-dispatch-stock" variant="default" size="sm" onClick={() => navigate("/dispatch/new")}>
-                Dispatch Stock
+          {/* ── Your Stock Health ─────────────────────────── */}
+          <div className="mb-5">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Your Stock Health</h2>
+              <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => navigate("/inventory")}>
+                View Inventory <ArrowRight className="h-3 w-3 ml-1" />
               </Button>
-            )}
-            {canDo("request-stock") && (
-              <Button data-testid="action-request-stock" variant="outline" size="sm" onClick={() => navigate("/request/new")}>
-                Request Stock
-              </Button>
-            )}
-            {canDo("adjust-stock") && (
-              <Button data-testid="action-adjust-stock" variant="outline" size="sm" onClick={() => navigate("/adjustment/new")}>
-                Adjust Stock
-              </Button>
-            )}
-            {canDo("record-wastage") && (
-              <Button data-testid="action-record-wastage" variant="outline" size="sm" onClick={() => navigate("/wastage/new")}>
-                Record Wastage
-              </Button>
-            )}
-            {canDo("record-wastage") && (
-              <Button data-testid="action-wastage-report" variant="ghost" size="sm" onClick={() => navigate("/wastage/report")}>
-                Wastage Report
-              </Button>
-            )}
+            </div>
+            <StockIntelligenceBar
+              total={totalItems}
+              low={lowStockCount}
+              pendingOut={0}
+              pendingIn={receivePendingCount}
+            />
           </div>
 
-          {/* Procurement actions — gated by add-stock-purchase permission */}
-          {canDo("add-stock-purchase") && (
-            <div className="mt-3 pt-3 border-t border-border">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Procurement</p>
-              <div className="flex flex-wrap gap-2">
-                <Button data-testid="action-add-stock-purchase" variant="outline" size="sm" onClick={() => navigate("/procurement/new")}>
-                  Add Stock (Vendor)
-                </Button>
-                <Button data-testid="action-manage-vendors" variant="ghost" size="sm" onClick={() => navigate("/vendors")}>
-                  Manage Vendors
+          {/* ── Store Health Grid (Central only) ──────────── */}
+          {isTopLevel && storeHealth.length > 0 && (
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Store Health Across Hierarchy</h2>
+                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => navigate("/hierarchy")}>
+                  View Hierarchy <ArrowRight className="h-3 w-3 ml-1" />
                 </Button>
               </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {storeHealth.slice(0, 6).map((store) => {
+                  const name = store.name || store.restaurant_name || `Store #${store.id}`;
+                  const storeType = store.restaurant_type_flag || store.restaurantTypeFlag || "";
+                  const outCount = store.out_of_stock_count || 0;
+                  const lowCount = store.low_stock_count || 0;
+                  const hasProblem = outCount >= 2;
+                  return (
+                    <Card
+                      key={store.id}
+                      data-testid={`store-health-${store.id}`}
+                      className={`cursor-pointer hover:shadow-md transition-shadow ${hasProblem ? "border-l-[3px] border-l-red-500" : ""}`}
+                      onClick={() => navigate(`/store/${store.id}`)}
+                    >
+                      <CardContent className="py-3 px-4">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-sm font-semibold truncate">{name}</span>
+                          {outCount > 0 ? (
+                            <Badge variant="destructive" className="text-[9px] px-1.5 py-0 shrink-0">{outCount} out of stock</Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-emerald-700 border-emerald-200 bg-emerald-50 shrink-0">Healthy</Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3 text-xs">
+                          {outCount > 0 && (
+                            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-red-500" />{outCount} out</span>
+                          )}
+                          {lowCount > 0 && (
+                            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{lowCount} low</span>
+                          )}
+                          <span className="text-muted-foreground text-xs">{mapRestaurantType(storeType)}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* ── Quick Actions (role-gated) ────────────────── */}
+          <div className="mb-5">
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Quick Actions</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {canDo("dispatch") && (
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/dispatch/new")}>
+                  <CardContent className="py-3 px-4">
+                    <p className="text-xs font-semibold" data-testid="qa-dispatch">Dispatch Stock</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Send stock to stores</p>
+                  </CardContent>
+                </Card>
+              )}
+              {canDo("add-stock-purchase") && (
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/procurement/new")}>
+                  <CardContent className="py-3 px-4">
+                    <p className="text-xs font-semibold" data-testid="qa-procure">Add Stock (Vendor)</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Procure from vendors</p>
+                  </CardContent>
+                </Card>
+              )}
+              {canDo("request-stock") && (
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/request/new")}>
+                  <CardContent className="py-3 px-4">
+                    <p className="text-xs font-semibold" data-testid="qa-request">Request Stock</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Request from parent store</p>
+                  </CardContent>
+                </Card>
+              )}
+              {canDo("adjust-stock") && (
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/adjustment/new")}>
+                  <CardContent className="py-3 px-4">
+                    <p className="text-xs font-semibold" data-testid="qa-adjust">Adjust Stock</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Correct quantities</p>
+                  </CardContent>
+                </Card>
+              )}
+              {canDo("record-wastage") && (
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/wastage/new")}>
+                  <CardContent className="py-3 px-4">
+                    <p className="text-xs font-semibold" data-testid="qa-wastage">Record Wastage</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Log spoiled/damaged stock</p>
+                  </CardContent>
+                </Card>
+              )}
+              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/wastage/report")}>
+                <CardContent className="py-3 px-4">
+                  <p className="text-xs font-semibold" data-testid="qa-wastage-report">Wastage Report</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Analyze wastage trends</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* ── Today's Activity Feed ─────────────────────── */}
+          {todayActivity.length > 0 && (
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Today's Activity</h2>
+                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => navigate("/history")}>
+                  View full history <ArrowRight className="h-3 w-3 ml-1" />
+                </Button>
+              </div>
+              <Card>
+                <CardContent className="py-2 px-4 divide-y divide-border">
+                  {todayActivity.map((t, idx) => {
+                    const isSender = String(t.from_restaurant_id) === String(restaurantId);
+                    const isReceiver = String(t.to_restaurant_id) === String(restaurantId);
+                    const isOut = isSender && ["dispatched", "approved", "received", "partially_received"].includes(t.status);
+                    const isIn = isReceiver && ["received", "partially_received"].includes(t.status);
+                    const counterparty = isSender ? (t.to_restaurant_name || `Store #${t.to_restaurant_id}`) : (t.from_restaurant_name || `Store #${t.from_restaurant_id}`);
+                    const lines = t.lines || [];
+                    const itemName = lines[0]?.stock_title || "Transfer";
+                    const itemCount = lines.length;
+                    const time = t.dispatched_at || t.received_at || t.created_at;
+
+                    return (
+                      <div
+                        key={t.id || idx}
+                        data-testid={`activity-${idx}`}
+                        className="flex items-center gap-3 py-2 text-xs cursor-pointer hover:bg-accent/30 -mx-4 px-4 transition-colors"
+                        onClick={() => navigate(`/transfer/${t.id}`)}
+                      >
+                        <span className="text-[10px] text-muted-foreground w-14 shrink-0 tabular-nums">
+                          {time ? new Date(time).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }) : "—"}
+                        </span>
+                        {isIn ? (
+                          <Badge className="text-[9px] px-1.5 py-0 bg-emerald-100 text-emerald-700 border-emerald-200 shrink-0">
+                            <ArrowDownLeft className="h-2.5 w-2.5 mr-0.5" />Received
+                          </Badge>
+                        ) : isOut ? (
+                          <Badge className="text-[9px] px-1.5 py-0 bg-red-100 text-red-700 border-red-200 shrink-0">
+                            <ArrowUpRight className="h-2.5 w-2.5 mr-0.5" />Dispatched
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-[9px] px-1.5 py-0 shrink-0">{t.status}</Badge>
+                        )}
+                        <span className="font-semibold truncate">{itemName}</span>
+                        {itemCount > 1 && <span className="text-muted-foreground">+{itemCount - 1}</span>}
+                        <span className="text-muted-foreground truncate">{isIn ? "from" : "to"} {counterparty}</span>
+                        <span className="ml-auto tabular-nums text-muted-foreground font-mono text-[10px]">PO-{String(t.id || "").slice(-4).toUpperCase() || "XXXX"}</span>
+                      </div>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* ── Your Latest Request (Outlet/Master only) ──── */}
+          {!isTopLevel && latestRequest && (
+            <div className="mb-5">
+              <Card
+                data-testid="latest-request-card"
+                className="border-l-[3px] border-l-amber-500 cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => navigate(`/transfer/${latestRequest.id}`)}
+              >
+                <CardContent className="py-3 px-4 flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Your Latest Request</p>
+                    <p className="text-sm font-semibold mt-1">
+                      PO-{String(latestRequest.id || "").slice(-4).toUpperCase() || "XXXX"} — {(latestRequest.lines || []).length} items
+                    </p>
+                    <p className="text-xs text-amber-600 mt-0.5">
+                      {latestRequest.status === "requested" ? "Awaiting Approval" : latestRequest.status} — {formatRelativeTime(latestRequest.created_at)}
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" className="text-xs shrink-0">Track <ArrowRight className="h-3 w-3 ml-1" /></Button>
+                </CardContent>
+              </Card>
             </div>
           )}
         </>

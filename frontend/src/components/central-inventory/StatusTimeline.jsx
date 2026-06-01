@@ -1,6 +1,33 @@
-import { formatTimestamp } from "@/lib/formatters";
+import { formatTimestamp, formatRelativeTime } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
-import { Check, Circle, X, AlertTriangle, Ban } from "lucide-react";
+import { Check, Circle, X, AlertTriangle, Ban, Clock } from "lucide-react";
+
+function durationBetween(isoA, isoB) {
+  if (!isoA || !isoB) return null;
+  const ms = Math.abs(new Date(isoB) - new Date(isoA));
+  const hours = ms / (1000 * 60 * 60);
+  if (hours < 1) return `${Math.round(hours * 60)}m`;
+  if (hours < 24) return `${Math.round(hours)}h`;
+  const days = Math.round(hours / 24);
+  return `${days}d`;
+}
+
+function totalLifecycle(steps) {
+  const timestamps = steps.filter(s => s.timestamp).map(s => new Date(s.timestamp).getTime());
+  if (timestamps.length < 2) return null;
+  const ms = Math.max(...timestamps) - Math.min(...timestamps);
+  const hours = ms / (1000 * 60 * 60);
+  if (hours < 1) return "< 1 hour";
+  if (hours < 24) return `${Math.round(hours)} hours`;
+  const days = Math.round(hours / 24);
+  return `${days} day${days > 1 ? "s" : ""}`;
+}
+
+function isStaleStep(step) {
+  if (!step.active || !step.timestamp) return false;
+  const ms = Date.now() - new Date(step.timestamp).getTime();
+  return ms > 24 * 60 * 60 * 1000;
+}
 
 /**
  * StatusTimeline — Visual transfer lifecycle progression.
@@ -204,11 +231,16 @@ export default function StatusTimeline({ transfer }) {
 
   if (steps.length === 0) return null;
 
+  const lifecycle = totalLifecycle(steps);
+
   return (
     <div data-testid="status-timeline" className="mb-4">
       <div className="flex items-start gap-0 overflow-x-auto pb-2">
         {steps.map((step, idx) => {
           const isLast = idx === steps.length - 1;
+          const nextStep = steps[idx + 1];
+          const dur = step.timestamp && nextStep?.timestamp ? durationBetween(step.timestamp, nextStep.timestamp) : null;
+          const stale = isStaleStep(step);
           return (
             <div key={step.key} className="flex items-start" data-testid={`timeline-step-${step.key}`}>
               {/* Step node */}
@@ -233,10 +265,17 @@ export default function StatusTimeline({ transfer }) {
                   {step.label}
                 </p>
 
-                {/* Timestamp */}
+                {/* Relative timestamp */}
                 {step.timestamp && (
-                  <p className="text-[9px] text-muted-foreground mt-0.5 text-center">
-                    {formatTimestamp(step.timestamp)}
+                  <p className="text-[9px] text-muted-foreground mt-0.5 text-center" title={formatTimestamp(step.timestamp)}>
+                    {formatRelativeTime(step.timestamp)}
+                  </p>
+                )}
+
+                {/* Stale warning */}
+                {stale && (
+                  <p className="text-[9px] text-red-600 font-semibold mt-0.5 text-center flex items-center gap-0.5">
+                    <Clock className="h-2.5 w-2.5" />Stale
                   </p>
                 )}
 
@@ -248,21 +287,30 @@ export default function StatusTimeline({ transfer }) {
                 )}
               </div>
 
-              {/* Connector line */}
+              {/* Connector line with duration */}
               {!isLast && (
-                <div className="flex items-center pt-3.5 px-0.5">
+                <div className="flex flex-col items-center pt-3.5 px-0.5">
                   <div
                     className={cn(
                       "h-0.5 w-6 shrink-0",
                       getConnectorColor(step, steps[idx + 1])
                     )}
                   />
+                  {dur && (
+                    <span className="text-[8px] text-muted-foreground mt-0.5">{dur}</span>
+                  )}
                 </div>
               )}
             </div>
           );
         })}
       </div>
+      {/* Total lifecycle */}
+      {lifecycle && (
+        <p className="text-[10px] text-muted-foreground mt-1" data-testid="timeline-lifecycle">
+          Total lifecycle: {lifecycle}
+        </p>
+      )}
     </div>
   );
 }
