@@ -1,48 +1,46 @@
 # Central Inventory — PRD
 
 ## Original Problem Statement
-Build a governance & control system + intelligent UI freeze for the Central Inventory project. Pull code from GitHub (branch: 10-may), deploy, and perform final UI/UX design review.
+Build intelligent UI freeze implementation for the Central Inventory project. Sprint A: Foundation Intelligence (Read-Only Screens).
 
 ## Architecture & Tech Stack
-- **Frontend**: React 19, Tailwind CSS 3, Radix UI, craco (34 components, 10 hooks, 88 API methods)
-- **Backend**: FastAPI proxy → preprod.mygenie.online (177 lines, zero business logic)
+- **Frontend**: React 19, Tailwind CSS 3, Radix UI, Craco, shadcn/ui
+- **Backend**: FastAPI proxy → preprod.mygenie.online POS API
 - **Database**: MongoDB (session storage)
-- **Governance**: 10-layer control + registry.json (35 items) + dev dashboard
 
 ## What's Been Implemented
 
-### June 1, 2026 — Deployment
-- Cloned repo from GitHub (branch: 10-may) into /app
-- Preserved platform essentials (.emergent, .git, frontend/.env, backend/.env)
-- Installed all backend + frontend dependencies
-- Added PREPROD_API_BASE_V1 and PREPROD_API_BASE_V2 to backend .env
-- Both services running and verified
+### June 1, 2026 — Sprint A (In Progress)
+**Completed:**
+- **Operations Hub** — Full intelligence rewrite: greeting, NBA banners (stale approvals, ready to dispatch), 4 KPI cards, Stock Health bar, Store Health Grid (Central), Quick Actions (role-gated), Today's Activity feed, Latest Request card (Outlet/Master)
+- **useStockIntelligence hook** — Shared intelligence computations: low stock, stale approvals, ready-to-dispatch, today's activity
+- **StockIntelligenceBar** — Reusable 6-metric stock health strip
+- **StatusTimeline** — Enhanced with relative timestamps, duration between steps, total lifecycle, stale detection
 
-### June 1, 2026 — UI/UX Final Design Review
-- Reviewed all 9 HTML previews covering 24 screens + 3 modals
-- Created 7 review documents in `/app/control/sessions/ui_review/`
-- **Verdict: STRONG PROFESSIONAL QUALITY — READY FOR IMPLEMENTATION WITH MINOR REFINEMENTS**
-- Found 16 issues: 3 Must Have, 5 Should Have, 5 Could Have, 3 Defer
-- No preview rebuilds required — all fixes are implementation-time
-- 2 items pending owner approval (loading/error states, E8 badge colors)
+**Remaining Sprint A:**
+- StockInventorySummary — Add Expiry Risk, Pending In/Out, Days of Cover columns + Export CSV
+- StockDetailPanel — Add FEFO dispatch-first badge, consumption context, reorder suggestion
+- HistoryLedger — Add movement type badges (already partial), PO ref column, Export CSV
 
-## Current Status: UI/UX REVIEW COMPLETE — Owner Approval Pending
+### Test Results (14/14 PASS)
+- Hub greeting, NBA banners, KPI cards, stock health bar, quick actions all working
+- Stock Inventory loads 4 items with real data
+- Stock Detail shows FEFO batches with expiry badges
+- History shows 20 transfers with status badges
+- Timeline shows relative timestamps + lifecycle duration + stale detection
+- Login, navigation all functional
 
-## Key Documents
-- Phase 7 Freeze: `control/sessions/INTELLIGENT_UI_FREEZE_PHASE_7_FINAL_FREEZE.md`
-- UI Review Report: `control/sessions/ui_review/UI_UX_FINAL_DESIGN_REVIEW_REPORT.md`
-- Screen Matrix: `control/sessions/ui_review/SCREEN_BY_SCREEN_UI_CHANGE_MATRIX.md`
-- Owner Checklist: `control/sessions/ui_review/OWNER_UI_APPROVAL_CHECKLIST.md`
+## Test Credentials
+- Central: abhishek@kalabahia.com / Qplazm@10
+- Master: owner@democentral1.com / Qplazm@10
+- Outlet: owner@demofranchise1.com / Qplazm@10
 
 ## Next Steps
-1. Owner reviews UI/UX report and approves 2 pending items
-2. Implementation Sprint A: Read-only intelligence (3-4 days)
-3. Implementation Sprint B: Transfer flow intelligence (5-6 days)
-4. Implementation Sprint C: Operations + config intelligence (4-5 days)
-5. Backend gap resolution (G-012 to G-016) with POS team
+1. Complete remaining 3 Sprint A screens (StockInventorySummary, StockDetailPanel, HistoryLedger)
+2. Sprint B: Transfer flow intelligence (5-6 days)
+3. Sprint C: Operations + config intelligence (4-5 days)
 
-## Backlog (P0/P1/P2)
+## Backlog
 - P0: G-013 PO number generation (backend team)
-- P1: G-012 Catalog category fields, G-014 Invoice OCR endpoint
+- P1: G-012 Catalog category, G-014 Invoice OCR
 - P2: G-015 Excel parsing, G-016 Invoice storage
-- Future: CR-020 Daily Intelligence Digest, CR-015 FEFO Batch Detail, CR-016 Hierarchy Toggle
