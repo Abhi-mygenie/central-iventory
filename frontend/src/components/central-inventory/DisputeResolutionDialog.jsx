@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { formatPO } from "@/lib/formatters";
 
 /**
  * DisputeResolutionDialog — P16 Phase 3
@@ -36,7 +37,7 @@ export default function DisputeResolutionDialog({ open, onOpenChange, transfer, 
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent data-testid="dispute-resolution-dialog" className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Resolve Dispute — Transfer #{transfer?.id}</DialogTitle>
+          <DialogTitle>Resolve Dispute — {formatPO(transfer?.id)}</DialogTitle>
           <DialogDescription>
             The receiver flagged a discrepancy. Review and accept or reject the dispute.
           </DialogDescription>

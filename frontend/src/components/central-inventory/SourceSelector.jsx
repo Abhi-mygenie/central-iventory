@@ -132,12 +132,18 @@ export default function SourceSelector({ fromRestaurantId, inventoryMasterId, va
               <SelectValue placeholder="Select segment" />
             </SelectTrigger>
             <SelectContent>
-              {segments.map((seg) => (
-                <SelectItem key={seg.segment_id} value={String(seg.segment_id)}>
+              {segments.map((seg) => {
+                const daysLeft = seg.expiry_date ? Math.ceil((new Date(seg.expiry_date + "T23:59:59") - new Date()) / (1000 * 60 * 60 * 24)) : null;
+                const isExpired = daysLeft !== null && daysLeft < 0;
+                const isNearExpiry = daysLeft !== null && daysLeft >= 0 && daysLeft <= 30;
+                return (
+                <SelectItem key={seg.segment_id} value={String(seg.segment_id)} disabled={isExpired}>
                   {seg.batch || `Seg #${seg.segment_id}`} — {seg.display_qty ?? seg.cal_quantity} avail
                   {seg.expiry_date ? ` (exp: ${seg.expiry_date})` : ""}
+                  {isExpired ? " [EXPIRED]" : isNearExpiry ? ` [${daysLeft}d left - FEFO]` : ""}
                 </SelectItem>
-              ))}
+                );
+              })}
             </SelectContent>
           </Select>
         )

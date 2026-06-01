@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Loader2 } from "lucide-react";
+import { Loader2, Clock } from "lucide-react";
+import { formatPO, formatRelativeTime } from "@/lib/formatters";
 
 const RESOLUTION_TYPES = [
   { value: "damaged", label: "Damaged" },
@@ -81,10 +82,24 @@ export default function ReceiveDialog({ open, onOpenChange, transfer, onSubmit, 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent data-testid="receive-dialog" className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Receive Transfer #{transfer?.id}</DialogTitle>
+          <DialogTitle>Receive Transfer {formatPO(transfer?.id)}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-3 py-2">
+          {/* Dispatch time context */}
+          {transfer?.dispatched_at && (
+            <div className="flex items-center gap-2 px-3 py-2 bg-muted/30 border border-border/50 rounded-md text-xs flex-wrap" data-testid="dispatch-time-context">
+              <Clock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+              <span className="text-muted-foreground">Dispatched:</span>
+              <span className="font-semibold">{formatRelativeTime(transfer.dispatched_at)}</span>
+              {transfer.type === "request" && (
+                <span className="ml-auto text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 border border-emerald-200">
+                  Fulfilling your request
+                </span>
+              )}
+            </div>
+          )}
+
           <div className="text-xs text-muted-foreground">
             {lines.length} item{lines.length !== 1 ? "s" : ""} in this transfer
           </div>

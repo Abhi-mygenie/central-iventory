@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Package, AlertCircle } from "lucide-react";
+import { formatPO } from "@/lib/formatters";
 import api from "@/services/api";
 
 /**
@@ -115,7 +116,7 @@ export default function ApproveWaveDialog({ open, onOpenChange, transfer, onSubm
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent data-testid="approve-wave-dialog" className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Partial Approve — Transfer #{transfer?.id}</DialogTitle>
+          <DialogTitle>Partial Approve — {formatPO(transfer?.id)}</DialogTitle>
           <DialogDescription>Select lines to approve with segment allocation. Unselected lines will be placed on hold.</DialogDescription>
         </DialogHeader>
 

@@ -1,30 +1,41 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginContext } from "@/hooks/useLoginContext";
 import api from "@/services/api";
 import { mapRestaurantType, TYPE_LABELS } from "@/lib/terminology";
-import { formatTimestamp, formatItemsCount } from "@/lib/formatters";
+import { formatTimestamp, formatItemsCount, formatRelativeTime, formatPO } from "@/lib/formatters";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import FulfillmentVerdict from "@/components/common/FulfillmentVerdict";
+import StoreHealthStrip from "@/components/common/StoreHealthStrip";
 import {
   LoadingState,
   ErrorState,
   EmptyState,
-  BlockedAction,
 } from "@/components/common/StateDisplays";
 import { StatusBadge } from "@/components/common/Badges";
-import { CheckCircle2, Inbox, SendHorizonal, Truck, Lock, RefreshCw } from "lucide-react";
+import { CheckCircle2, Inbox, SendHorizonal, Truck, RefreshCw, Clock, AlertTriangle } from "lucide-react";
+
+function AgeBadge({ createdAt }) {
+  if (!createdAt) return null;
+  const ms = Date.now() - new Date(createdAt).getTime();
+  const hours = ms / (1000 * 60 * 60);
+  const days = Math.floor(hours / 24);
+  if (days >= 3)
+    return <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-red-100 text-red-700 border border-red-200" data-testid="age-stale">{days} days ago</span>;
+  if (hours >= 24)
+    return <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200" data-testid="age-aging">{Math.floor(hours)}h ago</span>;
+  return <span className="text-[10px] px-2 py-0.5 rounded bg-muted text-muted-foreground" data-testid="age-fresh">{Math.floor(hours)}h ago</span>;
+}
 
 /**
- * SCR-05 Pending Queues — Slice 2
+ * SCR-05 Pending Queues — Sprint B Intelligence Upgrade
  *
- * Enhancements:
- * - Ready to Dispatch tab (Item 1) — filters from transfer history
- * - Items count column (Item 8)
- * - Formatted timestamps (Item 4)
- * - Contextual actions hidden for irrelevant roles
+ * Approval tab: card-based inbox with item-level visibility,
+ * fulfillment verdict, age badges, store health strip, quick actions.
  */
 export default function PendingQueues() {
   const navigate = useNavigate();
@@ -32,8 +43,11 @@ export default function PendingQueues() {
 
   const [data, setData] = useState(null);
   const [readyToDispatch, setReadyToDispatch] = useState([]);
+  const [transferDetails, setTransferDetails] = useState({});
+  const [ownStock, setOwnStock] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortBy, setSortBy] = useState("oldest");
   const [activeTab, setActiveTab] = useState(() =>
     canDo("approve") ? "approval" : "receive"
   );
@@ -42,28 +56,47 @@ export default function PendingQueues() {
     setLoading(true);
     setError(null);
     try {
-      // Fetch pending queues
-      const resp = await api.getPendingQueues();
-      const d = resp.data?.data || resp.data;
+      const [qResp, stockResp] = await Promise.allSettled([
+        api.getPendingQueues(),
+        api.getStockInventory(),
+      ]);
+
+      const d = qResp.status === "fulfilled" ? (qResp.value.data?.data || qResp.value.data) : {};
       setData(d);
 
-      // Fetch transfer history to find "approved" transfers for Ready to Dispatch
+      if (stockResp.status === "fulfilled") {
+        setOwnStock(stockResp.value.data?.current_stocks || []);
+      }
+
+      // Fetch details for approval items (to get line items)
+      const approvals = d?.approval_pending || [];
+      if (approvals.length > 0) {
+        const detailResults = await Promise.allSettled(
+          approvals.slice(0, 10).map((t) => api.getTransferDetails(t.id || t.transfer_id))
+        );
+        const details = {};
+        detailResults.forEach((r, i) => {
+          if (r.status === "fulfilled") {
+            const td = r.value?.data?.data || r.value?.data;
+            const tid = approvals[i]?.id || approvals[i]?.transfer_id;
+            if (tid) details[tid] = td;
+          }
+        });
+        setTransferDetails(details);
+      }
+
+      // Ready to dispatch
       if (canDo("dispatch")) {
         try {
           const histResp = await api.getTransferHistory();
           const histData = histResp.data?.data || histResp.data;
           const histItems = Array.isArray(histData) ? histData : [];
-          // Filter for approved transfers where current user is the source (can dispatch)
-          // P16: Include partially_approved (has approved qty ready for dispatch)
-          // and partially_received (has follow-up dispatch waves possible)
           const dispatchReady = histItems.filter(
             (t) => ["approved", "partially_approved", "partially_received"].includes(t.status) &&
                    String(t.from_restaurant_id) === String(restaurantId)
           );
           setReadyToDispatch(dispatchReady);
-        } catch {
-          setReadyToDispatch([]);
-        }
+        } catch { setReadyToDispatch([]); }
       }
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to load queues");
@@ -72,69 +105,185 @@ export default function PendingQueues() {
     }
   }, [canDo, restaurantId]);
 
-  useEffect(() => {
-    fetchQueues();
-  }, [fetchQueues]);
+  useEffect(() => { fetchQueues(); }, [fetchQueues]);
 
   const approvalPending = data?.approval_pending || [];
   const receivePending = data?.receive_pending || [];
   const myRequests = data?.my_requests || [];
 
-  const renderTransferRow = (item, idx, showActions = false) => {
+  // Sort approvals
+  const sortedApprovals = useMemo(() => {
+    const items = [...approvalPending];
+    if (sortBy === "oldest") {
+      items.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    } else {
+      items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    }
+    return items;
+  }, [approvalPending, sortBy]);
+
+  // Render approval card
+  const renderApprovalCard = (item) => {
     const id = item.id || item.transfer_id;
-    const itemsCount = item.items_count ?? item.lines?.length ?? null;
+    const detail = transferDetails[id];
+    const lines = detail?.lines || [];
+    const createdAt = item.created_at;
+    const ms = createdAt ? Date.now() - new Date(createdAt).getTime() : 0;
+    const hours = ms / (1000 * 60 * 60);
+    const isStale = hours >= 72;
+    const isAging = hours >= 24;
+    const fromName = item.from_restaurant_name || mapRestaurantType(item.from_restaurant_type) || "—";
+    const toName = item.to_restaurant_name || mapRestaurantType(item.to_restaurant_type) || "—";
+
+    // Fulfillment check
+    let fulfillableCount = 0;
+    lines.forEach((l) => {
+      const qty = l.requestedDisplayQty ?? l.quantity ?? 0;
+      const myItem = ownStock.find((s) => s.stock_title === l.stock_title);
+      if (myItem && myItem.display_qty >= qty) fulfillableCount++;
+    });
+
     return (
-      <TableRow
-        key={id || idx}
-        data-testid={`queue-item-${id || idx}`}
-        className="cursor-pointer hover:bg-accent/50"
-        onClick={() => id && navigate(`/transfer/${id}`)}
+      <Card
+        key={id}
+        data-testid={`approval-card-${id}`}
+        className={`mb-3 cursor-pointer hover:shadow-md transition-shadow overflow-hidden ${
+          isStale ? "border-l-[3px] border-l-red-500" : isAging ? "border-l-[3px] border-l-amber-500" : ""
+        }`}
+        onClick={() => navigate(`/transfer/${id}`)}
       >
-        <TableCell className="text-xs font-mono">{id || "—"}</TableCell>
-        <TableCell className="text-xs">{item.from_restaurant_name || mapRestaurantType(item.from_restaurant_type) || "—"}</TableCell>
-        <TableCell className="text-xs">{item.to_restaurant_name || mapRestaurantType(item.to_restaurant_type) || "—"}</TableCell>
-        <TableCell><StatusBadge status={item.status} /></TableCell>
-        <TableCell className="text-xs tabular-nums">{formatItemsCount(itemsCount)}</TableCell>
-        <TableCell className="text-xs text-muted-foreground">{formatTimestamp(item.created_at)}</TableCell>
-        <TableCell>
-          {item.type === "modification_request" ? (
-            <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-medium" data-testid={`type-badge-${id}`}>Modification</span>
-          ) : (
-            <span className="text-[10px] text-muted-foreground">View details</span>
-          )}
-        </TableCell>
-      </TableRow>
+        {/* Card Header */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-sm font-bold" data-testid={`po-${id}`}>{formatPO(id)}</span>
+            <div>
+              <p className="text-xs">{fromName} → {toName}</p>
+              <p className="text-[10px] text-muted-foreground">
+                {mapRestaurantType(item.from_restaurant_type)} requesting from you
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {lines.length > 0 && (
+              <FulfillmentVerdict
+                partialCount={fulfillableCount}
+                totalCount={lines.length}
+              />
+            )}
+            <AgeBadge createdAt={createdAt} />
+          </div>
+        </div>
+
+        {/* Item-level table */}
+        {lines.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="bg-muted/30">
+                  <th className="text-left px-4 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase">Item Requested</th>
+                  <th className="text-left px-4 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase">Qty Requested</th>
+                  <th className="text-left px-4 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase">Your Stock</th>
+                  <th className="text-left px-4 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase">After Approval</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lines.slice(0, 5).map((l, i) => {
+                  const qty = l.requestedDisplayQty ?? l.quantity ?? 0;
+                  const myItem = ownStock.find((s) => s.stock_title === l.stock_title);
+                  const myQty = myItem?.display_qty ?? 0;
+                  const afterQty = myQty - qty;
+                  const insufficient = afterQty < 0;
+                  return (
+                    <tr key={l.id || i} className="border-t border-border/30">
+                      <td className="px-4 py-2">
+                        <span className="font-medium">{l.stock_title}</span>
+                        <span className="text-muted-foreground ml-1">{l.unit}</span>
+                      </td>
+                      <td className="px-4 py-2 tabular-nums font-mono">{qty} {l.unit}</td>
+                      <td className="px-4 py-2">
+                        <span className={`tabular-nums ${myQty === 0 ? "text-red-600 font-semibold" : insufficient ? "text-amber-600" : "text-muted-foreground"}`}>
+                          {myQty} {myItem?.display_unit || l.unit}
+                        </span>
+                      </td>
+                      <td className={`px-4 py-2 tabular-nums font-mono ${insufficient ? "text-red-600" : "text-muted-foreground"}`}>
+                        {Math.round(afterQty * 100) / 100} {l.unit}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Card Footer */}
+        <div className="flex items-center justify-between px-4 py-2.5 bg-muted/20 border-t border-border/30">
+          <span className="text-[10px] text-muted-foreground">
+            {lines.length} item{lines.length !== 1 ? "s" : ""} · Requested by {fromName}
+          </span>
+          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+            <Button variant="outline" size="sm" className="h-7 text-[10px]" onClick={() => navigate(`/transfer/${id}`)}>
+              View Details
+            </Button>
+            <Button variant="default" size="sm" className="h-7 text-[10px]" onClick={() => navigate(`/transfer/${id}`)}>
+              Approve
+            </Button>
+          </div>
+        </div>
+      </Card>
     );
   };
 
-  const tableHeaders = (
-    <TableHeader>
-      <TableRow>
-        <TableHead className="text-[10px]">Transfer ID</TableHead>
-        <TableHead className="text-[10px]">From</TableHead>
-        <TableHead className="text-[10px]">To</TableHead>
-        <TableHead className="text-[10px]">Status</TableHead>
-        <TableHead className="text-[10px]">Items</TableHead>
-        <TableHead className="text-[10px]">Created</TableHead>
-        <TableHead className="text-[10px]">Actions</TableHead>
-      </TableRow>
-    </TableHeader>
-  );
+  // Simple table row for non-approval tabs
+  const renderSimpleCard = (item, idx) => {
+    const id = item.id || item.transfer_id;
+    return (
+      <Card
+        key={id || idx}
+        data-testid={`queue-card-${id || idx}`}
+        className="mb-2 cursor-pointer hover:shadow-md transition-shadow"
+        onClick={() => id && navigate(`/transfer/${id}`)}
+      >
+        <CardContent className="py-3 px-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="font-mono text-xs font-semibold shrink-0">{formatPO(id)}</span>
+            <div className="min-w-0">
+              <p className="text-xs truncate">
+                {item.from_restaurant_name || "—"} → {item.to_restaurant_name || "—"}
+              </p>
+              <p className="text-[10px] text-muted-foreground">
+                {formatRelativeTime(item.created_at)} · {formatItemsCount(item.items_count)}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <StatusBadge status={item.status} />
+            {item.type === "modification_request" && (
+              <Badge className="text-[9px] bg-amber-100 text-amber-700 border-amber-200">Modification</Badge>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   return (
     <div data-testid="pending-queues">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-lg font-bold">Pending Queues</h1>
-        <Button
-          data-testid="refresh-queues-btn"
-          variant="ghost"
-          size="sm"
-          onClick={fetchQueues}
-          disabled={loading}
-          className="h-7 text-xs gap-1"
-        >
-          <RefreshCw className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} /> Refresh
-        </Button>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-muted-foreground">Updated just now</span>
+          <Button
+            data-testid="refresh-queues-btn"
+            variant="ghost"
+            size="sm"
+            onClick={fetchQueues}
+            disabled={loading}
+            className="h-7 text-xs gap-1"
+          >
+            <RefreshCw className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} /> Refresh
+          </Button>
+        </div>
       </div>
 
       {loading ? (
@@ -149,13 +298,12 @@ export default function PendingQueues() {
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 Approvals
                 {approvalPending.length > 0 && (
-                  <span className="ml-1 bg-blue-100 text-blue-700 text-[10px] px-1.5 py-0.5 rounded-full">
+                  <span className="ml-1 bg-primary text-primary-foreground text-[10px] px-1.5 py-0.5 rounded-full">
                     {approvalPending.length}
                   </span>
                 )}
               </TabsTrigger>
             )}
-            {/* Ready to Dispatch tab (Item 1) — only for dispatch-capable roles */}
             {canDo("dispatch") && (
               <TabsTrigger data-testid="tab-ready-to-dispatch" value="readyToDispatch" className="gap-1.5">
                 <Truck className="h-3.5 w-3.5" />
@@ -187,79 +335,59 @@ export default function PendingQueues() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Approval tab */}
+          {/* ═══ APPROVAL TAB — Card-based inbox ═══ */}
           {canDo("approve") && (
             <TabsContent value="approval">
               {approvalPending.length === 0 ? (
-                <EmptyState title="No pending approvals" />
+                <EmptyState title="No pending approvals" description="All approval requests have been handled." />
               ) : (
-                <Card>
-                  <CardContent className="py-0 px-0">
-                    <Table>
-                      {tableHeaders}
-                      <TableBody>
-                        {approvalPending.map((item, idx) => renderTransferRow(item, idx, true))}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
+                <>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs text-muted-foreground">
+                      {sortedApprovals.length} transfer{sortedApprovals.length !== 1 ? "s" : ""} awaiting approval
+                    </span>
+                    <Select value={sortBy} onValueChange={setSortBy}>
+                      <SelectTrigger className="w-36 h-7 text-[10px]" data-testid="sort-approvals">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="oldest">Oldest first</SelectItem>
+                        <SelectItem value="newest">Newest first</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {sortedApprovals.map(renderApprovalCard)}
+                </>
               )}
             </TabsContent>
           )}
 
-          {/* Ready to Dispatch tab (Item 1) */}
+          {/* ═══ Ready to Dispatch ═══ */}
           {canDo("dispatch") && (
             <TabsContent value="readyToDispatch">
               {readyToDispatch.length === 0 ? (
                 <EmptyState title="No transfers ready to dispatch" description="Approved transfers awaiting dispatch will appear here" />
               ) : (
-                <Card>
-                  <CardContent className="py-0 px-0">
-                    <Table>
-                      {tableHeaders}
-                      <TableBody>
-                        {readyToDispatch.map((item, idx) => renderTransferRow(item, idx, true))}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
+                readyToDispatch.map((item, idx) => renderSimpleCard(item, idx))
               )}
             </TabsContent>
           )}
 
-          {/* Receive tab */}
+          {/* ═══ Receive ═══ */}
           <TabsContent value="receive">
             {receivePending.length === 0 ? (
               <EmptyState title="No pending receives" />
             ) : (
-              <Card>
-                <CardContent className="py-0 px-0">
-                  <Table>
-                    {tableHeaders}
-                    <TableBody>
-                      {receivePending.map((item, idx) => renderTransferRow(item, idx, true))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
+              receivePending.map((item, idx) => renderSimpleCard(item, idx))
             )}
           </TabsContent>
 
-          {/* My Requests tab */}
+          {/* ═══ My Requests ═══ */}
           <TabsContent value="myrequests">
             {myRequests.length === 0 ? (
               <EmptyState title="No requests" description="You haven't made any stock requests" />
             ) : (
-              <Card>
-                <CardContent className="py-0 px-0">
-                  <Table>
-                    {tableHeaders}
-                    <TableBody>
-                      {myRequests.map((item, idx) => renderTransferRow(item, idx, false))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
+              myRequests.map((item, idx) => renderSimpleCard(item, idx))
             )}
           </TabsContent>
         </Tabs>

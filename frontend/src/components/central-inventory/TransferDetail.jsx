@@ -4,7 +4,7 @@ import { useLoginContext } from "@/hooks/useLoginContext";
 import { useWriteAction } from "@/hooks/useWriteAction";
 import api from "@/services/api";
 import { mapRestaurantType, getStatusConfig, getLineStatusConfig, TYPE_LABELS } from "@/lib/terminology";
-import { formatTimestamp } from "@/lib/formatters";
+import { formatTimestamp, formatPO, formatRelativeTime } from "@/lib/formatters";
 import { getAvailableActions } from "@/lib/transferActions";
 import StatusTimeline from "./StatusTimeline";
 import ConfirmActionDialog from "./ConfirmActionDialog";
@@ -314,8 +314,11 @@ export default function TransferDetail() {
 
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <div className="flex items-center gap-3">
-          <h1 className="text-lg font-bold">Transfer #{data.id || id}</h1>
+          <h1 className="text-lg font-bold">{formatPO(data.id || id)}</h1>
           <StatusBadge status={data.status} />
+          {data.created_at && (
+            <span className="text-xs text-muted-foreground">Created {formatRelativeTime(data.created_at)}</span>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <Button
