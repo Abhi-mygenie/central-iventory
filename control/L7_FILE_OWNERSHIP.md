@@ -1,6 +1,6 @@
 # L7 — File Ownership (Frozen vs Active)
 
-> **Updated:** 2026-06-01 (Sprint A+B+C implementation complete)
+> **Updated:** 2026-06-01 (Session closing — all implementation complete)
 
 ---
 
@@ -12,52 +12,55 @@
 | `memory/central_inventory/SYSTEM_HANDOVER_DOCUMENT.md` | Architecture bible |
 | `memory/central_inventory/OWNER_ANSWERS_COMPLETE.md` | 104 owner decisions |
 | `memory/central_inventory/CENTRAL_INVENTORY_LOGIN_CONTEXT_AND_SCREEN_VISIBILITY_MATRIX.md` | Role-screen matrix |
-| `frontend/src/lib/terminology.js` | Terminology inversion mapping — changes break everything |
+| `frontend/src/lib/terminology.js` | Terminology inversion — changes break everything |
 | `frontend/src/lib/screenVisibility.js` | Role-based nav + access gates |
-| `backend/.env` | Protected env vars (MONGO_URL, DB_NAME) |
-| `frontend/.env` | Protected env vars (REACT_APP_BACKEND_URL) |
-| `control/registry.json` | Single source of truth — edit carefully |
+| `backend/.env` | Protected env vars |
+| `frontend/.env` | Protected env vars |
+| `control/registry.json` | Single source of truth — edit carefully, regenerate dashboard |
 | `control/sessions/INTELLIGENT_UI_FREEZE_PHASE_7_FINAL_FREEZE.md` | Frozen implementation spec |
 
-## Active Files (Hot — frequently modified)
+## Files Created in S2 (6 new)
 
-| File | Owner | Purpose |
-|------|-------|---------|
-| `frontend/src/services/api.js` | Shared | 88 API methods — all proxy calls |
-| `frontend/src/App.js` | Shared | Route registrations |
-| `frontend/src/components/central-inventory/*.jsx` | Per-CR | Feature components |
-| `backend/server.py` | Backend | Proxy layer (177 lines) |
+| File | Purpose | Depends On |
+|------|---------|-----------|
+| `hooks/useStockIntelligence.js` | Shared intelligence computations | api.js |
+| `components/common/StockIntelligenceBar.jsx` | 6-metric stock health strip | — |
+| `components/common/PostSubmitConfirmation.jsx` | Success card for write actions | formatters.js |
+| `components/common/StoreHealthStrip.jsx` | Compact store health display | — |
+| `components/common/FulfillmentVerdict.jsx` | Can/Partial/Can't fulfill badge | — |
+| `lib/formatters.js` (formatPO added) | PO-XXXX format utility | — |
 
-## New Files Created (Sprint A+B+C)
+## Files Modified in S2 (26 existing)
 
-| File | Sprint | Purpose |
-|------|:------:|---------|
-| `frontend/src/hooks/useStockIntelligence.js` | A | Shared intelligence computations |
-| `frontend/src/components/common/StockIntelligenceBar.jsx` | A | 6-metric stock health strip |
-| `frontend/src/components/common/PostSubmitConfirmation.jsx` | B | Reusable success card |
-| `frontend/src/components/common/StoreHealthStrip.jsx` | B | Compact store health display |
-| `frontend/src/components/common/FulfillmentVerdict.jsx` | B | Fulfillment verdict badge |
-
-## Heavily Modified Files (Sprint A+B+C)
-
-| File | Sprint | Change Type |
-|------|:------:|-------------|
-| `OperationsHub.jsx` | A | Full rewrite — intelligence command center |
-| `PendingQueues.jsx` | B | Full rewrite — card-based approval inbox |
-| `StockDetailPanel.jsx` | A | Major — FEFO enhancements, batch table upgrades |
-| `HistoryLedger.jsx` | A | Major — PO column, Export CSV |
-| `StatusTimeline.jsx` | A | Major — relative times, durations, stale detection |
-
-## Conflict Zones (Multiple CRs Touch These)
-
-| File | Risk | CRs That Touch It |
-|------|------|--------------------|
-| `api.js` | HIGH — every CR adds methods | All CRs |
-| `App.js` | MEDIUM — route additions | Most CRs |
-| `OperationsHub.jsx` | HIGH — intelligence hub, many data sources | Sprint A + many future CRs |
-| `PendingQueues.jsx` | HIGH — card inbox, batch-fetches details | Sprint B + approval CRs |
-| `formatters.js` | MEDIUM — new formatPO utility, shared | All screens using PO |
-| `screenVisibility.js` | LOW — nav item additions | CRs adding new screens |
+| File | Change Summary |
+|------|---------------|
+| `OperationsHub.jsx` | Full rewrite — greeting, NBA, KPIs, stock health, store grid, activity |
+| `PendingQueues.jsx` | Full rewrite — card-based inbox, item table, verdicts, age badges |
+| `AddStockPurchaseForm.jsx` | Full rewrite — 3-mode tabbed (Upload Invoice + Manual Entry), stock context |
+| `StockDetailPanel.jsx` | Major — % of Total, Action col, FEFO badge, reorder suggestion |
+| `HistoryLedger.jsx` | Major — PO column, Export CSV |
+| `StatusTimeline.jsx` | Major — relative times, durations, stale detection |
+| `TransferDetail.jsx` | PO title, relative time |
+| `ReceiveDialog.jsx` | PO title, dispatch time context |
+| `ApproveWaveDialog.jsx` | PO title |
+| `DisputeResolutionDialog.jsx` | PO title |
+| `SourceSelector.jsx` | FEFO badges, expired disabled |
+| `StockAdjustmentForm.jsx` | Stock context bar, impact preview, undo guidance |
+| `WastageEntryForm.jsx` | Stock context, undo guidance |
+| `OperationalSettings.jsx` | Impact badges, "Affects all stores" |
+| `VendorManagement.jsx` | Status column (Active/Inactive) |
+| `WastageReport.jsx` | Export CSV |
+| `StockInventorySummary.jsx` | 3 new columns, Export CSV |
+| `IngredientCatalogue.jsx` | Vendor column |
+| `ProductCatalogue.jsx` | "Has Recipe" column |
+| `RecipeCatalogue.jsx` | "Cost Mapped" column |
+| `AddonRecipeCatalogue.jsx` | "Cost Mapped" column |
+| `DailyConsumptionReport.jsx` | Days of Cover column |
+| `HierarchyManagement.jsx` | Push Status column (Synced/Stale) |
+| `HierarchySummary.jsx` | Health column (Active/No activity) |
+| `StoreDetail.jsx` | Stock health summary strip (3 KPI cards) |
+| `DirectDispatchForm.jsx` | Destination health strip |
+| `RequestStockForm.jsx` | Low-stock suggestions banner |
 
 ## Key Dependencies
 

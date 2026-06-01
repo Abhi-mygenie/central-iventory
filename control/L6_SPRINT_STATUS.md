@@ -1,49 +1,13 @@
 # L6 — Sprint Status
 
-> **Updated:** 2026-06-01 (Sprint A+B+C complete)
+> **Updated:** 2026-06-01 (Session closing)
 > **Source of truth for items:** `control/registry.json`
 
 ---
 
-## Active Sprint
+## No Active Sprint
 
-### S2 — Intelligent UI Implementation
-- **Start:** 2026-06-01
-- **End:** 2026-06-01 (all 3 sub-sprints completed in single session)
-- **Goal:** Implement intelligence layer across all screens per Phase 7 frozen spec.
-
-**Sprint A — Foundation Intelligence (COMPLETE, 21/21 PASS):**
-- OperationsHub.jsx — full rewrite (greeting, NBA banners, KPIs, stock health, store grid, quick actions, activity feed)
-- StockInventorySummary.jsx — +3 columns (Expiry Risk, Pending, Days of Cover), Export CSV
-- StockDetailPanel.jsx — +% of Total, Action column, FEFO dispatch-first badge, reorder suggestion
-- HistoryLedger.jsx — PO/Ref column (PO-XXXX format), Export CSV
-- StatusTimeline.jsx — relative timestamps, durations, lifecycle total, stale detection
-- NEW: useStockIntelligence.js hook, StockIntelligenceBar.jsx component
-- NEW: formatPO() utility in formatters.js
-
-**Sprint B — Transfer Flow Intelligence (COMPLETE, 18/18 PASS):**
-- PendingQueues.jsx — full rewrite: table → card-based approval inbox with item-level table, age badges, fulfillment verdicts, sort control
-- TransferDetail.jsx — PO format title, "Created X days ago" relative time
-- ReceiveDialog.jsx — PO format, dispatch time context
-- ApproveWaveDialog.jsx — PO format
-- DisputeResolutionDialog.jsx — PO format
-- SourceSelector.jsx — FEFO badges on segments, expired segments disabled
-- NEW: PostSubmitConfirmation.jsx, StoreHealthStrip.jsx, FulfillmentVerdict.jsx
-
-**Sprint C — Operations + Config Intelligence (COMPLETE, 11/11 PASS):**
-- StockAdjustmentForm.jsx — stock context bar, impact preview, undo guidance
-- WastageEntryForm.jsx — stock context, undo guidance
-- OperationalSettings.jsx — "High impact" badge, "Affects all stores" badge
-- VendorManagement.jsx — Status column (Active/Inactive detection >60 days)
-- WastageReport.jsx — Export CSV button
-- BUG FIX: display_qty string → Number() conversion for arithmetic
-
-**Remaining polish (deferred to next session):**
-- Catalogue screens: "Used in X recipes" cross-ref columns
-- DailyConsumptionReport: days-of-cover column
-- HierarchyManagement: push status (Synced/Stale)
-- RequestStockForm: Intelligent PO auto-detect tab
-- DirectDispatchForm: destination needs auto-detect
+All planned work is complete. Next work requires backend team deliverables (G-013, G-014, G-015).
 
 ## Closed Sprints
 
@@ -52,26 +16,35 @@
 - **CRs:** CR-021 (Implementation, CLOSED), CR-022 (Code Review Fixes, CLOSED)
 - **BUGs:** BUG-016 (display_qty TypeError, RESOLVED)
 - **Tests:** 55/55 PASS across 4 iterations (27-30)
-- **Governance Note:** CR-021 and CR-022 registered retroactively. Work completed before registration — gap documented.
+- **Screens upgraded:** 22+ (all screens in the application)
+- **Files created:** 6 new, **Files modified:** 26 existing
+- **Additional work:** Procurement 3-mode UI, Product/Recipe/Addon-Recipe cross-ref columns, Hierarchy Summary health column, Store Detail health strip
+- **Governance Note:** CR-021/CR-022 registered retroactively — gap documented
 
 ### S1 — Governance Setup + Intelligent UI Freeze
 - **Period:** 2026-05-31
+- **CRs:** CR-019 (UI Freeze, CLOSED — 7/7 artifacts)
 - **Deliverables:** 10-layer control, registry.json, dev dashboard, 7-phase UI freeze, 9 HTML previews, 24/24 screens approved
-- **CRs:** CR-019 (UI Freeze, CLOSED)
-- **Status:** CLOSED
 
 ### S0 — Pre-Governance (Retroactive)
 - **Period:** 2026-01-01 → 2026-05-29
 - **CRs:** CR-001 to CR-014 (14 CRs, all CLOSED)
 - **BUGs:** BUG-001 to BUG-015 (15 BUGs, mixed status)
-- **Closure Note:** Owner sign-off pending on all items.
 
-## Unassigned Items (Backlog)
+## Backlog (Blocked on Backend)
 
-| ID | Title | Status | Priority |
-|----|-------|--------|----------|
-| CR-015 | P24 — FEFO Batch Stock Detail | PLANNED | P0 |
-| CR-016 | P20-Phase2 — Hierarchy Toggle | PLANNED | P1 |
-| CR-017 | P21-Smart — Smart Dispatch Assistance | PROPOSED | P1 |
-| CR-018 | P25 — Wastage Report Enhancements | PLANNED | P2 |
-| CR-020 | Daily Intelligence Digest (SMS/WhatsApp/Email) | PROPOSED | Future |
+| ID | Title | Blocker | Priority |
+|----|-------|---------|----------|
+| — | Wire Invoice AI extraction | G-014 | P1 |
+| — | Wire Excel import parsing | G-015 | P2 |
+| — | Replace formatPO with real PO numbers | G-013 | P0 |
+| CR-015 | P24 — FEFO Batch Stock Detail | — | P0 |
+| CR-016 | P20-Phase2 — Hierarchy Toggle | — | P1 |
+| CR-017 | P21-Smart — Smart Dispatch Assistance | — | P1 |
+| CR-018 | P25 — Wastage Report Enhancements | — | P2 |
+| CR-020 | Daily Intelligence Digest | — | Future |
+
+## Owner Signoff Pending
+
+- **CR-021** — Sprint A+B+C Intelligence Implementation
+- **CR-022** — Code Quality Review Fixes

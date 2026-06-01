@@ -1,6 +1,6 @@
 # L5 — Env & Config Registry
 
-> **Updated:** 2026-06-01 (Sprint A+B+C implementation complete)
+> **Updated:** 2026-06-01 (Session closing)
 
 ---
 
@@ -18,20 +18,26 @@
 
 | Variable | Value | Purpose | Protected? |
 |----------|-------|---------|:----------:|
-| `REACT_APP_BACKEND_URL` | `https://deploy-workflow-14.preview.emergentagent.com` | Backend API URL (managed by platform) | YES |
+| `REACT_APP_BACKEND_URL` | `https://deploy-workflow-14.preview.emergentagent.com` | Backend API URL | YES |
 | `WDS_SOCKET_PORT` | `443` | WebSocket dev server port | YES |
 | `ENABLE_HEALTH_CHECK` | `false` | Health check plugin toggle | NO |
 
-## Feature Flags
+## Test Environment Variables (for pytest)
 
-| Flag | Location | Current Value | Purpose |
-|------|----------|:------------:|---------|
-| `ENABLE_HEALTH_CHECK` | `frontend/.env` | `false` | Webpack health check plugin |
+| Variable | Purpose | Where Used |
+|----------|---------|-----------|
+| `TEST_PASSWORD` | Shared test password | All test files in `backend/tests/` |
+| `TEST_MASTER_EMAIL` | Central store test email | test_p17, test_p21, etc. |
+| `TEST_CENTRAL_EMAIL` | Master store test email | test_p12, test_p17, etc. |
+| `TEST_FRANCHISE_EMAIL` | Outlet test email | test_p12, test_p17, etc. |
+
+**Note:** Test credentials were moved from hardcoded values to environment variables as part of CR-022 security fixes.
 
 ## Config History
 
 | Date | Change | By | Reason |
 |------|--------|----|----|
-| 2026-05-31 | Initial registry created | Governance setup | Baseline documentation |
-| 2026-06-01 | PREPROD_API_BASE_V1/V2 added to backend .env | Sprint deployment | Moved from code defaults to env vars |
-| 2026-06-01 | Frontend .env updated for deploy-workflow-14 | Platform deployment | New preview URL |
+| 2026-05-31 | Initial registry created | Governance setup | Baseline |
+| 2026-06-01 | PREPROD_API_BASE_V1/V2 added to backend .env | Deployment | Moved from code defaults |
+| 2026-06-01 | Frontend .env updated for deploy-workflow-14 | Platform | New preview URL |
+| 2026-06-01 | Test credentials moved to env vars | CR-022 | Security fix |

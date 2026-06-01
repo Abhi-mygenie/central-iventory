@@ -2773,9 +2773,15 @@
         "PostSubmitConfirmation.jsx",
         "StoreHealthStrip.jsx",
         "FulfillmentVerdict.jsx",
-        "formatters.js"
+        "formatters.js",
+        "AddStockPurchaseForm.jsx",
+        "ProductCatalogue.jsx",
+        "RecipeCatalogue.jsx",
+        "AddonRecipeCatalogue.jsx",
+        "HierarchySummary.jsx",
+        "StoreDetail.jsx"
       ],
-      "notes": "Retroactive registration. 22 screens upgraded, 6 new files, 20 modified. 55/55 tests PASS. Governance gap: work started without CR registration.",
+      "notes": "Retroactive registration. 22+ screens upgraded, 6 new files, 26 modified. 55/55 tests PASS + 6 additional screen fixes + Procurement 3-mode upgrade. Governance gap: work started without CR registration.",
       "artifact_refs": [
         {
           "artifact": 0,
