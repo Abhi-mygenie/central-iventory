@@ -62,7 +62,7 @@ function LineQtyBreakdown({ line }) {
 export default function TransferDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { restaurantType, restaurantId } = useLoginContext();
+  const { restaurantType, restaurantId, isTopLevel } = useLoginContext();
   const { restaurantMap } = useRestaurantMap();
   const { submitting, execute } = useWriteAction();
 
@@ -70,6 +70,11 @@ export default function TransferDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [linkedMods, setLinkedMods] = useState([]);
+
+  // C1: Requester store snapshot + approval impact state
+  const [requesterStock, setRequesterStock] = useState([]);
+  const [ownStock, setOwnStock] = useState([]);
+  const [snapshotLoading, setSnapshotLoading] = useState(false);
 
   // Dialog state
   const [confirmDialog, setConfirmDialog] = useState(null);
@@ -110,6 +115,35 @@ export default function TransferDetail() {
   }, [id]);
 
   useEffect(() => { fetchDetail(); }, [fetchDetail]);
+
+  // C1: Fetch requester store snapshot + own stock for approval impact
+  useEffect(() => {
+    if (!data || !isTopLevel) return;
+    if (!["requested", "approved", "partially_approved"].includes(data.status)) return;
+    let cancelled = false;
+    (async () => {
+      setSnapshotLoading(true);
+      try {
+        const [reqResp, ownResp] = await Promise.allSettled([
+          api.getHierarchyDetail({ storeRestaurantId: data.to_restaurant_id }),
+          api.getStockInventory(),
+        ]);
+        if (cancelled) return;
+        if (reqResp.status === "fulfilled") {
+          const rd = reqResp.value?.data?.data || reqResp.value?.data;
+          setRequesterStock(rd?.child_stock_summary || []);
+        }
+        if (ownResp.status === "fulfilled") {
+          setOwnStock(ownResp.value?.data?.current_stocks || []);
+        }
+      } catch (e) {
+        console.warn("[transfer-detail] Snapshot fetch failed:", e);
+      } finally {
+        if (!cancelled) setSnapshotLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [data, isTopLevel]);
 
   // ── Action handlers ────────────────────────────────────────────
   const handleApprove = () => {
@@ -377,6 +411,161 @@ export default function TransferDetail() {
           </CardContent>
         </Card>
       </div>
+
+      {/* C1: Requester Store Snapshot + Approval Impact (Central only, requested/approved status) */}
+      {isTopLevel && ["requested", "approved", "partially_approved"].includes(data.status) && requesterStock.length > 0 && (
+        <>
+          {/* REQUESTER STORE SNAPSHOT */}
+          <Card className="mb-4 border-l-[3px] border-l-blue-500" data-testid="requester-snapshot">
+            <CardHeader className="py-2.5 px-4">
+              <CardTitle className="text-xs font-medium uppercase tracking-wider flex items-center gap-1.5 text-blue-700">
+                <BarChart3 className="h-3.5 w-3.5" />
+                Requester Store Snapshot — {toName}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="py-0 px-0">
+              {/* Summary stat cards */}
+              {(() => {
+                const outCount = requesterStock.filter(i => (parseFloat(i.display_quantity) || 0) === 0).length;
+                const lowCount = requesterStock.filter(i => i.is_low_stock && (parseFloat(i.display_quantity) || 0) > 0).length;
+                const adequateCount = requesterStock.filter(i => !i.is_low_stock && (parseFloat(i.display_quantity) || 0) > 0).length;
+                const requestedTitles = new Set(lines.map(l => (l.stock_title || "").toLowerCase()));
+                const outNotRequested = requesterStock.filter(i => (parseFloat(i.display_quantity) || 0) === 0 && !requestedTitles.has((i.stock_title || "").toLowerCase())).length;
+                return (
+                  <>
+                    <div className="grid grid-cols-4 gap-2 px-4 py-3 border-b border-border/50">
+                      <div className="text-center">
+                        <p className="text-lg font-bold text-red-600 tabular-nums">{outCount}</p>
+                        <p className="text-[9px] text-muted-foreground uppercase">Out of Stock</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-lg font-bold text-amber-600 tabular-nums">{lowCount}</p>
+                        <p className="text-[9px] text-muted-foreground uppercase">Low Stock</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-lg font-bold text-emerald-600 tabular-nums">{adequateCount}</p>
+                        <p className="text-[9px] text-muted-foreground uppercase">Adequate</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-lg font-bold tabular-nums">{requesterStock.length}</p>
+                        <p className="text-[9px] text-muted-foreground uppercase">Total Items</p>
+                      </div>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="text-[10px]">Item</TableHead>
+                            <TableHead className="text-[10px] text-right">Stock Level</TableHead>
+                            <TableHead className="text-[10px] text-right">Min Threshold</TableHead>
+                            <TableHead className="text-[10px]">Status</TableHead>
+                            <TableHead className="text-[10px]">In This Request?</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {requesterStock.map((item, idx) => {
+                            const qty = parseFloat(item.display_quantity) || 0;
+                            const minQty = parseFloat(item.min_qty_alert) || 0;
+                            const isOut = qty === 0;
+                            const isLow = item.is_low_stock && qty > 0;
+                            const matchedLine = lines.find(l => (l.stock_title || "").toLowerCase() === (item.stock_title || "").toLowerCase());
+                            return (
+                              <TableRow key={idx} data-testid={`snapshot-row-${idx}`} className={isOut ? "bg-red-50/30" : isLow ? "bg-amber-50/30" : ""}>
+                                <TableCell className="text-xs font-medium">
+                                  {item.stock_title} <span className="text-muted-foreground">{item.unit}</span>
+                                </TableCell>
+                                <TableCell className={`text-xs text-right tabular-nums ${isOut ? "text-red-600 font-semibold" : isLow ? "text-amber-600" : ""}`}>
+                                  {qty} {item.unit}
+                                </TableCell>
+                                <TableCell className="text-xs text-right tabular-nums text-muted-foreground">{minQty} {item.unit}</TableCell>
+                                <TableCell>
+                                  {isOut ? (
+                                    <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-red-100 text-red-700 border border-red-200">OUT</span>
+                                  ) : isLow ? (
+                                    <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200">LOW</span>
+                                  ) : (
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 border border-emerald-200">OK</span>
+                                  )}
+                                </TableCell>
+                                <TableCell className="text-xs">
+                                  {matchedLine ? (
+                                    <span className="text-blue-700 font-medium">Yes — {matchedLine.requestedDisplayQty ?? matchedLine.quantity} {matchedLine.unit}</span>
+                                  ) : (
+                                    <span className="text-muted-foreground">Not requested</span>
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </div>
+                    {outNotRequested > 0 && (
+                      <p className="text-[10px] text-muted-foreground px-4 py-2 border-t border-border/50">
+                        {outNotRequested} out-of-stock item{outNotRequested > 1 ? "s" : ""} not included in this request
+                      </p>
+                    )}
+                  </>
+                );
+              })()}
+            </CardContent>
+          </Card>
+
+          {/* APPROVAL IMPACT ON YOUR STOCK */}
+          <Card className="mb-4 border-l-[3px] border-l-amber-500" data-testid="approval-impact">
+            <CardHeader className="py-2.5 px-4">
+              <CardTitle className="text-xs font-medium uppercase tracking-wider flex items-center gap-1.5 text-amber-700">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Approval Impact on Your Stock
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="py-0 px-0">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-[10px]">Item</TableHead>
+                      <TableHead className="text-[10px] text-right">Requested</TableHead>
+                      <TableHead className="text-[10px] text-right">Your Stock</TableHead>
+                      <TableHead className="text-[10px] text-right">After Approval</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {lines.map((line, idx) => {
+                      const requested = line.requestedDisplayQty ?? line.quantity ?? 0;
+                      const myItem = ownStock.find(s => (s.stock_title || "").toLowerCase() === (line.stock_title || "").toLowerCase());
+                      const myQty = myItem?.display_qty ?? 0;
+                      const afterQty = Math.round((myQty - requested) * 10000) / 10000;
+                      const isNegative = afterQty < 0;
+                      return (
+                        <TableRow key={idx} data-testid={`impact-row-${idx}`}>
+                          <TableCell className="text-xs font-medium">{line.stock_title} <span className="text-muted-foreground">{line.unit}</span></TableCell>
+                          <TableCell className="text-xs text-right tabular-nums font-mono">{requested} {line.unit}</TableCell>
+                          <TableCell className="text-xs text-right tabular-nums">{myQty} {myItem?.display_unit || line.unit}</TableCell>
+                          <TableCell className={`text-xs text-right tabular-nums font-mono font-semibold ${isNegative ? "text-red-600" : "text-muted-foreground"}`}>
+                            {afterQty} {line.unit}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+              <p className="text-[10px] text-amber-700 px-4 py-2 border-t border-border/50">
+                Approving will reduce your stock as shown above
+              </p>
+            </CardContent>
+          </Card>
+        </>
+      )}
+      {isTopLevel && ["requested", "approved", "partially_approved"].includes(data.status) && snapshotLoading && (
+        <Card className="mb-4">
+          <CardContent className="py-6 px-4 text-center">
+            <Loader2 className="h-4 w-4 animate-spin mx-auto mb-2 text-muted-foreground" />
+            <p className="text-xs text-muted-foreground">Loading requester store snapshot...</p>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="mb-4">
         <CardContent className="py-3 px-4">
