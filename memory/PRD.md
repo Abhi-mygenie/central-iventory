@@ -15,7 +15,7 @@ Build a governance & control system + intelligent UI freeze for the Central Inve
 
 ### Intelligent UI Freeze (FROZEN)
 - **24/24 screens approved** across 5 flows
-- **10 HTML previews** at `/__dev/previews/`
+- **9 HTML previews** at `/__dev/previews/`
 - **Phase 7 Final Freeze** at `control/sessions/INTELLIGENT_UI_FREEZE_PHASE_7_FINAL_FREEZE.md`
 - **3 implementation sprints planned**: Sprint A (read-only, 3-4d), Sprint B (transfer flow, 5-6d), Sprint C (operations, 4-5d)
 - **~28% codebase growth** estimated (9,800 → 12,500 lines)

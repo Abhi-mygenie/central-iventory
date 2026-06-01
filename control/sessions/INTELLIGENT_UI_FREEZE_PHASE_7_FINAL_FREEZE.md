@@ -13,7 +13,7 @@
 Convert 24 existing Central Inventory screens from crude functional UI into intelligent operational interfaces. All intelligence is frontend-side. Backend is proxy-only (unchanged). 5 backend gaps registered for parallel backend work.
 
 **Screens:** 24 (+ 6 modals)
-**Previews:** 10 HTML files at `/__dev/previews/`
+**Previews:** 9 HTML files at `/__dev/previews/`
 **New hooks needed:** 1 (`useStockIntelligence`)
 **New components needed:** ~5 shared intelligence components
 **Existing components modified:** 24

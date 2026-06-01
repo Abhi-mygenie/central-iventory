@@ -1,8 +1,7 @@
 # Intelligent UI Freeze — Master Progress & Approval Record
 
-> **Created:** 2026-05-31
-> **Last Updated:** 2026-05-31
-> **Status:** IN PROGRESS — Flow B + C approved, Flow D/E/A pending
+> **Last Updated:** 2026-05-31 (Phase 7 FROZEN)
+> **Status:** COMPLETE — All 24 screens approved, Phase 7 Final Freeze locked
 
 ---
 
@@ -30,10 +29,10 @@ Converting all Central Inventory screens from crude functional UI into an intell
 | **Phase 4** — Flow C Screen Previews | COMPLETE — 1 combined preview, approved | `previews/C_stock_operations.html` |
 | **Phase 4** — Flow D Screen Previews | PENDING | — |
 | **Phase 4** — Flow E Screen Previews | PENDING | — |
-| **Phase 4** — Flow A Screen Preview | PENDING | — |
-| **Phase 5** — Slice Approval Gate | PENDING (after all flows) | — |
-| **Phase 6** — E2E Intelligence Review | PENDING | — |
-| **Phase 7** — Final Freeze Document | PENDING | — |
+| **Phase 4** — Flow A Screen Preview | COMPLETE — 1 preview, approved | `previews/A1_operations_hub.html` |
+| **Phase 5** — Slice Approval Gate | COMPLETE | Inline — screen-by-screen per flow |
+| **Phase 6** — E2E Intelligence QA | COMPLETE | `sessions/INTELLIGENT_UI_FREEZE_PHASE_6_QA_REVIEW.md` — 8 gaps found, all fixed |
+| **Phase 7** — Final Freeze Document | **FROZEN** | `sessions/INTELLIGENT_UI_FREEZE_PHASE_7_FINAL_FREEZE.md` |
 
 ---
 
@@ -70,30 +69,43 @@ Converting all Central Inventory screens from crude functional UI into an intell
 - Excel/CSV upload in Manual Entry tab with review-approve flow
 - Download template feature
 
-### Flow D — Stock Visibility (4 screens) — PENDING
+### Flow D — Stock Visibility (4 screens) — APPROVED
 
-| Screen | Status |
-|--------|:------:|
-| D1 — Stock Inventory Summary | Not started |
-| D2 — Stock Detail Panel (FEFO) | Not started |
-| D3 — History & Ledger | Not started |
-| D4 — Status Timeline | Not started |
+| Screen | Preview | Owner Decision | Key Intelligence |
+|--------|---------|:-:|----------------|
+| **D1 — Stock Inventory** | `D_stock_visibility.html` | APPROVED | Expiry Risk, Pending In/Out, Days of Cover, Export CSV |
+| **D2 — Stock Detail** | `D_stock_visibility.html` | APPROVED | FEFO batch table, "dispatch first", expired "Record Wastage", consumption context, reorder suggestion |
+| **D3 — History & Ledger** | `D_stock_visibility.html` | APPROVED | Movement badges, PO ref, signed qty, From/To with store type, Export CSV |
+| **D4 — Status Timeline** | `D_stock_visibility.html` | APPROVED | Relative timestamps, duration between steps, total lifecycle, stale detection |
 
-### Flow E — Configuration (8 screens) — PENDING
+### Flow E — Configuration (8 screens) — APPROVED
 
-| Screen | Status |
-|--------|:------:|
-| E1 — Operational Settings | Not started |
-| E2 — Vendor Management | Not started |
-| E3-E6 — Catalogue screens (4) | Not started |
-| E7 — Daily Consumption Report | Not started |
-| E8 — Hierarchy Management | Not started |
+| Screen | Preview | Owner Decision | Key Intelligence |
+|--------|---------|:-:|----------------|
+| **E1 — Settings** | `E_configuration.html` | APPROVED | Impact badges, "Affects all stores" warning |
+| **E2 — Vendors** | `E_configuration.html` | APPROVED | Last purchase, inactive detection |
+| **E3-E6 — Catalogue** | `E_configuration.html` | APPROVED | Usage cross-ref, push status, unmapped highlight |
+| **E7 — Consumption** | `E_configuration.html` | APPROVED | Consumption vs stock, days-of-cover, trend |
+| **E8 — Hierarchy** | `E_configuration.html` | APPROVED | Push status, stale detection, items-behind |
 
-### Flow A — Operations Hub (1 screen) — PENDING
+### Flow A — Operations Hub (1 screen) — APPROVED
 
-| Screen | Status |
-|--------|:------:|
-| A1 — Operations Hub (Dashboard) | Not started |
+| Screen | Preview | Owner Decision | Key Intelligence |
+|--------|---------|:-:|----------------|
+| **A1 — Operations Hub** | `A1_operations_hub.html` | APPROVED | Next Best Actions, Priority KPIs, Store Health Grid, Your Stock Health, Today's Activity, "Your Latest Request" card, Cross-item Expiry Scan, Post-submit Confirmation |
+
+### Phase 6 QA — 8 Gaps Fixed
+
+| Gap | Fix | Status |
+|-----|-----|:------:|
+| GAP-QA-01 | "Your Latest Request" card on Hub | FIXED |
+| GAP-QA-02 | Post-submit confirmation on all write screens | FIXED |
+| GAP-QA-04 | Time-since-dispatch on receive dialog | FIXED |
+| GAP-QA-05 | Request vs direct dispatch badge | FIXED |
+| MI-03 | Undo/rollback guidance on adjustment + wastage | FIXED |
+| MI-06 | Cross-item expiry scan | FIXED |
+| GAP-QA-08 | Export CSV on data screens | FIXED |
+| GAP-QA-07 | Wastage drill-down (noted for implementation) | NOTED |
 
 ---
 
