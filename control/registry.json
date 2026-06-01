@@ -3049,7 +3049,7 @@
       "status": "IN_PROGRESS",
       "severity": null,
       "sprint_key": "S3",
-      "phase": "Phase 1: Impact Analysis DONE \u2192 Impl Plan next",
+      "phase": "Phase 1: Impl Plan DONE \u2192 Code Gate next",
       "files": [],
       "notes": "Fix 18 API-mismatch bugs from audit. Proper control gate this time.",
       "artifact_refs": [
@@ -3074,8 +3074,8 @@
         {
           "artifact": 3,
           "label": "Impl-Plan",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR023_ARTIFACT_3_IMPLEMENTATION_PLAN.md"
         },
         {
           "artifact": 4,
