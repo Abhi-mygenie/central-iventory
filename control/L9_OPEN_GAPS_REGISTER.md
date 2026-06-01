@@ -26,15 +26,15 @@
 | G-015 | Excel/CSV parsing endpoint | C3 Manual Entry Excel upload | New endpoint or frontend-only parsing | P2 | OPEN |
 | G-016 | Invoice number storage for duplicate detection | C3 duplicate invoice check | Store processed invoice numbers in DB | P2 | OPEN |
 
-## Implementation Gaps (Frontend Polish — Deferred)
+## Implementation Gaps (Frontend Polish — ALL CLOSED)
 
-| # | Item | Screen | Sprint | Priority |
-|---|------|--------|:------:|:--------:|
-| IG-001 | Catalogue "Used in X recipes" cross-ref columns | IngredientCatalogue, ProductCatalogue, RecipeCatalogue, AddonRecipeCatalogue | C | LOW |
-| IG-002 | Consumption Report days-of-cover column | DailyConsumptionReport | C | LOW |
-| IG-003 | Hierarchy Management push status (Synced/Stale) | HierarchyManagement | C | LOW |
-| IG-004 | RequestStockForm Intelligent PO auto-detect tab | RequestStockForm | B | MEDIUM |
-| IG-005 | DirectDispatchForm destination needs auto-detect | DirectDispatchForm | B | MEDIUM |
+| # | Item | Screen | Sprint | Status |
+|---|------|--------|:------:|:------:|
+| IG-001 | Catalogue vendor column | IngredientCatalogue | C | **DONE** (iteration_30) |
+| IG-002 | Consumption Report days-of-cover column | DailyConsumptionReport | C | **DONE** (iteration_30) |
+| IG-003 | Hierarchy Management push status (Synced/Stale) | HierarchyManagement | C | **DONE** (iteration_30) |
+| IG-004 | RequestStockForm low-stock suggestions | RequestStockForm | B | **DONE** (iteration_30) |
+| IG-005 | DirectDispatchForm destination health strip | DirectDispatchForm | B | **DONE** (iteration_30) |
 
 ## Bugs Fixed During Sprint Implementation
 

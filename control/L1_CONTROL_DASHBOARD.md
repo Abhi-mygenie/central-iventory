@@ -60,13 +60,15 @@
 
 ## Remaining Polish (Not Blocking)
 
-| Item | Screen | Priority |
-|------|--------|:--------:|
-| Catalogue "Used in X recipes" cross-ref | IngredientCatalogue, ProductCatalogue, RecipeCatalogue | LOW |
-| Consumption Report days-of-cover column | DailyConsumptionReport | LOW |
-| Hierarchy Management push status (Synced/Stale) | HierarchyManagement | LOW |
-| RequestStockForm Intelligent PO tab | RequestStockForm | MEDIUM |
-| DirectDispatchForm destination needs | DirectDispatchForm | MEDIUM |
+All IG items completed on 2026-06-01 (iteration_30, 5/5 PASS):
+
+| Item | Screen | Status |
+|------|--------|:------:|
+| IG-001 Catalogue vendor column | IngredientCatalogue | **DONE** |
+| IG-002 Consumption days-of-cover | DailyConsumptionReport | **DONE** |
+| IG-003 Hierarchy push status | HierarchyManagement | **DONE** |
+| IG-004 Request intelligent PO | RequestStockForm | **DONE** |
+| IG-005 Dispatch destination needs | DirectDispatchForm | **DONE** |
 
 ## Backend Gaps (from UI Freeze — Unchanged)
 

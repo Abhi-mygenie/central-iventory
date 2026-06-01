@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useLoginContext } from "@/hooks/useLoginContext";
 import useHierarchyManagement from "@/hooks/useHierarchyManagement";
 import { LoadingState, EmptyState, ErrorState } from "@/components/common/StateDisplays";
@@ -631,7 +631,7 @@ export default function HierarchyManagement() {
                   {tab === "all" && (
                     <>
                       {centrals.map((c) => (
-                        <>{renderChildRow(c)}</>
+                        <React.Fragment key={c.id}>{renderChildRow(c)}</React.Fragment>
                       ))}
                       {franchises.map((c) => renderChildRow(c))}
                       {/* Show nested franchises for master */}
