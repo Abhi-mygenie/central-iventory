@@ -58,7 +58,7 @@ Only fix the 18 documented bugs. No "while I'm here" improvements. Any new issue
 
 | Batch | Scope | Bugs | Owner Smoke Test | Status |
 |:-----:|-------|------|:----------------:|:------:|
-| **1** | `useRestaurantMap` + OperationsHub Store Health Grid | A1, B1 | PENDING | NOT STARTED |
+| **1** | `useRestaurantMap` + OperationsHub Store Health Grid | A1, B1 | AWAITING OWNER | COMPLETE |
 | **2** | Restaurant names on PendingQueues, TransferDetail, HistoryLedger | B2, B3, B4 | PENDING | NOT STARTED |
 | **3** | TransferDetail Store Snapshot + Impact Summary | C1 | PENDING | NOT STARTED |
 | **4** | Consumption intelligence + DirectDispatch auto-detect | B9, C2 | PENDING | NOT STARTED |

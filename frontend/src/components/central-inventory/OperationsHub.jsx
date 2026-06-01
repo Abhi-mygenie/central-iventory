@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginContext } from "@/hooks/useLoginContext";
 import { useStockIntelligence } from "@/hooks/useStockIntelligence";
+import { useRestaurantMap } from "@/hooks/useRestaurantMap";
 import api from "@/services/api";
 import { formatRelativeTime, formatPO } from "@/lib/formatters";
 import { mapRestaurantType } from "@/lib/terminology";
@@ -69,6 +70,8 @@ export default function OperationsHub() {
     loading, error, refresh, recentHistory,
   } = useStockIntelligence();
 
+  const { restaurantMap } = useRestaurantMap();
+
   // Store health grid (Central only — fetch hierarchy detail per child)
   const [storeHealth, setStoreHealth] = useState([]);
   const [storeHealthLoading, setStoreHealthLoading] = useState(false);
@@ -79,13 +82,54 @@ export default function OperationsHub() {
     (async () => {
       setStoreHealthLoading(true);
       try {
+        // A1 FIX: API returns `stores`, not `children`
         const resp = await api.getHierarchySummary({ storeType: "franchise" });
         const data = resp.data?.data || resp.data;
-        const children = data?.children || data?.child_stores || [];
-        if (!cancelled) setStoreHealth(Array.isArray(children) ? children : []);
+        const stores = data?.stores || [];
+        if (!Array.isArray(stores) || stores.length === 0) {
+          if (!cancelled) setStoreHealth([]);
+          return;
+        }
+
+        // B1 FIX: Batch-call hierarchy-detail per store (max 6) to compute health
+        const toFetch = stores.slice(0, 6);
+        const detailResults = await Promise.allSettled(
+          toFetch.map((s) =>
+            api.getHierarchyDetail({ storeRestaurantId: s.restaurant_id })
+          )
+        );
+
+        const enriched = toFetch.map((store, idx) => {
+          const result = detailResults[idx];
+          let outCount = 0, lowCount = 0, adequateCount = 0, totalItems = 0;
+          if (result.status === "fulfilled") {
+            const detail = result.value?.data?.data || result.value?.data;
+            const items = detail?.child_stock_summary || [];
+            totalItems = items.length;
+            items.forEach((item) => {
+              const qty = parseFloat(item.display_quantity) || 0;
+              if (qty === 0) {
+                outCount++;
+              } else if (item.is_low_stock) {
+                lowCount++;
+              } else {
+                adequateCount++;
+              }
+            });
+          }
+          return {
+            ...store,
+            id: store.restaurant_id,
+            out_of_stock_count: outCount,
+            low_stock_count: lowCount,
+            adequate_count: adequateCount,
+            total_items: totalItems,
+          };
+        });
+
+        if (!cancelled) setStoreHealth(enriched);
       } catch (e) {
         console.warn("[hub] Failed to load store health:", e);
-        // Silently fail — grid just won't show
       } finally {
         if (!cancelled) setStoreHealthLoading(false);
       }
@@ -282,17 +326,19 @@ export default function OperationsHub() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {storeHealth.slice(0, 6).map((store) => {
-                  const name = store.name || store.restaurant_name || `Store #${store.id}`;
-                  const storeType = store.restaurant_type_flag || store.restaurantTypeFlag || "";
+                  const name = store.restaurant_name || `Store #${store.restaurant_id}`;
+                  const storeType = store.restaurant_type || "";
                   const outCount = store.out_of_stock_count || 0;
                   const lowCount = store.low_stock_count || 0;
+                  const adequateCount = store.adequate_count || 0;
+                  const totalItems = store.total_items || 0;
                   const hasProblem = outCount >= 2;
                   return (
                     <Card
-                      key={store.id}
-                      data-testid={`store-health-${store.id}`}
+                      key={store.restaurant_id}
+                      data-testid={`store-health-${store.restaurant_id}`}
                       className={`cursor-pointer hover:shadow-md transition-shadow ${hasProblem ? "border-l-[3px] border-l-red-500" : ""}`}
-                      onClick={() => navigate(`/store/${store.id}`)}
+                      onClick={() => navigate(`/store/${store.restaurant_id}`)}
                     >
                       <CardContent className="py-3 px-4">
                         <div className="flex items-center justify-between mb-1.5">
@@ -310,7 +356,10 @@ export default function OperationsHub() {
                           {lowCount > 0 && (
                             <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{lowCount} low</span>
                           )}
-                          <span className="text-muted-foreground text-xs">{mapRestaurantType(storeType)}</span>
+                          {adequateCount > 0 && (
+                            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{adequateCount} ok</span>
+                          )}
+                          <span className="text-muted-foreground text-xs">{totalItems > 0 ? `${totalItems} items` : mapRestaurantType(storeType)}</span>
                         </div>
                       </CardContent>
                     </Card>
@@ -389,7 +438,9 @@ export default function OperationsHub() {
                     const isReceiver = String(t.to_restaurant_id) === String(restaurantId);
                     const isOut = isSender && ["dispatched", "approved", "received", "partially_received"].includes(t.status);
                     const isIn = isReceiver && ["received", "partially_received"].includes(t.status);
-                    const counterparty = isSender ? (t.to_restaurant_name || `Store #${t.to_restaurant_id}`) : (t.from_restaurant_name || `Store #${t.from_restaurant_id}`);
+                    const counterparty = isSender
+                      ? (restaurantMap[String(t.to_restaurant_id)]?.name || t.to_restaurant_name || `Store #${t.to_restaurant_id}`)
+                      : (restaurantMap[String(t.from_restaurant_id)]?.name || t.from_restaurant_name || `Store #${t.from_restaurant_id}`);
                     const lines = t.lines || [];
                     const itemName = lines[0]?.stock_title || "Transfer";
                     const itemCount = lines.length;
