@@ -62,6 +62,17 @@ export function validateQuantityForUnit(quantity, unit) {
 }
 
 /**
+ * Format transfer ID as PO number: PO-A1B2
+ * Uses last 4 chars of transfer ID, uppercased. Falls back to "XXXX".
+ */
+export function formatPO(transferId) {
+  if (!transferId) return "PO-XXXX";
+  const s = String(transferId);
+  const tail = s.slice(-4).toUpperCase();
+  return `PO-${tail.padStart(4, "0")}`;
+}
+
+/**
  * Format items count: "3 items" / "1 item"
  */
 export function formatItemsCount(count) {

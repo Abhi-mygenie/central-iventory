@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useLoginContext } from "@/hooks/useLoginContext";
 import api from "@/services/api";
 import { mapRestaurantType, STATUS_CONFIG, getStatusConfig, TYPE_LABELS } from "@/lib/terminology";
-import { formatTimestamp, formatItemsCount } from "@/lib/formatters";
+import { formatTimestamp, formatItemsCount, formatPO } from "@/lib/formatters";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -15,7 +15,7 @@ import { StatusBadge, StoreTypeBadge } from "@/components/common/Badges";
 import DateRangePicker from "@/components/common/DateRangePicker";
 import {
   ScrollText, History, ArrowDownLeft, ArrowUpRight, Minus,
-  Search, X, Filter, Eye, ArrowRightLeft, RefreshCw
+  Search, X, Filter, Eye, ArrowRightLeft, RefreshCw, Download
 } from "lucide-react";
 
 const MOVEMENT_TYPES = {
@@ -425,14 +425,34 @@ export default function HistoryLedger() {
     <div data-testid="history-ledger">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-lg font-bold">History & Ledger</h1>
-        <button
-          data-testid="refresh-history-btn"
-          onClick={() => { fetchHistory(); setLedgerLoaded(false); }}
-          disabled={historyLoading}
-          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
-        >
-          <RefreshCw className={`h-3 w-3 ${historyLoading ? "animate-spin" : ""}`} /> Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            data-testid="export-csv-btn"
+            onClick={() => {
+              const rows = [["PO","Date","Source","Destination","Status","Type","Items","Direction"]];
+              filteredHistory.forEach(t => {
+                const dir = String(t.to_restaurant_id) === String(restaurantId) ? "In" : "Out";
+                rows.push([formatPO(t.id), t.created_at, t.from_restaurant_name||"", t.to_restaurant_name||"", t.status, t.type, t.items_count||"", dir]);
+              });
+              const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+              const blob = new Blob([csv], { type: "text/csv" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a"); a.href = url; a.download = "transfer_history.csv"; a.click();
+              URL.revokeObjectURL(url);
+            }}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Download className="h-3 w-3" /> Export CSV
+          </button>
+          <button
+            data-testid="refresh-history-btn"
+            onClick={() => { fetchHistory(); setLedgerLoaded(false); }}
+            disabled={historyLoading}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`h-3 w-3 ${historyLoading ? "animate-spin" : ""}`} /> Refresh
+          </button>
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -541,7 +561,7 @@ export default function HistoryLedger() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="text-[10px]">ID</TableHead>
+                            <TableHead className="text-[10px]">PO / Ref</TableHead>
                             <TableHead className="text-[10px]">Date</TableHead>
                             <TableHead className="text-[10px]">Source</TableHead>
                             <TableHead className="text-[10px]">Destination</TableHead>
@@ -563,7 +583,7 @@ export default function HistoryLedger() {
                                 className="cursor-pointer hover:bg-accent/50"
                                 onClick={() => navigate(`/transfer/${t.id}`)}
                               >
-                                <TableCell className="text-xs font-mono font-medium">#{t.id}</TableCell>
+                                <TableCell className="text-xs font-mono font-medium">{formatPO(t.id)}</TableCell>
                                 <TableCell className="text-xs text-muted-foreground">{formatTimestamp(t.created_at)}</TableCell>
                                 <TableCell className="text-xs">{t.from_restaurant_name || "—"}</TableCell>
                                 <TableCell className="text-xs">{t.to_restaurant_name || "—"}</TableCell>
@@ -738,7 +758,7 @@ export default function HistoryLedger() {
                                       data-testid={`ledger-ref-${e.reference_id}`}
                                       onClick={() => navigate(`/transfer/${e.reference_id}`)}
                                     >
-                                      {e.reference_type} #{e.reference_id}
+                                      {formatPO(e.reference_id)}
                                     </Button>
                                   ) : (
                                     <span className="text-[10px] text-muted-foreground">—</span>

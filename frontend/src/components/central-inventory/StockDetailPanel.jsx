@@ -182,6 +182,12 @@ function ItemSummarySection({ summary }) {
 // ── Section B: Batch Inventory (FEFO Segments) ──────────────────
 
 function BatchInventorySection({ segments, displayUnit }) {
+  const totalQty = segments.reduce((sum, s) => {
+    const days = daysUntilExpiry(s.expiry_date);
+    if (days !== null && days < 0) return sum; // exclude expired from total
+    return sum + (Number(s.display_qty) || 0);
+  }, 0);
+
   return (
     <Card data-testid="stock-detail-batches">
       <CardHeader className="pb-3">
@@ -189,7 +195,7 @@ function BatchInventorySection({ segments, displayUnit }) {
           <Layers className="h-4 w-4 text-slate-500" />
           Batch Inventory
           {segments.length > 0 && (
-            <span className="text-xs font-normal text-muted-foreground">({segments.length})</span>
+            <span className="text-xs font-normal text-muted-foreground">({segments.length} — FEFO order)</span>
           )}
         </CardTitle>
       </CardHeader>
@@ -201,25 +207,29 @@ function BatchInventorySection({ segments, displayUnit }) {
             icon={Layers}
           />
         ) : (
-          <div className="border rounded-lg overflow-hidden">
+          <div className="border rounded-lg overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-xs">Batch</TableHead>
                   <TableHead className="text-xs text-right">Available Qty</TableHead>
                   <TableHead className="text-xs text-right">Display Qty</TableHead>
+                  <TableHead className="text-xs text-right">% of Total</TableHead>
                   <TableHead className="text-xs">Expiry Date</TableHead>
                   <TableHead className="text-xs">Source Store</TableHead>
+                  <TableHead className="text-xs">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {segments.map((seg, i) => {
                   const days = daysUntilExpiry(seg.expiry_date);
                   const isExpired = days !== null && days < 0;
-                  const isExpiring = days !== null && days >= 0 && days <= 7;
+                  const isExpiring = days !== null && days >= 0 && days <= 30;
+                  const isFirstExpiry = i === 0 && isExpiring && !isExpired;
+                  const pctOfTotal = totalQty > 0 ? Math.round((Number(seg.display_qty) / totalQty) * 100) : 0;
                   let rowClass = "";
-                  if (isExpired) rowClass = "bg-red-50/60";
-                  else if (isExpiring) rowClass = "bg-amber-50/40";
+                  if (isExpired) rowClass = "bg-red-50/60 opacity-60";
+                  else if (isExpiring && i === 0) rowClass = "bg-amber-50/40";
 
                   return (
                     <TableRow
@@ -235,19 +245,32 @@ function BatchInventorySection({ segments, displayUnit }) {
                         </span>
                       </TableCell>
                       <TableCell className="py-2.5 text-right">
-                        <span className="text-sm tabular-nums" data-testid={`batch-cal-qty-${seg.segment_id || i}`}>
+                        <span className={`text-sm tabular-nums ${isExpired ? "line-through" : ""}`} data-testid={`batch-cal-qty-${seg.segment_id || i}`}>
                           {Number(seg.cal_quantity).toLocaleString()}
                         </span>
                       </TableCell>
                       <TableCell className="py-2.5 text-right">
-                        <span className="text-sm tabular-nums" data-testid={`batch-display-qty-${seg.segment_id || i}`}>
+                        <span className={`text-sm tabular-nums ${isExpired ? "line-through" : ""}`} data-testid={`batch-display-qty-${seg.segment_id || i}`}>
                           {Number(seg.display_qty)} {displayUnit}
                         </span>
+                      </TableCell>
+                      <TableCell className="py-2.5 text-right">
+                        {!isExpired && (
+                          <span className="text-xs tabular-nums text-muted-foreground">{pctOfTotal}%</span>
+                        )}
+                        {isExpired && <span className="text-xs text-muted-foreground">—</span>}
                       </TableCell>
                       <TableCell className="py-2.5">
                         <div className="flex flex-col gap-1">
                           <span className="text-xs">{formatDate(seg.expiry_date)}</span>
-                          <ExpiryBadge expiryDate={seg.expiry_date} />
+                          <div className="flex items-center gap-1">
+                            <ExpiryBadge expiryDate={seg.expiry_date} />
+                            {isFirstExpiry && (
+                              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200" data-testid="fefo-dispatch-first">
+                                Dispatch first
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell className="py-2.5">
@@ -260,6 +283,18 @@ function BatchInventorySection({ segments, displayUnit }) {
                           </span>
                         ) : (
                           <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="py-2.5">
+                        {isExpired && (
+                          <span className="text-[10px] font-semibold text-red-600 cursor-pointer hover:underline" data-testid={`wastage-action-${seg.segment_id || i}`}>
+                            Record Wastage
+                          </span>
+                        )}
+                        {isFirstExpiry && !isExpired && (
+                          <span className="text-[10px] font-medium text-amber-700 cursor-pointer hover:underline" data-testid={`dispatch-action-${seg.segment_id || i}`}>
+                            Dispatch
+                          </span>
                         )}
                       </TableCell>
                     </TableRow>
@@ -468,9 +503,37 @@ function ConsumptionSection({ consumptionSummary, consumptionLines, displayUnit,
         </div>
 
         {consumptionSummary && (
-          <p className="text-[10px] text-muted-foreground mb-3" data-testid="consumption-date-range">
-            Period: {formatDate(consumptionSummary.from_date)} — {formatDate(consumptionSummary.to_date)}
-          </p>
+          <div className="mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+              <div className="p-3 bg-muted/50 rounded-lg text-center">
+                <p className="text-[10px] text-muted-foreground uppercase">Total Consumed</p>
+                <p className="text-sm font-bold tabular-nums">{Number(consumptionSummary.total_consumed_cal || 0).toLocaleString()}</p>
+              </div>
+              <div className="p-3 bg-muted/50 rounded-lg text-center">
+                <p className="text-[10px] text-muted-foreground uppercase">Avg Daily</p>
+                <p className="text-sm font-bold tabular-nums">{Math.round((consumptionSummary.total_consumed_cal || 0) / 7).toLocaleString()}</p>
+              </div>
+              <div className="p-3 bg-muted/50 rounded-lg text-center">
+                <p className="text-[10px] text-muted-foreground uppercase">Days of Cover</p>
+                <p className="text-sm font-bold tabular-nums text-amber-600">
+                  {consumptionSummary.total_consumed_cal > 0
+                    ? `~${Math.round((consumptionSummary.current_stock_cal || 0) / (consumptionSummary.total_consumed_cal / 7))}d`
+                    : "—"}
+                </p>
+              </div>
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-center" data-testid="reorder-suggestion">
+                <p className="text-[10px] text-amber-700 uppercase">Reorder Suggestion</p>
+                <p className="text-xs font-semibold text-amber-800">
+                  {consumptionSummary.total_consumed_cal > 0
+                    ? `Request ${Math.round(consumptionSummary.total_consumed_cal).toLocaleString()} (7-day cover)`
+                    : "Insufficient data"}
+                </p>
+              </div>
+            </div>
+            <p className="text-[10px] text-muted-foreground" data-testid="consumption-date-range">
+              Period: {formatDate(consumptionSummary.from_date)} — {formatDate(consumptionSummary.to_date)}
+            </p>
+          </div>
         )}
 
         {consumptionLines.length === 0 ? (

@@ -31,8 +31,13 @@ import {
   CheckCircle2,
   Clock,
   ChevronRight,
+  Download,
+  Timer,
+  ArrowDownLeft,
+  ArrowUpRight,
 } from "lucide-react";
 import { LoadingState, ErrorState, EmptyState } from "@/components/common/StateDisplays";
+import { formatPO } from "@/lib/formatters";
 
 function formatTimeAgo(timestamp) {
   if (!timestamp) return "";
@@ -181,6 +186,25 @@ export default function StockInventorySummary() {
             <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
             Refresh
           </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            data-testid="export-inventory-csv"
+            onClick={() => {
+              const rows = [["Item","Category","Quantity","Unit","Min Alert","Status","Vendor"]];
+              filtered.forEach(s => {
+                rows.push([s.stock_title, s.category_name||"", s.display_qty, s.display_unit, s.min_qty_alert, s.is_low_stock?"Low":"OK", s.vendor_name||""]);
+              });
+              const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+              const blob = new Blob([csv], { type: "text/csv" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a"); a.href=url; a.download="stock_inventory.csv"; a.click();
+              URL.revokeObjectURL(url);
+            }}
+          >
+            <Download className="h-3.5 w-3.5 mr-1" />
+            CSV
+          </Button>
         </div>
       </div>
 
@@ -292,12 +316,19 @@ export default function StockInventorySummary() {
                 <TableHead className="text-xs text-right">Quantity</TableHead>
                 <TableHead className="text-xs text-right">Min Alert</TableHead>
                 <TableHead className="text-xs text-center">Status</TableHead>
-                <TableHead className="text-xs">Vendor</TableHead>
+                <TableHead className="text-xs text-center">Expiry Risk</TableHead>
+                <TableHead className="text-xs text-center">Pending</TableHead>
+                <TableHead className="text-xs text-right">Days of Cover</TableHead>
                 <TableHead className="text-xs w-8"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map((item) => (
+              {filtered.map((item) => {
+                // Estimate days of cover: simple heuristic based on qty vs min threshold
+                const daysOfCover = item.min_qty_alert > 0 && item.display_qty > 0
+                  ? Math.max(0, Math.round((item.display_qty / item.min_qty_alert) * 7))
+                  : null;
+                return (
                 <TableRow
                   key={item.id}
                   data-testid={`inventory-row-${item.id}`}
@@ -347,16 +378,32 @@ export default function StockInventorySummary() {
                       </Badge>
                     )}
                   </TableCell>
-                  <TableCell className="py-2.5">
-                    <span className="text-xs text-muted-foreground">
-                      {item.vendor_name || "—"}
+                  {/* Expiry Risk */}
+                  <TableCell className="py-2.5 text-center">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground" data-testid={`expiry-risk-${item.id}`}>
+                      View detail
                     </span>
+                  </TableCell>
+                  {/* Pending In/Out */}
+                  <TableCell className="py-2.5 text-center">
+                    <span className="text-[10px] text-muted-foreground" data-testid={`pending-${item.id}`}>—</span>
+                  </TableCell>
+                  {/* Days of Cover */}
+                  <TableCell className="py-2.5 text-right">
+                    {daysOfCover !== null ? (
+                      <span className={`text-xs tabular-nums ${daysOfCover < 3 ? "text-red-600 font-semibold" : daysOfCover < 7 ? "text-amber-600" : "text-muted-foreground"}`} data-testid={`days-cover-${item.id}`}>
+                        ~{daysOfCover}d
+                      </span>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
                   </TableCell>
                   <TableCell className="py-2.5">
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </TableCell>
                 </TableRow>
-              ))}
+                );
+              })}
             </TableBody>
           </Table>
         </div>
