@@ -6,6 +6,7 @@ import api from "@/services/api";
 import { mapRestaurantType } from "@/lib/terminology";
 import { validateQuantityForUnit } from "@/lib/formatters";
 import SourceSelector from "./SourceSelector";
+import StoreHealthStrip from "@/components/common/StoreHealthStrip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -120,6 +121,21 @@ export default function DirectDispatchForm() {
               </SelectContent>
             </Select>
           </div>
+          {/* IG-005: Destination health strip */}
+          {selectedDest && (() => {
+            const dest = destinations.find(d => String(d.restaurant_id) === String(selectedDest));
+            return dest ? (
+              <StoreHealthStrip
+                storeName={dest.restaurant_name}
+                outCount={dest.out_of_stock_count || 0}
+                lowCount={dest.low_stock_count || 0}
+                adequateCount={dest.adequate_count || 0}
+                totalItems={dest.total_items || 0}
+                urgent={(dest.out_of_stock_count || 0) >= 2}
+                className="rounded-lg border border-border/50 mt-2"
+              />
+            ) : null;
+          })()}
         </CardContent>
       </Card>
 

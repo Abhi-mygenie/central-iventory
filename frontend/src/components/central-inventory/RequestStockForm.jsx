@@ -9,9 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LoadingState, PermissionDenied } from "@/components/common/StateDisplays";
-import { ArrowLeft, Plus, Trash2, Loader2, SendHorizonal, AlertCircle, Store, Info } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2, SendHorizonal, AlertCircle, Store, Info, AlertTriangle } from "lucide-react";
 
 /**
  * Request Stock Form — canonical 3-step flow (P12/P14 contract).
@@ -54,6 +55,14 @@ export default function RequestStockForm() {
 
   // Step 3: Item rows
   const [rows, setRows] = useState([emptyRow()]);
+
+  // IG-004: Own stock for intelligent PO context
+  const [ownStock, setOwnStock] = useState([]);
+  useEffect(() => {
+    api.getStockInventory()
+      .then(r => setOwnStock(r.data?.current_stocks || []))
+      .catch(() => {});
+  }, []);
 
   // Load request-sources on mount
   useEffect(() => {
@@ -205,6 +214,29 @@ export default function RequestStockForm() {
         canSubmitToSelected={canSubmitToSelected}
         disabled={submitting}
       />
+
+      {/* IG-004: Low stock suggestions for Intelligent PO */}
+      {ownStock.length > 0 && catalog.length > 0 && (
+        (() => {
+          const lowItems = ownStock.filter(s => s.is_low_stock);
+          if (lowItems.length === 0) return null;
+          return (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4" data-testid="low-stock-suggestions">
+              <div className="flex items-center gap-2 mb-2">
+                <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />
+                <span className="text-xs font-semibold text-amber-800">{lowItems.length} item{lowItems.length > 1 ? "s" : ""} below minimum — consider requesting</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {lowItems.slice(0, 5).map(item => (
+                  <Badge key={item.id} variant="outline" className="text-[10px] bg-amber-100 text-amber-800 border-amber-300" data-testid={`suggest-${item.id}`}>
+                    {item.stock_title}: {item.display_qty} {item.display_unit} (min: {item.min_qty_alert})
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          );
+        })()
+      )}
 
       {/* Step 2 + 3: Catalog + Items */}
       {loadingCatalog ? (

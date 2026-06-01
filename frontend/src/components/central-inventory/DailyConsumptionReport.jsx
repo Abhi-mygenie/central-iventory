@@ -173,6 +173,7 @@ function IngredientSummaryTable({ summary, scope, isMultiStore, onDrillDown }) {
               <TableHead className="text-xs">Opening</TableHead>
               <SortHeader k="total_consumed">Consumed</SortHeader>
               <TableHead className="text-xs">Closing</TableHead>
+              <TableHead className="text-xs text-right">Days of Cover</TableHead>
               {isMultiStore && <TableHead className="text-xs">Store</TableHead>}
             </TableRow>
           </TableHeader>
@@ -196,6 +197,18 @@ function IngredientSummaryTable({ summary, scope, isMultiStore, onDrillDown }) {
                       {closingNeg && <AlertTriangle className="h-3 w-3 text-amber-500" />}
                     </span>
                   </TableCell>
+                  <TableCell className="text-xs font-mono text-right" data-testid={`days-cover-${row.ingredient_id}`}>
+                    {(() => {
+                      const consumed = parseQtyValue(row.total_consumed);
+                      const closing = parseQtyValue(row.closing_stock);
+                      if (consumed > 0 && closing > 0) {
+                        const avgDaily = consumed / 7;
+                        const days = Math.round(closing / avgDaily);
+                        return <span className={days < 3 ? "text-red-600 font-semibold" : days < 7 ? "text-amber-600" : "text-muted-foreground"}>~{days}d</span>;
+                      }
+                      return <span className="text-muted-foreground">—</span>;
+                    })()}
+                  </TableCell>
                   {isMultiStore && (
                     <TableCell className="text-xs text-muted-foreground">
                       {row.restaurant_id ? resolveStoreName(row.restaurant_id, scope) : "—"}
@@ -206,7 +219,7 @@ function IngredientSummaryTable({ summary, scope, isMultiStore, onDrillDown }) {
             })}
             {filtered.length === 0 && (
               <TableRow>
-                <TableCell colSpan={isMultiStore ? 6 : 5} className="text-center text-xs text-muted-foreground py-6">
+                <TableCell colSpan={isMultiStore ? 7 : 6} className="text-center text-xs text-muted-foreground py-6">
                   No ingredients match "{search}"
                 </TableCell>
               </TableRow>

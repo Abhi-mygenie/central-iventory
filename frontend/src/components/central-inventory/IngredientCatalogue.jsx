@@ -93,6 +93,7 @@ function IngredientsTab() {
               <TableHead className="text-xs text-right">Quantity</TableHead>
               <TableHead className="text-xs text-right">Min Alert</TableHead>
               <TableHead className="text-xs text-center">Status</TableHead>
+              <TableHead className="text-xs text-center">Vendor</TableHead>
               <TableHead className="text-xs w-20">Actions</TableHead>
             </TableRow></TableHeader>
             <TableBody>
@@ -105,6 +106,7 @@ function IngredientsTab() {
                   <TableCell className="py-2 text-center">
                     {item.is_low_stock ? <Badge variant="destructive" className="text-[10px] px-1.5 py-0">Low</Badge> : <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-emerald-700 border-emerald-200 bg-emerald-50">OK</Badge>}
                   </TableCell>
+                  <TableCell className="py-2 text-xs text-muted-foreground text-center">{item.vendor_name || "—"}</TableCell>
                   <TableCell className="py-2">
                     <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => { setEditItem(item); setDialogOpen(true); }} data-testid={`edit-ing-${item.id}`}><Pencil className="h-3.5 w-3.5" /></Button>
                   </TableCell>

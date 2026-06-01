@@ -514,8 +514,12 @@ export default function HierarchyManagement() {
     : tab === "central" ? centrals
     : franchises;
 
-  const renderChildRow = (child, isNested = false) => (
-    <TableRow key={child.id} data-testid={`child-row-${child.id}`} className={isNested ? "bg-accent/10" : ""}>
+  const renderChildRow = (child, isNested = false) => {
+    const createdDays = child.createdAt ? Math.floor((Date.now() - new Date(child.createdAt).getTime()) / (1000*60*60*24)) : null;
+    // Heuristic: if store was created > 14 days ago and we don't have explicit push date, mark as potentially stale
+    const isStale = createdDays !== null && createdDays > 14;
+    return (
+    <TableRow key={child.id} data-testid={`child-row-${child.id}`} className={isNested ? "bg-accent/10" : isStale ? "bg-amber-50/30" : ""}>
       <TableCell className="text-xs font-medium">
         <div className="flex items-center gap-1.5">
           {isNested && <span className="text-muted-foreground text-[10px] pl-2">└</span>}
@@ -528,20 +532,32 @@ export default function HierarchyManagement() {
         {child.createdAt ? format(new Date(child.createdAt), "d MMM yyyy") : "—"}
       </TableCell>
       <TableCell>
+        {isStale ? (
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200" data-testid={`push-stale-${child.id}`}>
+            Stale — push recommended
+          </span>
+        ) : (
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200" data-testid={`push-synced-${child.id}`}>
+            Synced
+          </span>
+        )}
+      </TableCell>
+      <TableCell>
         <div className="flex gap-1">
           <Button
-            variant="outline"
+            variant={isStale ? "default" : "outline"}
             size="sm"
             className="h-6 px-2 text-[10px] gap-1"
             onClick={() => handleOpenPush(child)}
             data-testid={`push-btn-${child.id}`}
           >
-            <Upload className="h-3 w-3" /> Push
+            <Upload className="h-3 w-3" /> {isStale ? "Push Now" : "Push"}
           </Button>
         </div>
       </TableCell>
     </TableRow>
-  );
+    );
+  };
 
   return (
     <div data-testid="hierarchy-management" className="space-y-4 p-4 max-w-7xl">
@@ -607,6 +623,7 @@ export default function HierarchyManagement() {
                     <TableHead className="text-xs">Type</TableHead>
                     <TableHead className="text-xs">Email</TableHead>
                     <TableHead className="text-xs">Created</TableHead>
+                    <TableHead className="text-xs">Push Status</TableHead>
                     <TableHead className="text-xs w-24">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
