@@ -1,31 +1,35 @@
 # Central Inventory — PRD
 
 ## Original Problem Statement
-Implement Intelligent UI for Central Inventory. Sprint A (read-only) + Sprint B (transfer flow) complete.
+Implement Intelligent UI for Central Inventory across 3 sprints (A/B/C).
 
-## Sprint A — COMPLETE (June 1, 2026) — 21/21 tests PASS
-- Operations Hub intelligence, Stock Inventory new columns, Stock Detail FEFO enhancements, History PO format + Export CSV, StatusTimeline relative timestamps + stale detection
-- New: useStockIntelligence hook, StockIntelligenceBar, formatPO utility
+## ALL SPRINTS COMPLETE — June 1, 2026
 
-## Sprint B — COMPLETE (June 1, 2026) — 18/18 tests PASS
-### Files Created (3)
-- `components/common/PostSubmitConfirmation.jsx` — Success card for write actions
-- `components/common/StoreHealthStrip.jsx` — Compact store health display
-- `components/common/FulfillmentVerdict.jsx` — Can fulfill / Partial / Can't fulfill badge
+### Sprint A — 21/21 PASS
+- Operations Hub intelligence (greeting, NBA banners, KPIs, stock health, store health grid, quick actions, activity feed)
+- Stock Inventory new columns (Expiry Risk, Pending, Days of Cover) + Export CSV
+- Stock Detail FEFO enhancements (% of Total, Action column, dispatch-first badge, reorder suggestion)
+- History PO format + Export CSV
+- StatusTimeline relative timestamps + stale detection
 
-### Files Modified (6)
-- `PendingQueues.jsx` — **Full rewrite**: table → card-based approval inbox with item-level visibility, PO format, age badges, fulfillment verdicts, sort control, After Approval projections
-- `TransferDetail.jsx` — PO format title (PO-0113), "Created X days ago" relative time
-- `ReceiveDialog.jsx` — PO format title, dispatch time context ("Dispatched: 2 hours ago")
-- `ApproveWaveDialog.jsx` — PO format title
-- `DisputeResolutionDialog.jsx` — PO format title
-- `SourceSelector.jsx` — FEFO badges on segments, expired segments disabled with [EXPIRED] label
+### Sprint B — 18/18 PASS
+- Pending Queues card-based approval inbox (item-level, age badges, fulfillment verdicts, sort)
+- PO format everywhere (PO-XXXX using last 4 digits)
+- ReceiveDialog dispatch time context
+- SourceSelector FEFO badges
+- All dialogs use PO format
 
-### Key Features
-- Card-based approval inbox with 4-column item table (Requested, Qty, Your Stock, After Approval)
-- Age badges: red (>72h stale), amber (24-72h aging), gray (fresh)
-- Fulfillment verdict: "Can fulfill" / "Partial — 2 of 3 items" / "Can't fulfill"
-- PO-XXXX format everywhere (queues, detail, history, all dialogs)
+### Sprint C — 11/11 PASS
+- Stock Adjustment stock context bar + impact preview + undo guidance
+- Wastage Entry stock context + undo guidance
+- Operational Settings impact badges ("High impact", "Affects all stores")
+- Vendor Management Status column (Active/Inactive detection)
+- Wastage Report Export CSV
+- Bug fix: display_qty string → Number() for arithmetic
+
+## Files Modified/Created Summary
+- **Created**: 6 new files (useStockIntelligence, StockIntelligenceBar, PostSubmitConfirmation, StoreHealthStrip, FulfillmentVerdict, formatPO in formatters.js)
+- **Modified**: 15 existing files (OperationsHub, StockInventorySummary, StockDetailPanel, HistoryLedger, StatusTimeline, PendingQueues, TransferDetail, ReceiveDialog, ApproveWaveDialog, DisputeResolutionDialog, SourceSelector, StockAdjustmentForm, WastageEntryForm, OperationalSettings, VendorManagement, WastageReport)
 
 ## Test Credentials
 - Central: abhishek@kalabahia.com / Qplazm@10
@@ -33,9 +37,10 @@ Implement Intelligent UI for Central Inventory. Sprint A (read-only) + Sprint B 
 - Outlet: owner@demofranchise1.com / Qplazm@10
 
 ## Next Steps
-1. **Sprint C** (4-5 days): Operations + config intelligence — Stock Adjustment, Wastage, Procurement, Settings, Vendors, Catalogues, Consumption Report, Hierarchy Management
+1. Remaining Sprint C polish: Catalogues usage cross-ref, Consumption days-of-cover, Hierarchy push status
 2. Backend team: G-013 PO number, G-012 catalog category
+3. Sprint B/C remaining: RequestStockForm intelligent PO, DirectDispatchForm destination needs
 
 ## Backlog
 - P0: G-013 PO number (backend), P1: G-012/G-014, P2: G-015/G-016
-- Future: CR-020 Daily Digest, CR-015 FEFO Detail, CR-016 Hierarchy Toggle
+- Future: CR-020 Daily Digest, CR-015 FEFO Detail
