@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginContext } from "@/hooks/useLoginContext";
+import { useRestaurantMap } from "@/hooks/useRestaurantMap";
 import api from "@/services/api";
 import { mapRestaurantType, STATUS_CONFIG, getStatusConfig, TYPE_LABELS } from "@/lib/terminology";
 import { formatTimestamp, formatItemsCount, formatPO } from "@/lib/formatters";
@@ -201,6 +202,7 @@ function deriveWastageEntries(wastageData) {
 export default function HistoryLedger() {
   const navigate = useNavigate();
   const { restaurantId, restaurantType, isTopLevel, isMiddleLevel, isBottomLevel } = useLoginContext();
+  const { restaurantMap } = useRestaurantMap();
 
   const [activeTab, setActiveTab] = useState("history");
 
@@ -288,9 +290,16 @@ export default function HistoryLedger() {
     }
   }, [activeTab, historyData, ledgerLoaded, fetchLedgerData]);
 
-  // Build restaurant name map from history data (history list has names, details does not)
+  // Build restaurant name map from history data + restaurantMap hook
   const historyNameMap = useMemo(() => {
     const map = {};
+    // Merge restaurantMap first (from hierarchy-summary)
+    if (restaurantMap) {
+      Object.entries(restaurantMap).forEach(([rid, info]) => {
+        map[rid] = { name: info.name, type: info.type || null };
+      });
+    }
+    // Overlay from history data (has names from transfer records)
     for (const t of historyData) {
       if (t.from_restaurant_id && t.from_restaurant_name) {
         map[t.from_restaurant_id] = { name: t.from_restaurant_name, type: t.from_restaurant_type || null };
@@ -300,7 +309,7 @@ export default function HistoryLedger() {
       }
     }
     return map;
-  }, [historyData]);
+  }, [historyData, restaurantMap]);
 
   // Derive ledger entries (transfers + wastage merged)
   const ledgerEntries = useMemo(() => {
@@ -585,8 +594,8 @@ export default function HistoryLedger() {
                               >
                                 <TableCell className="text-xs font-mono font-medium">{formatPO(t.id)}</TableCell>
                                 <TableCell className="text-xs text-muted-foreground">{formatTimestamp(t.created_at)}</TableCell>
-                                <TableCell className="text-xs">{t.from_restaurant_name || "—"}</TableCell>
-                                <TableCell className="text-xs">{t.to_restaurant_name || "—"}</TableCell>
+                                <TableCell className="text-xs">{restaurantMap[String(t.from_restaurant_id)]?.name || t.from_restaurant_name || "—"}</TableCell>
+                                <TableCell className="text-xs">{restaurantMap[String(t.to_restaurant_id)]?.name || t.to_restaurant_name || "—"}</TableCell>
                                 <TableCell><StatusBadge status={t.status} /></TableCell>
                                 <TableCell>
                                   <Badge variant="outline" className={`text-[9px] font-normal ${t.type === "modification_request" ? "bg-amber-50 text-amber-700 border-amber-200" : ""}`}>

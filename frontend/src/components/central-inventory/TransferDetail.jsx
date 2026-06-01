@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useLoginContext } from "@/hooks/useLoginContext";
+import { useRestaurantMap } from "@/hooks/useRestaurantMap";
 import { useWriteAction } from "@/hooks/useWriteAction";
 import api from "@/services/api";
 import { mapRestaurantType, getStatusConfig, getLineStatusConfig, TYPE_LABELS } from "@/lib/terminology";
@@ -62,6 +63,7 @@ export default function TransferDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { restaurantType, restaurantId } = useLoginContext();
+  const { restaurantMap } = useRestaurantMap();
   const { submitting, execute } = useWriteAction();
 
   const [data, setData] = useState(null);
@@ -278,10 +280,10 @@ export default function TransferDetail() {
   if (!data) return <EmptyState title="No transfer data" />;
 
   const lines = data.lines || data.items || [];
-  const fromName = data.from_restaurant?.restaurant_name || data.from_restaurant_name || "—";
-  const fromType = data.from_restaurant?.restaurant_type || data.from_restaurant_type;
-  const toName = data.to_restaurant?.restaurant_name || data.to_restaurant_name || "—";
-  const toType = data.to_restaurant?.restaurant_type || data.to_restaurant_type;
+  const fromName = restaurantMap[String(data.from_restaurant_id)]?.name || data.from_restaurant?.restaurant_name || data.from_restaurant_name || "—";
+  const fromType = data.from_restaurant?.restaurant_type || data.from_restaurant_type || restaurantMap[String(data.from_restaurant_id)]?.type;
+  const toName = restaurantMap[String(data.to_restaurant_id)]?.name || data.to_restaurant?.restaurant_name || data.to_restaurant_name || "—";
+  const toType = data.to_restaurant?.restaurant_type || data.to_restaurant_type || restaurantMap[String(data.to_restaurant_id)]?.type;
 
   const hasLineResolution = lines.some((l) => l.accepted_qty != null || l.rejected_qty != null);
   const hasP16Meta = lines.some((l) => l.hasApprovalMeta);

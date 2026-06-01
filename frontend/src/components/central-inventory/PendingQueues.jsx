@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginContext } from "@/hooks/useLoginContext";
+import { useRestaurantMap } from "@/hooks/useRestaurantMap";
 import api from "@/services/api";
 import { mapRestaurantType, TYPE_LABELS } from "@/lib/terminology";
 import { formatTimestamp, formatItemsCount, formatRelativeTime, formatPO } from "@/lib/formatters";
@@ -40,6 +41,7 @@ function AgeBadge({ createdAt }) {
 export default function PendingQueues() {
   const navigate = useNavigate();
   const { restaurantType, canDo, restaurantId } = useLoginContext();
+  const { restaurantMap } = useRestaurantMap();
 
   const [data, setData] = useState(null);
   const [readyToDispatch, setReadyToDispatch] = useState([]);
@@ -132,8 +134,8 @@ export default function PendingQueues() {
     const hours = ms / (1000 * 60 * 60);
     const isStale = hours >= 72;
     const isAging = hours >= 24;
-    const fromName = item.from_restaurant_name || mapRestaurantType(item.from_restaurant_type) || "—";
-    const toName = item.to_restaurant_name || mapRestaurantType(item.to_restaurant_type) || "—";
+    const fromName = restaurantMap[String(item.from_restaurant_id)]?.name || item.from_restaurant_name || mapRestaurantType(item.from_restaurant_type) || "—";
+    const toName = restaurantMap[String(item.to_restaurant_id)]?.name || item.to_restaurant_name || mapRestaurantType(item.to_restaurant_type) || "—";
 
     // Fulfillment check
     let fulfillableCount = 0;
@@ -159,7 +161,7 @@ export default function PendingQueues() {
             <div>
               <p className="text-xs">{fromName} → {toName}</p>
               <p className="text-[10px] text-muted-foreground">
-                {mapRestaurantType(item.from_restaurant_type)} requesting from you
+                {restaurantMap[String(item.from_restaurant_id)]?.name || mapRestaurantType(item.from_restaurant_type)} requesting from you
               </p>
             </div>
           </div>
@@ -249,7 +251,7 @@ export default function PendingQueues() {
             <span className="font-mono text-xs font-semibold shrink-0">{formatPO(id)}</span>
             <div className="min-w-0">
               <p className="text-xs truncate">
-                {item.from_restaurant_name || "—"} → {item.to_restaurant_name || "—"}
+                {restaurantMap[String(item.from_restaurant_id)]?.name || item.from_restaurant_name || "—"} → {restaurantMap[String(item.to_restaurant_id)]?.name || item.to_restaurant_name || "—"}
               </p>
               <p className="text-[10px] text-muted-foreground">
                 {formatRelativeTime(item.created_at)} · {formatItemsCount(item.items_count)}
