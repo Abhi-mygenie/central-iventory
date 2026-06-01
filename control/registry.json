@@ -3062,8 +3062,8 @@
         {
           "artifact": 1,
           "label": "Intake",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR023_ARTIFACT_1_INTAKE.md"
         },
         {
           "artifact": 2,
