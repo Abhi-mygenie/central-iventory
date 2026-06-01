@@ -107,7 +107,7 @@ export default function ReceiveDialog({ open, onOpenChange, transfer, onSubmit, 
           {/* Line items summary */}
           <div className="border rounded-md divide-y">
             {lines.map((line, idx) => (
-              <div key={idx} className="p-2.5 space-y-2">
+              <div key={line.id || `line-${idx}`} className="p-2.5 space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-medium">{lineData[idx]?.stock_title || line.stock_title || "Item"}</span>
                   <span className="text-xs text-muted-foreground">

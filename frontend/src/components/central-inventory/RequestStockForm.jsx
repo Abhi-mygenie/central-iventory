@@ -339,7 +339,7 @@ function ItemsCard({ rows, catalog, addRow, removeRow, updateRow, submitting }) 
       <CardContent className="py-0 px-4 space-y-3 pb-4">
         {rows.map((row, idx) => (
           <ItemRow
-            key={idx}
+            key={`item-${idx}-${row.itemId || 'empty'}`}
             idx={idx}
             row={row}
             catalog={catalog}

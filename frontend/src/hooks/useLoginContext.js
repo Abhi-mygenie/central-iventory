@@ -14,6 +14,11 @@ const LoginContext = createContext(null);
  * Central Inventory — Login Context Provider
  *
  * Derives user hierarchy level from `restaurant_type_flag`.
+ *
+ * SECURITY NOTE: Token stored in localStorage for persistence across tabs.
+ * localStorage is vulnerable to XSS — ensure CSP headers and input sanitization.
+ * Migration to httpOnly cookies requires backend proxy changes (tracked as future item).
+ *
  * Provides:
  *   - auth state (token, user profile)
  *   - user level / store scope
@@ -24,7 +29,7 @@ const LoginContext = createContext(null);
 export function LoginContextProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem("ci_token") || null);
   const [user, setUser] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("ci_user")); } catch { return null; }
+    try { return JSON.parse(localStorage.getItem("ci_user")); } catch (e) { console.warn("[auth] Failed to parse stored user:", e); return null; }
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

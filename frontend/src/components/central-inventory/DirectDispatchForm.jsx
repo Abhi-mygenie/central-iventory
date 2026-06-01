@@ -146,7 +146,7 @@ export default function DirectDispatchForm() {
             const selectedItem = items.find((i) => String(i.id) === String(row.itemId));
             const qtyErr = row.quantity && validateQuantityForUnit(row.quantity, row.unit);
             return (
-              <div key={idx} className="border rounded-md p-3 space-y-2" data-testid={`dispatch-item-row-${idx}`}>
+              <div key={`row-${idx}-${row.itemId || 'empty'}`} className="border rounded-md p-3 space-y-2" data-testid={`dispatch-item-row-${idx}`}>
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] text-muted-foreground">Item {idx + 1}</span>
                   {rows.length > 1 && (

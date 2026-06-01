@@ -170,7 +170,7 @@ export default function StoreDetail() {
               <TableBody>
                 {stockSummary.map((item, idx) => (
                   <TableRow
-                    key={idx}
+                    key={item.stock_title || `stock-${idx}`}
                     data-testid={`stock-row-${idx}`}
                     className={`cursor-pointer hover:bg-accent/50 ${item.is_low_stock ? "bg-amber-50/50" : ""}`}
                     onClick={() =>
@@ -225,7 +225,7 @@ export default function StoreDetail() {
                 </TableHeader>
                 <TableBody>
                   {childBatches.map((batch, idx) => (
-                    <TableRow key={idx}>
+                    <TableRow key={batch.segment_id || batch.batch || `batch-${idx}`}>
                       <TableCell className="text-xs">{batch.batch || "—"}</TableCell>
                       <TableCell className="text-xs">{batch.expiry_date || "—"}</TableCell>
                       <TableCell className="text-xs text-right tabular-nums">{batch.cal_quantity}</TableCell>
@@ -265,7 +265,7 @@ export default function StoreDetail() {
               <TableBody>
                 {transactions.map((txn, idx) => (
                   <TableRow
-                    key={idx}
+                    key={txn.transfer_id || `txn-${idx}`}
                     data-testid={`txn-row-${idx}`}
                     className="cursor-pointer hover:bg-accent/50"
                     onClick={() => txn.transfer_id && navigate(`/transfer/${txn.transfer_id}`)}

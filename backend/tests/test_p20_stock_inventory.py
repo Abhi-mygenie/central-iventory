@@ -18,21 +18,21 @@ BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 TEST_USERS = {
     "master": {
         "email": "abhishek@kalabahia.com",
-        "password": "Qplazm@10",
+        "password": os.environ.get("TEST_PASSWORD", ""),
         "rid": 1,
         "type": "master",
         "expected_low_stock": 0
     },
     "central": {
         "email": "owner@democentral2.com",
-        "password": "Qplazm@10",
+        "password": os.environ.get("TEST_PASSWORD", ""),
         "rid": 782,
         "type": "central",
         "expected_low_stock": 2  # maida=0, patri=0
     },
     "franchise": {
         "email": "owner@demofranchise4.com",
-        "password": "Qplazm@10",
+        "password": os.environ.get("TEST_PASSWORD", ""),
         "rid": 786,
         "type": "franchise",
         "expected_low_stock": 0

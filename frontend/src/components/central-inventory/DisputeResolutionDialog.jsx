@@ -49,7 +49,7 @@ export default function DisputeResolutionDialog({ open, onOpenChange, transfer, 
             <div className="border rounded-md p-3 bg-muted/30 space-y-1.5">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Dispute Details</p>
               {disputeLines.map((dl, idx) => (
-                <div key={idx} className="flex justify-between text-xs">
+                <div key={dl.line_id || `dl-${idx}`} className="flex justify-between text-xs">
                   <span>Line #{dl.line_id}</span>
                   <span>
                     <span className="text-emerald-700">Accepted: {dl.accepted_qty}</span>

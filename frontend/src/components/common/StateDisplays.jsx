@@ -7,7 +7,7 @@ export function LoadingState({ lines = 3 }) {
   return (
     <div data-testid="loading-state" className="space-y-3 p-4">
       {Array.from({ length: lines }).map((_, i) => (
-        <Skeleton key={i} className="h-10 w-full" />
+        <Skeleton key={`skel-${i}`} className="h-10 w-full" />
       ))}
     </div>
   );

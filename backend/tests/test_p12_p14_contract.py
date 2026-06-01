@@ -15,11 +15,11 @@ import os
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
-# Test credentials
-FRANCHISE_EMAIL = "owner@demofranchise4.com"
-FRANCHISE_PASSWORD = "Qplazm@10"
-CENTRAL_EMAIL = "owner@democentral2.com"
-CENTRAL_PASSWORD = "Qplazm@10"
+# Test credentials from environment (never hardcode secrets)
+FRANCHISE_EMAIL = os.environ.get('TEST_FRANCHISE_EMAIL', 'owner@demofranchise4.com')
+FRANCHISE_PASSWORD = os.environ.get('TEST_PASSWORD', '')
+CENTRAL_EMAIL = os.environ.get('TEST_CENTRAL_EMAIL', 'owner@democentral2.com')
+CENTRAL_PASSWORD = os.environ.get('TEST_PASSWORD', '')
 
 
 class TestP12P14Contract:

@@ -60,7 +60,7 @@ function IngredientsTab() {
       ]);
       setIngredients(invResp.data?.current_stocks || []);
       setCategories(catResp.data || []);
-    } catch (e) { setError(e?.message || "Failed to load"); }
+    } catch (e) { setError(e?.message || "Failed to load"); console.warn("[catalogue]", e); }
     finally { setLoading(false); }
   }, []);
 

@@ -9,8 +9,8 @@ import os
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
 # Test credentials
-FRANCHISE_USER = {"email": "owner@demofranchise4.com", "password": "Qplazm@10"}
-CENTRAL_USER = {"email": "owner@democentral1.com", "password": "Qplazm@10"}
+FRANCHISE_USER = {"email": "owner@demofranchise4.com", "password": os.environ.get("TEST_PASSWORD", "")}
+CENTRAL_USER = {"email": "owner@democentral1.com", "password": os.environ.get("TEST_PASSWORD", "")}
 
 
 @pytest.fixture(scope="module")

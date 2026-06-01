@@ -7,9 +7,9 @@ Tests:
 - P19: Add Stock Purchase API
 
 Test credentials:
-- Master: abhishek@kalabahia.com / Qplazm@10 (rid=1, type=master)
-- Central: owner@democentral2.com / Qplazm@10 (rid=782, type=central)
-- Franchise: owner@demofranchise4.com / Qplazm@10 (rid=786, type=franchise)
+- Master: abhishek@kalabahia.com / <from TEST_PASSWORD env> (rid=1, type=master)
+- Central: owner@democentral2.com / <from TEST_PASSWORD env> (rid=782, type=central)
+- Franchise: owner@demofranchise4.com / <from TEST_PASSWORD env> (rid=786, type=franchise)
 """
 
 import pytest
@@ -19,17 +19,17 @@ import time
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
-# Test credentials
-MASTER_EMAIL = "abhishek@kalabahia.com"
-MASTER_PASSWORD = "Qplazm@10"
+# Test credentials from environment (never hardcode secrets)
+MASTER_EMAIL = os.environ.get('TEST_MASTER_EMAIL', 'abhishek@kalabahia.com')
+MASTER_PASSWORD = os.environ.get('TEST_PASSWORD', '')
 MASTER_RID = 1
 
-CENTRAL_EMAIL = "owner@democentral2.com"
-CENTRAL_PASSWORD = "Qplazm@10"
+CENTRAL_EMAIL = os.environ.get('TEST_CENTRAL_EMAIL', 'owner@democentral2.com')
+CENTRAL_PASSWORD = os.environ.get('TEST_PASSWORD', '')
 CENTRAL_RID = 782
 
-FRANCHISE_EMAIL = "owner@demofranchise4.com"
-FRANCHISE_PASSWORD = "Qplazm@10"
+FRANCHISE_EMAIL = os.environ.get('TEST_FRANCHISE_EMAIL', 'owner@demofranchise4.com')
+FRANCHISE_PASSWORD = os.environ.get('TEST_PASSWORD', '')
 FRANCHISE_RID = 786
 
 

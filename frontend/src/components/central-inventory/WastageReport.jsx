@@ -119,7 +119,7 @@ function AllocationRow({ entry }) {
         <div className="mt-1 space-y-1">
           {allocations.map((a, i) => (
             <div
-              key={i}
+              key={a.segment_id || `alloc-${i}`}
               className="text-[10px] text-muted-foreground flex items-center gap-3 pl-1"
               data-testid={`alloc-detail-${entry.wastage_id}-${i}`}
             >

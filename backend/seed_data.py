@@ -13,7 +13,8 @@ Hierarchy:
 """
 
 from datetime import datetime, timedelta, timezone
-import random
+import secrets
+import random  # Only for deterministic seed data (not security-sensitive)
 
 now = datetime.now(timezone.utc)
 today = now.strftime("%Y-%m-%d")

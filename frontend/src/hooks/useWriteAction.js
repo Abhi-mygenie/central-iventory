@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
 import { mapApiErrorMessage } from "@/lib/terminology";
 
@@ -8,9 +8,11 @@ import { mapApiErrorMessage } from "@/lib/terminology";
  */
 export function useWriteAction() {
   const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false);
 
   const execute = useCallback(async (apiCall, { successMsg, onSuccess, onError } = {}) => {
-    if (submitting) return null;
+    if (submittingRef.current) return null;
+    submittingRef.current = true;
     setSubmitting(true);
     try {
       const resp = await apiCall();
@@ -40,9 +42,10 @@ export function useWriteAction() {
       if (onError) onError(err);
       return null;
     } finally {
+      submittingRef.current = false;
       setSubmitting(false);
     }
-  }, [submitting]);
+  }, []);
 
   return { submitting, execute };
 }

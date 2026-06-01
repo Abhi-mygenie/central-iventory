@@ -425,7 +425,7 @@ function ConsumptionLineRow({ line, displayUnit }) {
               <div className="space-y-1.5">
                 {allocations.map((a, ai) => (
                   <div
-                    key={ai}
+                    key={a.segment_id || `alloc-${ai}`}
                     className="flex items-center gap-4 text-[11px] text-muted-foreground"
                     data-testid={`alloc-item-${line.order_id}-${ai}`}
                   >

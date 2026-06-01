@@ -14,9 +14,9 @@ BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
 # Test credentials from test_credentials.md
 CREDENTIALS = {
-    "central": {"email": "abhishek@kalabahia.com", "password": "Qplazm@10", "restaurant_id": 1, "type": "master"},
-    "master": {"email": "owner@democentral1.com", "password": "Qplazm@10", "restaurant_id": 781, "type": "central"},
-    "outlet": {"email": "owner@demofranchise1.com", "password": "Qplazm@10", "restaurant_id": 783, "type": "franchise"},
+    "central": {"email": "abhishek@kalabahia.com", "password": os.environ.get("TEST_PASSWORD", ""), "restaurant_id": 1, "type": "master"},
+    "master": {"email": "owner@democentral1.com", "password": os.environ.get("TEST_PASSWORD", ""), "restaurant_id": 781, "type": "central"},
+    "outlet": {"email": "owner@demofranchise1.com", "password": os.environ.get("TEST_PASSWORD", ""), "restaurant_id": 783, "type": "franchise"},
 }
 
 

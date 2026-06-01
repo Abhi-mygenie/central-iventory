@@ -34,7 +34,7 @@ function setToken(token) {
 try {
   const stored = localStorage.getItem("ci_token");
   if (stored) setToken(stored);
-} catch { /* SSR or no localStorage */ }
+} catch (e) { console.warn("[api] Failed to restore token from localStorage:", e); }
 
 // ── Response normalizers (shared contract layer) ─────────────────
 

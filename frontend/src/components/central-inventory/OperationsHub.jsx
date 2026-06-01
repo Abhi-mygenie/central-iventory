@@ -83,7 +83,8 @@ export default function OperationsHub() {
         const data = resp.data?.data || resp.data;
         const children = data?.children || data?.child_stores || [];
         if (!cancelled) setStoreHealth(Array.isArray(children) ? children : []);
-      } catch {
+      } catch (e) {
+        console.warn("[hub] Failed to load store health:", e);
         // Silently fail — grid just won't show
       } finally {
         if (!cancelled) setStoreHealthLoading(false);

@@ -463,7 +463,7 @@ export default function TransferDetail() {
               <TableBody>
                 {lines.map((line, idx) => (
                   <TableRow
-                    key={idx}
+                    key={line.id || `line-${idx}`}
                     data-testid={`transfer-line-${idx}`}
                     className={
                       line.lineStatus === "cancelled_remainder" ? "opacity-50 line-through" :

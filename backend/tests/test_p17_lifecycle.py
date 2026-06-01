@@ -19,8 +19,8 @@ import time
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
 # Test credentials from test_credentials.md
-CENTRAL_USER = {"email": "owner@democentral2.com", "password": "Qplazm@10", "fcm_token": "test"}
-FRANCHISE_USER = {"email": "owner@demofranchise4.com", "password": "Qplazm@10", "fcm_token": "test"}
+CENTRAL_USER = {"email": "owner@democentral2.com", "password": os.environ.get("TEST_PASSWORD", ""), "fcm_token": "test"}
+FRANCHISE_USER = {"email": "owner@demofranchise4.com", "password": os.environ.get("TEST_PASSWORD", ""), "fcm_token": "test"}
 
 # Known test transfers from investigation
 T116_WITHDRAWN = 116  # withdrawn transfer

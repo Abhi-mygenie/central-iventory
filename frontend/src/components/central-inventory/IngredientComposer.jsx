@@ -37,7 +37,7 @@ export default function IngredientComposer({ ingredients, onChange, disabled }) 
     <div className="space-y-2">
       <Label className="text-xs font-medium">Ingredients *</Label>
       {ingredients.map((row, idx) => (
-        <div key={idx} className="flex items-end gap-2" data-testid={`composer-row-${idx}`}>
+        <div key={row.ingredient_id || `row-${idx}`} className="flex items-end gap-2" data-testid={`composer-row-${idx}`}>
           <div className="flex-1">
             {idx === 0 && <Label className="text-[10px] text-muted-foreground">Item</Label>}
             <Select value={row.ingredient_id ? String(row.ingredient_id) : ""} onValueChange={v => updateRow(idx, "ingredient_id", v)} disabled={disabled}>

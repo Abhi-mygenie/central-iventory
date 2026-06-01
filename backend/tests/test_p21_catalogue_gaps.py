@@ -17,9 +17,9 @@ import time
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
-# Test credentials
-MASTER_EMAIL = "abhishek@kalabahia.com"
-MASTER_PASSWORD = "Qplazm@10"
+# Test credentials from environment (never hardcode secrets)
+MASTER_EMAIL = os.environ.get('TEST_MASTER_EMAIL', 'abhishek@kalabahia.com')
+MASTER_PASSWORD = os.environ.get('TEST_PASSWORD', '')
 
 
 @pytest.fixture(scope="module")
