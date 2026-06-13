@@ -250,14 +250,27 @@ CR-029 (Stock Inventory Split) is INDEPENDENT
 
 ---
 
-## 8. Open Questions
+## 8. Open Questions — RESOLVED
 
-| # | Question | Blocks |
-|---|----------|--------|
-| Q1 | **Hierarchy Summary** (`/hierarchy`) — merge into Store Management as a tab, keep as separate page, or drop? Currently shows store health grid. | CR-027 route planning |
-| Q2 | **Bulk save API** — does POS have a batch update endpoint for foods? Need to probe `POST /product/bulk-update` or similar. | CR-028 save strategy |
-| Q3 | **Excel import format** — what columns should the import template have? Same as the bulk editor columns? | CR-028 import feature |
-| Q4 | **`is_sub_recipe` field** — does `getStockInventory()` return this field? Need to validate from API response. | CR-029 FG/Raw detection |
+| # | Question | Answer | Date |
+|---|----------|--------|------|
+| Q1 | Hierarchy Summary — merge, keep, or drop? | **Merge into Store Management as a tab** | 2026-06-13 |
+| Q2 | Bulk save API for Product Catalog? | **Parked** — use single-item `updateFood()` calls with progress indicator for now | 2026-06-13 |
+| Q3 | Excel import template columns? | **Parked** — defer import feature to later phase | 2026-06-13 |
+| Q4 | `is_sub_recipe` field in stock-inventory? | **CONFIRMED** — API returns `type` ("inventory" / "SubRecipe"), `is_sub_recipe` (bool), `subrecipe_id` (int/null), `recipe_id` (int/null). Triple-confirmed detection logic. Zero risk. | 2026-06-13 |
+
+### Q4 Evidence (curl validation)
+
+```
+Stock-inventory item fields for type detection:
+
+Ingredient (Raw Material):
+  type: "inventory", is_sub_recipe: false, subrecipe_id: null, recipe_id: null
+
+Finished Good (Sub-Recipe output):
+  type: "SubRecipe", is_sub_recipe: true, subrecipe_id: 187, recipe_id: 187
+  category_name: "Sub Recipe"
+```
 
 ---
 
