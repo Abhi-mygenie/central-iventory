@@ -9,47 +9,28 @@ Multi-store hierarchy stock management module for MyGenie POS platform. FastAPI 
 - **Database:** MongoDB (token sessions only)
 - **Terminology:** Backend `master` = Central Store (TOP), `central` = Master Store (MID), `franchise` = Outlet (BOTTOM)
 
-## Core Requirements
-- Multi-store hierarchy management (3 fixed levels)
-- Inventory transfers with approval lifecycle
-- Stock management with FEFO segment tracking
-- Vendor management and procurement
-- Purchase order lifecycle
-- Production run management
-- Reports (consumption, wastage)
-
 ## What's Been Implemented (2026-06-14)
 
-### CR-030: Inward Screens (IMPLEMENTED)
-- **Phase 0:** api.js — `getVendorItemList()`, `getStockInventory()` with segment/consumption params, 10 PO lifecycle methods
-- **Phase 1:** VendorManagement.jsx — master-detail layout, purchase intelligence (KPIs, bar chart, recent purchases)
-- **Phase 2:** IngredientCatalogue.jsx — expandable rows, inline edit, intelligence panel (avg rate, consumption, days-of-stock, vendor price comparison)
-- **Phase 3:** Purchase Order module — PurchaseOrderList, PurchaseOrderCreate, PurchaseOrderDetail (status tabs, create flow, receive with variance detection)
-
-### Previously Implemented (by prior agents)
-- CR-001 to CR-029: Full app including login, operations hub, transfers, stock management, production, reports, settings
+### CR-030: Inward Screens — COMPLETE
+- **Phase 0:** api.js — `getVendorItemList()`, `getStockInventory()` extended params, 10 PO lifecycle methods
+- **Phase 1:** VendorManagement.jsx — master-detail with purchase intelligence (KPIs, bar chart, recent purchases)
+- **Phase 2:** IngredientCatalogue.jsx — expandable rows, inline edit, vendor price comparison, category/status filters
+- **Phase 3:** Purchase Order module — PurchaseOrderList, PurchaseOrderCreate (By Vendor + By Item Need + multi-PO auto-grouping), PurchaseOrderDetail (status timeline, receive with variance detection, GRN history)
+- **AddStockPurchaseForm PO gate** — redirects to PO flow when `require_po_for_purchase: true`
+- **By Item Need mode** — urgency-sorted items, per-item vendor picker (cheapest pre-selected), auto-groups by vendor into multiple POs with preview
 
 ## Prioritized Backlog
 
 ### P0 (Next)
-- CR-030: AddStockPurchaseForm gate redirect for `DIRECT_PURCHASE_REQUIRES_PO`
-- CR-030: PO Create "By Item Need" mode
 - CR-031: Production Screens (Sub-Recipe Master, Run Production, Production History)
+- CR-032: Outward Screens (Store Management, Product Catalog, Stock Inventory, Pending Queues/History fixes)
 
 ### P1
-- CR-032: Outward Screens (Store Management, Product Catalog, Stock Inventory, Pending Queues fixes, History fixes)
+- CR-033: Reports Enhancement
 
 ### P2 (Future)
-- CR-033: Reports Enhancement
 - G-014: Invoice OCR integration
 - G-020: Unit conversion support
-- PO Create Multi-PO Review mode
 
 ## Test Accounts
 See `/app/memory/test_credentials.md`
-
-## Key Files
-- `frontend/src/services/api.js` — 1132 lines, 96+ API methods
-- `frontend/src/lib/terminology.js` — FROZEN terminology mapping
-- `frontend/src/lib/screenVisibility.js` — FROZEN role-based access
-- `control/registry.json` — governance SSOT

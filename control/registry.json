@@ -3528,7 +3528,7 @@
         "IngredientCatalogue.jsx",
         "AddStockPurchaseForm.jsx"
       ],
-      "notes": "UX Redesign + PO Module plan 2026-06-14. 3 UX freezes: Vendor Management (master-detail), Raw Material Master (expandable rows), Purchase Order Module (9 screens, full PO lifecycle). G-021 CLOSED. ~28h estimated.",
+      "notes": "UX Redesign + PO Module. IMPLEMENTED: 3 UX freezes done (Vendor master-detail, Raw Material expandable rows, PO Module 9 screens). AddStockPurchaseForm PO gate redirect DONE. By Item Need mode DONE. G-021 CLOSED. ~28h estimated.",
       "artifact_refs": [
         {
           "artifact": 0,

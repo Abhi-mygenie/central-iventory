@@ -12,17 +12,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoadingState, ErrorState } from "@/components/common/StateDisplays";
 import PostSubmitConfirmation from "@/components/common/PostSubmitConfirmation";
 import { toast } from "@/hooks/use-toast";
-import { PackagePlus, Loader2, Plus, Trash2, ChevronDown, ChevronUp, ShieldX, CheckCircle2, Upload, FileSpreadsheet, AlertTriangle, Info, Download } from "lucide-react";
+import { PackagePlus, Loader2, Plus, Trash2, ChevronDown, ChevronUp, ShieldX, CheckCircle2, Upload, FileSpreadsheet, AlertTriangle, Info, Download, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function AddStockPurchaseForm() {
   const { restaurantType, isTopLevel } = useLoginContext();
   const { submitting, execute } = useWriteAction();
+  const navigate = useNavigate();
 
   const [inventoryItems, setInventoryItems] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [ownStock, setOwnStock] = useState([]);
   const [loading, setLoading] = useState(true);
   const [blocked, setBlocked] = useState(false);
+  const [poRequired, setPORequired] = useState(false);
   const [error, setError] = useState(null);
   const [showCommercial, setShowCommercial] = useState(false);
   const [confirmMode, setConfirmMode] = useState(false);
@@ -44,11 +47,13 @@ export default function AddStockPurchaseForm() {
     setLoading(true);
     setError(null);
     setBlocked(false);
+    setPORequired(false);
     try {
-      const [invResp, vendorResp, stockResp] = await Promise.allSettled([
+      const [invResp, vendorResp, stockResp, settingsResp] = await Promise.allSettled([
         api.getInventoryMaster(),
         api.getVendors(),
         api.getStockInventory(),
+        api.getOperationalSettings(),
       ]);
 
       if (invResp.status === "fulfilled") {
@@ -66,6 +71,15 @@ export default function AddStockPurchaseForm() {
 
       if (stockResp.status === "fulfilled") {
         setOwnStock(stockResp.value.data?.current_stocks || []);
+      }
+
+      // Check if PO is required via operational settings
+      if (settingsResp.status === "fulfilled") {
+        const d = settingsResp.value.data?.data || settingsResp.value.data || {};
+        const settings = d.stored_settings || d.settings || d;
+        if (settings.require_po_for_purchase === true) {
+          setPORequired(true);
+        }
       }
     } catch {
       setError("Failed to load form data");
@@ -131,7 +145,13 @@ export default function AddStockPurchaseForm() {
       try {
         const resp = await execute(() => api.addStockPurchase(line.itemId, payload), { successMsg: null });
         if (resp) successCount++;
-      } catch { /* handled by execute */ }
+      } catch (err) {
+        const code = err?.response?.data?.errors?.[0]?.code || "";
+        if (code === "DIRECT_PURCHASE_REQUIRES_PO") {
+          setPORequired(true);
+          return;
+        }
+      }
     }
 
     if (successCount > 0) {
@@ -148,6 +168,24 @@ export default function AddStockPurchaseForm() {
         <h2 className="text-sm font-semibold mb-1">Direct Vendor Procurement Disabled</h2>
         <p className="text-xs text-muted-foreground max-w-sm">
           Stock is received from your parent store via inventory transfers. Contact your Central Store manager to enable direct vendor purchasing.
+        </p>
+      </div>
+    );
+  }
+
+  if (poRequired) {
+    return (
+      <div data-testid="procurement-po-gate" className="flex flex-col items-center justify-center py-16 text-center">
+        <AlertTriangle className="h-10 w-10 text-amber-500 mb-3" />
+        <h2 className="text-sm font-semibold mb-1">Direct Stock Entry Disabled</h2>
+        <p className="text-xs text-muted-foreground max-w-sm mb-4">
+          Your store requires purchase orders for vendor stock intake. Create a PO, send it to your vendor, and receive goods against it.
+        </p>
+        <Button size="sm" className="h-8 text-xs gap-1" onClick={() => navigate("/purchase/orders")} data-testid="go-to-po-btn">
+          Go to Purchase Orders <ArrowRight className="h-3 w-3" />
+        </Button>
+        <p className="text-[10px] text-muted-foreground mt-3">
+          Admin: This is controlled by <strong>require_po_for_purchase</strong> in Operational Settings.
         </p>
       </div>
     );
