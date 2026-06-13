@@ -2382,8 +2382,8 @@
       {
         "artifact": 3,
         "label": "Impl-Plan",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/CR027_028_029_ARTIFACT_3_IMPLEMENTATION_PLAN.md"
       },
       {
         "artifact": 4,
@@ -2405,15 +2405,14 @@
       }
     ],
     "completeness": {
-      "done": 2,
+      "done": 3,
       "total": 7,
-      "pct": 29
+      "pct": 43
     },
     "doc_count": 0,
     "is_debt": false,
     "debt_reasons": [
       "Session-Start: PENDING",
-      "Impl-Plan: PENDING",
       "Code-Gate: PENDING",
       "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
@@ -2454,8 +2453,8 @@
       {
         "artifact": 3,
         "label": "Impl-Plan",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/CR027_028_029_ARTIFACT_3_IMPLEMENTATION_PLAN.md"
       },
       {
         "artifact": 4,
@@ -2477,15 +2476,14 @@
       }
     ],
     "completeness": {
-      "done": 2,
+      "done": 3,
       "total": 7,
-      "pct": 29
+      "pct": 43
     },
     "doc_count": 0,
     "is_debt": false,
     "debt_reasons": [
       "Session-Start: PENDING",
-      "Impl-Plan: PENDING",
       "Code-Gate: PENDING",
       "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
@@ -2527,8 +2525,8 @@
       {
         "artifact": 3,
         "label": "Impl-Plan",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/CR027_028_029_ARTIFACT_3_IMPLEMENTATION_PLAN.md"
       },
       {
         "artifact": 4,
@@ -2550,15 +2548,14 @@
       }
     ],
     "completeness": {
-      "done": 2,
+      "done": 3,
       "total": 7,
-      "pct": 29
+      "pct": 43
     },
     "doc_count": 0,
     "is_debt": false,
     "debt_reasons": [
       "Session-Start: PENDING",
-      "Impl-Plan: PENDING",
       "Code-Gate: PENDING",
       "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
