@@ -83,7 +83,7 @@
 | Priority | CR | Title | Status |
 |----------|-----|-------|--------|
 | P0 | CR-028 | Product Catalog Overhaul (Excel-like bulk editor) | PROPOSED |
-| P1 | CR-016 | P20-Phase2 — Hierarchy Toggle | IN_PROGRESS — Re-QA needed |
+| P1 | CR-016 | P20-Phase2 — Hierarchy Toggle | **QA** ✅ — pending owner signoff |
 | P1 | CR-018 | P25 — Wastage Report Enhancements | PLANNED |
 | P2 | CR-017 | P21-Smart — Smart Dispatch Assistance | PROPOSED |
 | Future | CR-020 | Daily Intelligence Digest | PROPOSED |

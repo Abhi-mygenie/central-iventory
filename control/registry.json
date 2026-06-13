@@ -1259,7 +1259,7 @@
       "type": "CR",
       "id": "CR-016",
       "title": "P20-Phase2 \u2014 Stock Inventory Hierarchy Toggle",
-      "status": "IN_PROGRESS",
+      "status": "QA",
       "severity": null,
       "sprint_key": "S3",
       "phase": "P20-Phase2",
@@ -1318,14 +1318,15 @@
         {
           "artifact": 5,
           "label": "QA-Report",
-          "status": "PENDING",
+          "status": "DONE",
           "paths": [
             "control/sessions/CR016_ARTIFACT_5_QA_REPORT.md",
             "test_reports/iteration_42.json"
           ],
           "tags": [
             "RE-QA-REQUIRED"
-          ]
+          ],
+          "path": "control/sessions/CR016_ARTIFACT_5_QA_REPORT.md"
         },
         {
           "artifact": 6,

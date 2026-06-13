@@ -213,16 +213,15 @@
     "type": "CR",
     "id": "CR-016",
     "title": "P20-Phase2 — Stock Inventory Hierarchy Toggle",
-    "status": "IN_PROGRESS",
+    "status": "QA",
     "severity": null,
     "sprint_key": "S3",
     "sprint_name": "API Reality Check + Intelligent PO",
     "debt_reasons": [
-      "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
     ],
     "missing_count": 0,
-    "pending_count": 2
+    "pending_count": 1
   },
   {
     "type": "CR",

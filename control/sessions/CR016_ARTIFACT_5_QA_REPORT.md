@@ -1,42 +1,39 @@
-# CR-016 Artifact 5 — QA Report
+# CR-016 Artifact 5 — QA Report (Re-QA)
 
 > **CR ID:** CR-016
 > **Title:** P20-Phase2 — Stock Inventory Hierarchy Toggle
-> **Tester:** Testing Agent (iteration_42)
+> **Artifact:** 5 (QA Report)
 > **Date:** 2026-06-13
-> **Status:** PASS — all 12 tests passed
+> **Test Report:** `/app/test_reports/iteration_44.json`
+> **Overall Status:** ✅ ALL PASS (7/7)
 
 ---
 
 ## Test Results
 
-| # | Test | Status | Details |
-|---|------|:------:|---------|
-| 1 | Backend API /api/ | PASS | 200 OK |
-| 2 | Login as Central Store (806) | PASS | Token + rid=806 returned |
-| 3 | /inventory loads with KPI cards + table | PASS | 47 items, 1 low stock, 4 categories |
-| 4 | Hierarchy toggle VISIBLE for master user | PASS | data-testid hierarchy-toggle present, label "My store" |
-| 5 | Toggle ON → 4th KPI "Stores in Scope" | PASS | Shows "6 Stores in Scope" |
-| 6 | Toggle ON → low-stock alert banner | PASS | "52 low stock items across 6 stores" |
-| 7 | Toggle ON → store heatmap grid | PASS | 6 cards, sorted worst-first (Central Kitchen Beta 11/11 first) |
-| 8 | Heatmap card click → /store/{id} | PASS | Clicked card-808 → navigated to store detail |
-| 9 | Toggle OFF → hierarchy section hidden | PASS | KPI card, banner, heatmap all removed. Table stays |
-| 10 | Franchise user → toggle HIDDEN | PASS | No toggle in DOM for franchise (809) |
-| 11 | Search, sort, category filter | PASS | All functional |
-| 12 | CSV export | PASS | Downloads stock_inventory.csv |
+| # | Test | Status | Evidence |
+|---|------|:------:|----------|
+| T1 | Central Store (master) — toggle visible, default OFF, label "My store" | ✅ PASS | data-state='unchecked', 4th KPI/heatmap not visible |
+| T2 | Toggle ON — hierarchy elements appear | ✅ PASS | Label→"All stores", 4th KPI "7 Stores in Scope", alert "52 low stock across 7 stores", 7 heatmap cards |
+| T3 | Toggle OFF — hierarchy section removed | ✅ PASS | Label→"My store", KPI/banner/heatmap removed, own-store table remains |
+| T4 | Master Store (central) — toggle visible | ✅ PASS | Toggle present, "Master Store — Store #807" |
+| T5 | Outlet (franchise) — toggle NOT visible | ✅ PASS | No toggle element found, "Outlet — Store #809" |
+| T6 | Heatmap card details | ✅ PASS | Store names, terminology mapping (master→Central Store, central→Master Store, franchise→Outlet), ratio badge, progress bar, sorted worst-first |
+| T7 | CR-029 tabs work with hierarchy toggle | ✅ PASS | FG(4)/Raw(43)/All(47) tabs filter independently, hierarchy elements persist across tab switches |
 
-## Evidence
-- Test report: `test_reports/iteration_42.json`
-- Success rate: Backend 100% (2/2), Frontend 100% (12/12)
+## Key Verifications
 
-## Files Changed (3)
+- **Role gating**: `canToggleHierarchy = isTopLevel || isMiddleLevel` — correctly hides for franchise
+- **API integration**: `?include_hierarchy=true` returns `hierarchy_summary` with `by_store[]` per-store breakdown
+- **Terminology**: `mapRestaurantType()` correctly inverts API terms in heatmap cards
+- **Heatmap sorting**: Worst low-stock ratio first (verified)
+- **mixed-unit `total_display_qty`**: NOT displayed anywhere (only ratios and counts shown)
+- **CR-029 compatibility**: Stock type tabs (FG/Raw/All) work independently of hierarchy toggle
 
-| File | Change |
-|------|--------|
-| `services/api.js` | `_getStockInventory` accepts `{ includeHierarchy }` param |
-| `hooks/useStockInventory.js` | Added hierarchy state, toggle, role gate via `useLoginContext` |
-| `StockInventorySummary.jsx` | Toggle switch, 4th KPI card, alert banner, StoreHeatmapCard, store heatmap grid |
+## Issues Found
 
----
+**None.** All features working as specified in the implementation plan.
 
-*QA PASSED. Proceed to governance closure.*
+## Conclusion
+
+CR-016 passes re-QA. Ready for owner signoff.
