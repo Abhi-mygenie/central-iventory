@@ -2364,14 +2364,14 @@
       {
         "artifact": 0,
         "label": "Session-Start",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/SESSION_CLOSE_20260613.md"
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": null
+        "path": "control/sessions/SESSION_CLOSE_20260613.md"
       },
       {
         "artifact": 2,
@@ -2405,14 +2405,13 @@
       }
     ],
     "completeness": {
-      "done": 3,
+      "done": 4,
       "total": 7,
-      "pct": 43
+      "pct": 57
     },
     "doc_count": 0,
     "is_debt": true,
     "debt_reasons": [
-      "Session-Start: PENDING",
       "Code-Gate: PENDING",
       "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
@@ -2435,8 +2434,8 @@
       {
         "artifact": 0,
         "label": "Session-Start",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/SESSION_CLOSE_20260613.md"
       },
       {
         "artifact": 1,
@@ -2476,14 +2475,13 @@
       }
     ],
     "completeness": {
-      "done": 3,
+      "done": 4,
       "total": 7,
-      "pct": 43
+      "pct": 57
     },
     "doc_count": 0,
     "is_debt": false,
     "debt_reasons": [
-      "Session-Start: PENDING",
       "Code-Gate: PENDING",
       "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
@@ -2507,14 +2505,14 @@
       {
         "artifact": 0,
         "label": "Session-Start",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/SESSION_CLOSE_20260613.md"
       },
       {
         "artifact": 1,
         "label": "Intake",
         "status": "DONE",
-        "path": null
+        "path": "control/sessions/SESSION_CLOSE_20260613.md"
       },
       {
         "artifact": 2,
@@ -2548,14 +2546,13 @@
       }
     ],
     "completeness": {
-      "done": 3,
+      "done": 4,
       "total": 7,
-      "pct": 43
+      "pct": 57
     },
     "doc_count": 0,
     "is_debt": true,
     "debt_reasons": [
-      "Session-Start: PENDING",
       "Code-Gate: PENDING",
       "QA-Report: PENDING",
       "Owner-Signoff: PENDING"

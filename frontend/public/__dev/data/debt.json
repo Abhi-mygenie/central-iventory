@@ -295,13 +295,12 @@
     "sprint_key": null,
     "sprint_name": "Unassigned",
     "debt_reasons": [
-      "Session-Start: PENDING",
       "Code-Gate: PENDING",
       "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
     ],
     "missing_count": 0,
-    "pending_count": 4
+    "pending_count": 3
   },
   {
     "type": "CR",
@@ -312,12 +311,11 @@
     "sprint_key": null,
     "sprint_name": "Unassigned",
     "debt_reasons": [
-      "Session-Start: PENDING",
       "Code-Gate: PENDING",
       "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
     ],
     "missing_count": 0,
-    "pending_count": 4
+    "pending_count": 3
   }
 ]

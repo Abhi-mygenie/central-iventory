@@ -3350,14 +3350,14 @@
         {
           "artifact": 0,
           "label": "Session-Start",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/SESSION_CLOSE_20260613.md"
         },
         {
           "artifact": 1,
           "label": "Intake",
           "status": "DONE",
-          "path": null
+          "path": "control/sessions/SESSION_CLOSE_20260613.md"
         },
         {
           "artifact": 2,
@@ -3407,8 +3407,8 @@
         {
           "artifact": 0,
           "label": "Session-Start",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/SESSION_CLOSE_20260613.md"
         },
         {
           "artifact": 1,
@@ -3465,14 +3465,14 @@
         {
           "artifact": 0,
           "label": "Session-Start",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/SESSION_CLOSE_20260613.md"
         },
         {
           "artifact": 1,
           "label": "Intake",
           "status": "DONE",
-          "path": null
+          "path": "control/sessions/SESSION_CLOSE_20260613.md"
         },
         {
           "artifact": 2,
