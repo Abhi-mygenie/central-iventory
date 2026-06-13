@@ -1259,18 +1259,24 @@
       "type": "CR",
       "id": "CR-016",
       "title": "P20-Phase2 \u2014 Stock Inventory Hierarchy Toggle",
-      "status": "PLANNED",
+      "status": "CLOSED",
       "severity": null,
-      "sprint_key": null,
+      "sprint_key": "S3",
       "phase": "P20-Phase2",
-      "files": [],
-      "notes": "Cross-store stock comparison. API validated. ~3-4h estimate.",
+      "files": [
+        "frontend/src/services/api.js",
+        "frontend/src/hooks/useStockInventory.js",
+        "frontend/src/components/central-inventory/StockInventorySummary.jsx"
+      ],
+      "notes": "Hierarchy toggle for Master/Central users. Heatmap, KPI, alert banner. 12/12 tests pass. ~155 lines added.",
       "artifact_refs": [
         {
           "artifact": 0,
           "label": "Session-Start",
-          "status": "MISSING",
-          "paths": [],
+          "status": "DONE",
+          "paths": [
+            "control/sessions/CR016_SESSION_START.md"
+          ],
           "tags": []
         },
         {
@@ -1285,37 +1291,48 @@
         {
           "artifact": 2,
           "label": "Impact-Analysis",
-          "status": "MISSING",
-          "paths": [],
+          "status": "DONE",
+          "paths": [
+            "control/sessions/CR016_ARTIFACT_2_IMPACT_ANALYSIS.md"
+          ],
           "tags": []
         },
         {
           "artifact": 3,
           "label": "Impl-Plan",
-          "status": "MISSING",
-          "paths": [],
+          "status": "DONE",
+          "paths": [
+            "control/sessions/CR016_ARTIFACT_3_IMPLEMENTATION_PLAN.md"
+          ],
           "tags": []
         },
         {
           "artifact": 4,
           "label": "Code-Gate",
-          "status": "MISSING",
-          "paths": [],
+          "status": "DONE",
+          "paths": [
+            "control/sessions/CR016_ARTIFACT_4_CODE_GATE.md"
+          ],
           "tags": []
         },
         {
           "artifact": 5,
           "label": "QA-Report",
-          "status": "MISSING",
-          "paths": [],
+          "status": "DONE",
+          "paths": [
+            "control/sessions/CR016_ARTIFACT_5_QA_REPORT.md",
+            "test_reports/iteration_42.json"
+          ],
           "tags": []
         },
         {
           "artifact": 6,
           "label": "Owner-Signoff",
-          "status": "MISSING",
+          "status": "PENDING",
           "paths": [],
-          "tags": []
+          "tags": [
+            "AWAITING-OWNER"
+          ]
         }
       ]
     },

@@ -51,6 +51,13 @@
 |------|--------|
 | `StockDetailPanel.jsx` | GAP-1: import `useRestaurantMap`, resolve source store names in batch table. GAP-2: wire `onClick` handlers for "Record Wastage" → `/wastage/new` and "Dispatch" → `/dispatch/new` |
 
+### CR-016: Stock Inventory Hierarchy Toggle (3 files)
+| File | Change |
+|------|--------|
+| `services/api.js` | `_getStockInventory` accepts `{ includeHierarchy }` param, appends `?include_hierarchy=true` |
+| `hooks/useStockInventory.js` | Added `useLoginContext`, `canToggleHierarchy`, `showHierarchy` state, `hierarchySummary`/`hierarchyContext` state |
+| `StockInventorySummary.jsx` | Toggle switch, 4th KPI "Stores in Scope", low-stock alert banner, `StoreHeatmapCard` component, store heatmap grid sorted worst-first |
+
 ### CR-025 Sub-task: Wire `reference_code` as PO Number (9 files)
 | File | Change |
 |------|--------|

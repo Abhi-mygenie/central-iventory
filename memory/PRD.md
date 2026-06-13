@@ -19,8 +19,9 @@ Multi-store hierarchy stock management module for the MyGenie POS platform. Prox
 - **S0 (Pre-Governance)**: CR-001 to CR-014 — all 24 screens built
 - **S1**: CR-019 — Intelligent UI Freeze (24/24 screens approved)
 - **S2**: CR-021 (Intelligence layer), CR-022 (Code quality fixes)
-- **S3**: CR-023 (API Reality Check, 17 bug fixes), CR-024 (API Cache, 72% reduction), CR-025 (Intelligent PO + reference_code wire)
-- **2026-06-13**: CR-015 FEFO Batch Stock Detail Panel — GAP-1 (source store name resolution via useRestaurantMap) + GAP-2 (action button onClick wiring) fixed. QA PASS iteration_41. CLOSED.
+- **S3**: CR-023 (API Reality Check), CR-024 (API Cache), CR-025 (Intelligent PO + reference_code wire)
+- **2026-06-13**: CR-015 FEFO Batch Stock Detail (GAP fixes) — CLOSED, iteration_41
+- **2026-06-13**: CR-016 Hierarchy Toggle (toggle, KPI, alert banner, store heatmap) — CLOSED, iteration_42
 
 ## Current Sprint: S3 — All Items CLOSED
 | CR | Title | Status |
@@ -29,11 +30,11 @@ Multi-store hierarchy stock management module for the MyGenie POS platform. Prox
 | CR-024 | API Response Cache (71→20 calls) | CLOSED |
 | CR-025 | Intelligent PO + reference_code wire | CLOSED |
 | CR-015 | FEFO Batch Stock Detail Panel | CLOSED |
+| CR-016 | Stock Inventory Hierarchy Toggle | CLOSED |
 
 ## Prioritized Backlog
 | Priority | CR | Title | Status |
 |----------|-----|-------|--------|
-| P1 | CR-016 | Hierarchy Toggle (cross-store comparison) | PLANNED |
 | P1 | CR-018 | Wastage Report Enhancements | PLANNED |
 | P2 | CR-017 | Smart Dispatch Assistance (~95% done via CR-025) | PROPOSED |
 | Future | CR-020 | Daily Intelligence Digest | PROPOSED |
