@@ -2562,7 +2562,7 @@
     "type": "CR",
     "id": "CR-030",
     "title": "Inward Screens Audit (Vendor Management, Raw Material Master, Purchase)",
-    "status": "QA",
+    "status": "PLANNED",
     "severity": null,
     "sprint_key": "S3",
     "phase": "Screen Audit",
@@ -2571,7 +2571,7 @@
       "IngredientCatalogue.jsx",
       "AddStockPurchaseForm.jsx"
     ],
-    "notes": "Systematic QA audit of 3 Inward screens. UX freezes for Vendor Management and Raw Material Master produced.",
+    "notes": "UX Redesign plan created 2026-06-14. Previous bug-fix-only plan superseded. Vendor master-detail, Raw Material expandable rows, Purchase bug fixes.",
     "artifact_refs": [
       {
         "artifact": 0,
@@ -2589,13 +2589,13 @@
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "DONE",
-        "path": "control/sessions/CR030_ARTIFACT_2_3_IMPACT_AND_PLAN.md"
+        "path": "control/sessions/CR030_ARTIFACT_2_3_UNIFIED_IMPLEMENTATION_PLAN.md"
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "control/sessions/CR030_ARTIFACT_2_3_IMPACT_AND_PLAN.md"
+        "path": "control/sessions/CR030_ARTIFACT_2_3_UNIFIED_IMPLEMENTATION_PLAN.md"
       },
       {
         "artifact": 4,
@@ -2641,7 +2641,7 @@
       "ProductionRunForm.jsx",
       "ProductionHistory.jsx"
     ],
-    "notes": "QA audit of 3 Production screens post CR-026. UX freezes for all 3 screens produced.",
+    "notes": "UX Redesign plan created 2026-06-14. Sub-Recipe master-detail, Production confirmation, History expandable rows + date filter.",
     "artifact_refs": [
       {
         "artifact": 0,
@@ -2659,13 +2659,13 @@
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "DONE",
-        "path": "control/sessions/CR031_ARTIFACT_2_3_IMPACT_AND_PLAN.md"
+        "path": "control/sessions/CR031_ARTIFACT_2_3_UNIFIED_IMPLEMENTATION_PLAN.md"
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "control/sessions/CR031_ARTIFACT_2_3_IMPACT_AND_PLAN.md"
+        "path": "control/sessions/CR031_ARTIFACT_2_3_UNIFIED_IMPLEMENTATION_PLAN.md"
       },
       {
         "artifact": 4,
@@ -2714,7 +2714,7 @@
       "PendingQueues.jsx",
       "HistoryLedger.jsx"
     ],
-    "notes": "QA audit of 5 Outward screens post CR-027/029. UX freezes for all 5 screens produced.",
+    "notes": "UX Redesign plan created 2026-06-14. Store Management single view (Summary tab killed), Product Catalog 5 tabs with BOM editor, Stock Inventory expandable rows, Queues/History bug fixes.",
     "artifact_refs": [
       {
         "artifact": 0,
@@ -2732,13 +2732,13 @@
         "artifact": 2,
         "label": "Impact-Analysis",
         "status": "DONE",
-        "path": "control/sessions/CR032_ARTIFACT_2_3_IMPACT_AND_PLAN.md"
+        "path": "control/sessions/CR032_ARTIFACT_2_3_UNIFIED_IMPLEMENTATION_PLAN.md"
       },
       {
         "artifact": 3,
         "label": "Impl-Plan",
         "status": "DONE",
-        "path": "control/sessions/CR032_ARTIFACT_2_3_IMPACT_AND_PLAN.md"
+        "path": "control/sessions/CR032_ARTIFACT_2_3_UNIFIED_IMPLEMENTATION_PLAN.md"
       },
       {
         "artifact": 4,
