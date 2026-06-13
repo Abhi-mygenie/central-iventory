@@ -1297,7 +1297,7 @@
     "title": "P24 — FEFO Batch Stock Detail Panel",
     "status": "PLANNED",
     "severity": null,
-    "sprint_key": null,
+    "sprint_key": "S3",
     "phase": "P24",
     "files": [],
     "notes": "API validated (19 probes). 3-phase implementation planned. ~10-13h estimate.",
@@ -1371,7 +1371,7 @@
       "QA-Report: MISSING",
       "Owner-Signoff: MISSING"
     ],
-    "sprint_name": "Unassigned"
+    "sprint_name": "API Reality Check + Intelligent PO"
   },
   {
     "type": "CR",
@@ -2035,7 +2035,7 @@
     "type": "CR",
     "id": "CR-023",
     "title": "API Reality Check, Data Seed & Intelligence Gap Fix",
-    "status": "QA",
+    "status": "CLOSED",
     "severity": null,
     "sprint_key": "S3",
     "phase": "Code Gate PASSED → Batch 1 Implementation",
@@ -2099,27 +2099,25 @@
       {
         "artifact": 6,
         "label": "Owner-Signoff",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/HANDOVER_CR023_CR024_CR025_CLOSURE.md"
       }
     ],
     "completeness": {
-      "done": 6,
+      "done": 7,
       "total": 7,
-      "pct": 86
+      "pct": 100
     },
     "doc_count": 0,
-    "is_debt": true,
-    "debt_reasons": [
-      "Owner-Signoff: PENDING"
-    ],
+    "is_debt": false,
+    "debt_reasons": [],
     "sprint_name": "API Reality Check + Intelligent PO"
   },
   {
     "type": "CR",
     "id": "CR-024",
     "title": "API Response Cache — Performance Optimization",
-    "status": "QA",
+    "status": "CLOSED",
     "severity": null,
     "sprint_key": "S3",
     "phase": "Performance",
@@ -2167,27 +2165,25 @@
       {
         "artifact": 6,
         "label": "Owner-Signoff",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/HANDOVER_CR023_CR024_CR025_CLOSURE.md"
       }
     ],
     "completeness": {
-      "done": 6,
+      "done": 7,
       "total": 7,
-      "pct": 86
+      "pct": 100
     },
     "doc_count": 0,
-    "is_debt": true,
-    "debt_reasons": [
-      "Owner-Signoff: PENDING"
-    ],
+    "is_debt": false,
+    "debt_reasons": [],
     "sprint_name": "API Reality Check + Intelligent PO"
   },
   {
     "type": "CR",
     "id": "CR-025",
     "title": "Coverage-Based Intelligent PO — Request Stock + Direct Dispatch",
-    "status": "QA",
+    "status": "CLOSED",
     "severity": null,
     "sprint_key": "S3",
     "phase": "Intelligence",
@@ -2236,20 +2232,18 @@
       {
         "artifact": 6,
         "label": "Owner-Signoff",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/HANDOVER_CR023_CR024_CR025_CLOSURE.md"
       }
     ],
     "completeness": {
-      "done": 6,
+      "done": 7,
       "total": 7,
-      "pct": 86
+      "pct": 100
     },
     "doc_count": 0,
-    "is_debt": true,
-    "debt_reasons": [
-      "Owner-Signoff: PENDING"
-    ],
+    "is_debt": false,
+    "debt_reasons": [],
     "sprint_name": "API Reality Check + Intelligent PO"
   }
 ]

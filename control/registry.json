@@ -2,9 +2,9 @@
   "meta": {
     "project": "Central Inventory",
     "repo": "parth-mygenie/central_inventory",
-    "branch": "02-june",
+    "branch": "13-6-26",
     "schema_version": "1.0",
-    "last_updated": "2026-06-02",
+    "last_updated": "2026-06-13",
     "generator": "control/gen_dashboard_data.js"
   },
   "sprints": {
@@ -34,7 +34,7 @@
       "status": "active",
       "start": "2026-06-01",
       "end": null,
-      "goal": "Fix 18 API-mismatch bugs (CR-023), add API cache (CR-024), build coverage-based Intelligent PO for Request Stock + Direct Dispatch (CR-025)"
+      "goal": "Fix 18 API-mismatch bugs (CR-023), add API cache (CR-024), build coverage-based Intelligent PO for Request Stock + Direct Dispatch (CR-025), FEFO Batch Stock Detail (CR-015), wire reference_code as PO number (CR-025 sub-task)"
     }
   },
   "items": [
@@ -1182,7 +1182,7 @@
       "title": "P24 \u2014 FEFO Batch Stock Detail Panel",
       "status": "PLANNED",
       "severity": null,
-      "sprint_key": null,
+      "sprint_key": "S3",
       "phase": "P24",
       "files": [],
       "notes": "API validated (19 probes). 3-phase implementation planned. ~10-13h estimate.",
@@ -3053,7 +3053,7 @@
       "type": "CR",
       "id": "CR-023",
       "title": "API Reality Check, Data Seed & Intelligence Gap Fix",
-      "status": "QA",
+      "status": "CLOSED",
       "severity": null,
       "sprint_key": "S3",
       "phase": "Code Gate PASSED \u2192 Batch 1 Implementation",
@@ -3117,8 +3117,8 @@
         {
           "artifact": 6,
           "label": "Owner-Signoff",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/HANDOVER_CR023_CR024_CR025_CLOSURE.md"
         }
       ]
     },
@@ -3126,7 +3126,7 @@
       "type": "CR",
       "id": "CR-024",
       "title": "API Response Cache \u2014 Performance Optimization",
-      "status": "QA",
+      "status": "CLOSED",
       "severity": null,
       "sprint_key": "S3",
       "phase": "Performance",
@@ -3174,8 +3174,8 @@
         {
           "artifact": 6,
           "label": "Owner-Signoff",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/HANDOVER_CR023_CR024_CR025_CLOSURE.md"
         }
       ]
     },
@@ -3183,7 +3183,7 @@
       "type": "CR",
       "id": "CR-025",
       "title": "Coverage-Based Intelligent PO \u2014 Request Stock + Direct Dispatch",
-      "status": "QA",
+      "status": "CLOSED",
       "severity": null,
       "sprint_key": "S3",
       "phase": "Intelligence",
@@ -3232,8 +3232,8 @@
         {
           "artifact": 6,
           "label": "Owner-Signoff",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/HANDOVER_CR023_CR024_CR025_CLOSURE.md"
         }
       ]
     }

@@ -1,23 +1,24 @@
 # L6 — Sprint Status
 
-> **Updated:** 2026-06-02 (CR-024 + CR-025 in QA)
+> **Updated:** 2026-06-13 (CR-023, CR-024, CR-025 CLOSED)
 > **Source of truth for items:** `control/registry.json`
 
 ---
 
-## Active Sprint: S3 — API Reality Check + Intelligent PO
+## Active Sprint: S3 — API Reality Check + Intelligent PO + FEFO Detail
 
 - **Period:** 2026-06-01 → ongoing
-- **CRs:** CR-023 (QA), CR-024 (QA), CR-025 (QA)
-- **Branch:** `02-june`
+- **CRs:** CR-023 (CLOSED), CR-024 (CLOSED), CR-025 (CLOSED), CR-015 (PLANNED)
+- **Branch:** `13-6-26`
 
 ### S3 Deliverables
 
 | CR | Title | Status | QA Report | Owner Signoff |
 |----|-------|:------:|:---------:|:-------------:|
-| CR-023 | API Reality Check — 17 bug fixes | QA | iteration_34 | PENDING |
-| CR-024 | API Response Cache (71→20 calls, 72%) | QA | iteration_36 | PENDING |
-| CR-025 | Intelligent PO (Request Stock + Direct Dispatch) | QA | iteration_39 | PENDING |
+| CR-023 | API Reality Check — 17 bug fixes | **CLOSED** | iteration_34 | DONE |
+| CR-024 | API Response Cache (71→20 calls, 72%) | **CLOSED** | iteration_36 | DONE |
+| CR-025 | Intelligent PO (Request Stock + Direct Dispatch) | **CLOSED** | iteration_39 | DONE |
+| CR-015 | P24 — FEFO Batch Stock Detail Panel | **PLANNED** | — | — |
 
 ### CR-023 Detail — 17 Bugs Fixed
 - Batch 1: OperationsHub field fix + store health grid
@@ -37,6 +38,7 @@
 ### CR-025 Detail — Intelligent PO
 - **Request Stock:** Coverage selector (3/7/10/30d), consumption-based + threshold fallback, category grouping, source cross-validation, pending request count, order summary
 - **Direct Dispatch:** Integrated table (Qty to Send + Source Segment inline), "You'll retain X%", "You only have X" warnings, review section, PO auto-gen note
+- **Sub-task pending:** Wire `reference_code` as PO number (planning artifacts 0-3 complete)
 
 ## Closed Sprints
 
@@ -51,15 +53,19 @@
 - **CRs:** CR-001 to CR-014 (all CLOSED)
 - **BUGs:** BUG-001 to BUG-015 (mixed status)
 
+## Backlog (Next Work)
+
+| ID | Title | Priority | Planning Doc |
+|----|-------|----------|-------------|
+| CR-015 | P24 — FEFO Batch Stock Detail | **P0** | `AI/Plans/phase3/P24_fefo_batch_stock_planning.md` |
+| CR-016 | P20-Phase2 — Hierarchy Toggle | P1 | `AI/Plans/phase2/P20_stock_inventory_summary_plan.md` |
+| CR-018 | P25 — Wastage Report Enhancements | P1 | — |
+| CR-017 | P21-Smart — Smart Dispatch Assistance | P2 | `AI/Plans/phase3/P21_smart_dispatch_request_assistance.md` |
+| CR-020 | Daily Intelligence Digest | Future | — |
+
 ## Backlog (Blocked on Backend)
 
-| ID | Title | Blocker | Priority |
-|----|-------|---------|----------|
-| — | Wire Invoice AI extraction | G-014 | P1 |
-| — | Wire Excel import parsing | G-015 | P2 |
-| — | Replace formatPO with real PO numbers | G-013 | P0 |
-| CR-015 | P24 — FEFO Batch Stock Detail | — | P0 |
-| CR-016 | P20-Phase2 — Hierarchy Toggle | — | P1 |
-| CR-017 | P21-Smart — Smart Dispatch Assistance | — | P1 |
-| CR-018 | P25 — Wastage Report Enhancements | — | P2 |
-| CR-020 | Daily Intelligence Digest | — | Future |
+| Item | Blocker |
+|------|---------|
+| Wire Invoice AI extraction | G-014 |
+| Wire Excel import parsing | G-015 |
