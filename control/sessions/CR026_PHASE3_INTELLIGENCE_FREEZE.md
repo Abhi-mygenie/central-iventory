@@ -2,7 +2,7 @@
 
 > **CR ID:** CR-026 Phase 3
 > **Title:** Production Intelligence UI
-> **Status:** MOCK COMPLETE — Pending owner approval to freeze (G-018 CLOSED — all 9 elements unblocked)
+> **Status:** FROZEN — Owner approved 2026-06-13. All 9 elements unblocked. Implementation proceeds against this mock.
 > **Date:** 2026-06-13
 > **Preview:** `/__dev/previews/P28_production_intelligence.html`
 
@@ -78,4 +78,4 @@ Batch 2 (MEDIUM priority):
 
 ---
 
-*This document is pending owner freeze. Implementation does not begin until approved.*
+*This document is FROZEN. Implementation proceeds against this spec + mock. Changes require owner re-approval.*
