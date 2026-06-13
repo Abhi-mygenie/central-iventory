@@ -591,8 +591,10 @@ function getWastageReport({ restaurantIds, fromDate, toDate, wasteType, foodId, 
  * CAUTION: This is for summary/dashboard only.
  * Do NOT use for request flow source catalog (use requestCatalog instead).
  */
-function _getStockInventory() {
-  return client.get("/proxy/v2/inventory/stock-inventory").then((resp) => {
+function _getStockInventory({ includeHierarchy } = {}) {
+  const params = {};
+  if (includeHierarchy) params.include_hierarchy = true;
+  return client.get("/proxy/v2/inventory/stock-inventory", { params }).then((resp) => {
     const data = resp.data;
     if (data?.current_stocks) {
       data.current_stocks = data.current_stocks.map(normalizeStockItem);
