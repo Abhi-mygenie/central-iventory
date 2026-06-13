@@ -3271,7 +3271,7 @@
       "type": "CR",
       "id": "CR-026",
       "title": "P28 \u2014 Production Unit Module (Production Run UI + History)",
-      "status": "IN_PROGRESS",
+      "status": "QA",
       "severity": null,
       "sprint_key": "S3",
       "phase": "Production",
@@ -3321,8 +3321,8 @@
         {
           "artifact": 5,
           "label": "QA-Report",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR027_029_026_ARTIFACT_5_QA_REPORT.md"
         },
         {
           "artifact": 6,
@@ -3336,9 +3336,9 @@
       "type": "CR",
       "id": "CR-027",
       "title": "Navigation Restructure \u2014 Grouped Sidebar (INWARD / PRODUCTION / OUTWARD / REPORTS / SETTINGS)",
-      "status": "IN_PROGRESS",
+      "status": "QA",
       "severity": null,
-      "sprint_key": null,
+      "sprint_key": "S3",
       "phase": "UX",
       "files": [
         "frontend/src/lib/screenVisibility.js",
@@ -3374,14 +3374,14 @@
         {
           "artifact": 4,
           "label": "Code-Gate",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR027_029_026_ARTIFACT_5_QA_REPORT.md"
         },
         {
           "artifact": 5,
           "label": "QA-Report",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR027_029_026_ARTIFACT_5_QA_REPORT.md"
         },
         {
           "artifact": 6,
@@ -3452,9 +3452,9 @@
       "type": "CR",
       "id": "CR-029",
       "title": "Stock Inventory Split \u2014 Finished Goods vs Raw Materials Tabs",
-      "status": "IN_PROGRESS",
+      "status": "QA",
       "severity": null,
-      "sprint_key": null,
+      "sprint_key": "S3",
       "phase": "UX",
       "files": [
         "frontend/src/components/central-inventory/StockInventorySummary.jsx",
@@ -3489,14 +3489,14 @@
         {
           "artifact": 4,
           "label": "Code-Gate",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR027_029_026_ARTIFACT_5_QA_REPORT.md"
         },
         {
           "artifact": 5,
           "label": "QA-Report",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR027_029_026_ARTIFACT_5_QA_REPORT.md"
         },
         {
           "artifact": 6,

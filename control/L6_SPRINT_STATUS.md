@@ -53,12 +53,21 @@
 - **CRs:** CR-001 to CR-014 (all CLOSED)
 - **BUGs:** BUG-001 to BUG-015 (mixed status)
 
+## QA Completed (2026-06-13) — Pending Owner Signoff
+
+| ID | Title | QA Status | Test Report |
+|----|-------|:---------:|-------------|
+| CR-026 | P28 — Production Unit Module | ✅ PASS (14/14) | `test_reports/iteration_43.json` |
+| CR-027 | Navigation Restructure | ✅ PASS (14/14) | `test_reports/iteration_43.json` |
+| CR-029 | Stock Inventory FG/Raw Split | ✅ PASS (14/14) | `test_reports/iteration_43.json` |
+
 ## Backlog (Next Work)
 
 | ID | Title | Priority | Planning Doc |
 |----|-------|----------|-------------|
 | CR-015 | P24 — FEFO Batch Stock Detail | **CLOSED** | `AI/Plans/phase3/P24_fefo_batch_stock_planning.md` |
 | CR-016 | P20-Phase2 — Hierarchy Toggle | **IN_PROGRESS** | `AI/Plans/phase2/P20_stock_inventory_summary_plan.md` — Re-QA required (hook fix) |
+| CR-028 | Product Catalog Overhaul | **PROPOSED** | `control/sessions/CR027_028_029_ARTIFACT_3_IMPLEMENTATION_PLAN.md` |
 | CR-018 | P25 — Wastage Report Enhancements | P1 | — |
 | CR-017 | P21-Smart — Smart Dispatch Assistance | P2 | `AI/Plans/phase3/P21_smart_dispatch_request_assistance.md` |
 | CR-020 | Daily Intelligence Digest | Future | — |

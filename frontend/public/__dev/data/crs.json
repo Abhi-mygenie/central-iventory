@@ -2273,7 +2273,7 @@
     "type": "CR",
     "id": "CR-026",
     "title": "P28 — Production Unit Module (Production Run UI + History)",
-    "status": "IN_PROGRESS",
+    "status": "QA",
     "severity": null,
     "sprint_key": "S3",
     "phase": "Production",
@@ -2323,8 +2323,8 @@
       {
         "artifact": 5,
         "label": "QA-Report",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/CR027_029_026_ARTIFACT_5_QA_REPORT.md"
       },
       {
         "artifact": 6,
@@ -2334,14 +2334,13 @@
       }
     ],
     "completeness": {
-      "done": 5,
+      "done": 6,
       "total": 7,
-      "pct": 71
+      "pct": 86
     },
     "doc_count": 0,
     "is_debt": true,
     "debt_reasons": [
-      "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
     ],
     "sprint_name": "API Reality Check + Intelligent PO"
@@ -2350,9 +2349,9 @@
     "type": "CR",
     "id": "CR-027",
     "title": "Navigation Restructure — Grouped Sidebar (INWARD / PRODUCTION / OUTWARD / REPORTS / SETTINGS)",
-    "status": "IN_PROGRESS",
+    "status": "QA",
     "severity": null,
-    "sprint_key": null,
+    "sprint_key": "S3",
     "phase": "UX",
     "files": [
       "frontend/src/lib/screenVisibility.js",
@@ -2388,14 +2387,14 @@
       {
         "artifact": 4,
         "label": "Code-Gate",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/CR027_029_026_ARTIFACT_5_QA_REPORT.md"
       },
       {
         "artifact": 5,
         "label": "QA-Report",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/CR027_029_026_ARTIFACT_5_QA_REPORT.md"
       },
       {
         "artifact": 6,
@@ -2405,18 +2404,16 @@
       }
     ],
     "completeness": {
-      "done": 4,
+      "done": 6,
       "total": 7,
-      "pct": 57
+      "pct": 86
     },
     "doc_count": 0,
     "is_debt": true,
     "debt_reasons": [
-      "Code-Gate: PENDING",
-      "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
     ],
-    "sprint_name": "Unassigned"
+    "sprint_name": "API Reality Check + Intelligent PO"
   },
   {
     "type": "CR",
@@ -2492,9 +2489,9 @@
     "type": "CR",
     "id": "CR-029",
     "title": "Stock Inventory Split — Finished Goods vs Raw Materials Tabs",
-    "status": "IN_PROGRESS",
+    "status": "QA",
     "severity": null,
-    "sprint_key": null,
+    "sprint_key": "S3",
     "phase": "UX",
     "files": [
       "frontend/src/components/central-inventory/StockInventorySummary.jsx",
@@ -2529,14 +2526,14 @@
       {
         "artifact": 4,
         "label": "Code-Gate",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/CR027_029_026_ARTIFACT_5_QA_REPORT.md"
       },
       {
         "artifact": 5,
         "label": "QA-Report",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/CR027_029_026_ARTIFACT_5_QA_REPORT.md"
       },
       {
         "artifact": 6,
@@ -2546,17 +2543,15 @@
       }
     ],
     "completeness": {
-      "done": 4,
+      "done": 6,
       "total": 7,
-      "pct": 57
+      "pct": 86
     },
     "doc_count": 0,
     "is_debt": true,
     "debt_reasons": [
-      "Code-Gate: PENDING",
-      "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
     ],
-    "sprint_name": "Unassigned"
+    "sprint_name": "API Reality Check + Intelligent PO"
   }
 ]

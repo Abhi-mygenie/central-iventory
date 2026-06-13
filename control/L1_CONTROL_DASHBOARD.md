@@ -70,12 +70,20 @@
 | G-018 | Production run list/history | P0 | **CLOSED** — `GET /inventory/production-run?limit=&from_date=` confirmed |
 | G-019 | Segment unit_cost | P1 | **CLOSED** — `unit_cost` in segments[] of `GET /stock-inventory/{id}` confirmed |
 
+## QA Completed (2026-06-13) — Pending Owner Signoff
+
+| CR | Title | QA Status | Test Report |
+|----|-------|:---------:|-------------|
+| CR-026 | P28 — Production Unit Module | ✅ PASS (14/14) | `test_reports/iteration_43.json` |
+| CR-027 | Navigation Restructure (6 sections, 15 items) | ✅ PASS (14/14) | `test_reports/iteration_43.json` |
+| CR-029 | Stock Inventory FG/Raw Split (3 tabs) | ✅ PASS (14/14) | `test_reports/iteration_43.json` |
+
 ## Next Work — Backlog Priority
 
 | Priority | CR | Title | Status |
 |----------|-----|-------|--------|
-| **P0** | CR-015 | P24 — FEFO Batch Stock Detail Panel | PLANNED |
-| P1 | CR-016 | P20-Phase2 — Hierarchy Toggle | **IN_PROGRESS** — Re-QA needed |
+| P0 | CR-028 | Product Catalog Overhaul (Excel-like bulk editor) | PROPOSED |
+| P1 | CR-016 | P20-Phase2 — Hierarchy Toggle | IN_PROGRESS — Re-QA needed |
 | P1 | CR-018 | P25 — Wastage Report Enhancements | PLANNED |
 | P2 | CR-017 | P21-Smart — Smart Dispatch Assistance | PROPOSED |
 | Future | CR-020 | Daily Intelligence Digest | PROPOSED |
