@@ -48,16 +48,35 @@
 | CR-015 | P24 — FEFO Batch Stock Detail Panel (GAP fixes) | CLOSED | 2026-06-13 |
 | CR-016 | P20-Phase2 — Stock Inventory Hierarchy Toggle | CLOSED | 2026-06-13 |
 
-## Registry: 25 CRs, 16 BUGs, 3 Sprints (S0-S2 closed, S3 active)
+## Registry: 33 CRs, 16 BUGs, 3 Sprints (S0-S2 closed, S3 active)
+
+## Screen Audit CRs (Planned — from 13-june-2)
+
+| CR | Title | Screens | Artifacts | UX Freezes |
+|----|-------|:-------:|:---------:|:----------:|
+| CR-030 | Inward Screens Audit | 3 (Vendor, Raw Material, Purchase) | 4/7 | 2 (Vendor Mgmt, Raw Material Master) |
+| CR-031 | Production Screens Audit | 3 (Sub-Recipe, Run Prod, Prod History) | 4/7 | 3 (Sub-Recipe, Run Production, Prod History) |
+| CR-032 | Outward Screens Audit | 5 (Store Mgmt, Product Cat, Stock Inv, Queues, History) | 4/7 | 5 (all screens) |
+| CR-033 | Action Screens Audit | 5 (Dispatch, Request, Adjustment, Wastage, Transfer) | 2/7 | 0 |
+
+## Backend Gaps (New)
+
+| ID | Gap | Priority | Status |
+|----|-----|:--------:|--------|
+| G-020 | Custom unit conversion in inventory master | P1 | OPEN — POS backend required |
+| G-021 | Purchase Order Module (create/approve/receive/close) | P0 | OPEN — POS backend required |
+
+## Owner Signoff Pending
+
+## Backend Gaps
+
+| ID | Gap | Priority | Status |
 
 ## Owner Signoff Pending
 
 - **CR-021** — Sprint A+B+C Intelligence Implementation
 - **CR-022** — Code Quality Review Fixes
 
-## Backend Gaps
-
-| ID | Gap | Priority | Status |
 |----|-----|:--------:|--------|
 | G-013 | PO number generation | P0 | **CLOSED** — `reference_code` in API, frontend wire planned |
 | G-009 | Partial dispatch | P1 | **CLOSED** — works via approval_lines |

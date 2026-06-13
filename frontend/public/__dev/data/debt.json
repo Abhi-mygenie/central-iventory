@@ -307,5 +307,71 @@
     ],
     "missing_count": 0,
     "pending_count": 1
+  },
+  {
+    "type": "CR",
+    "id": "CR-030",
+    "title": "Inward Screens Audit (Vendor Management, Raw Material Master, Purchase)",
+    "status": "PLANNED",
+    "severity": null,
+    "sprint_key": null,
+    "sprint_name": "Unassigned",
+    "debt_reasons": [
+      "Code-Gate: MISSING",
+      "QA-Report: MISSING",
+      "Owner-Signoff: MISSING"
+    ],
+    "missing_count": 3,
+    "pending_count": 0
+  },
+  {
+    "type": "CR",
+    "id": "CR-031",
+    "title": "Production Screens Audit (Sub-Recipe Master, Run Production, Production History)",
+    "status": "PLANNED",
+    "severity": null,
+    "sprint_key": null,
+    "sprint_name": "Unassigned",
+    "debt_reasons": [
+      "Code-Gate: MISSING",
+      "QA-Report: MISSING",
+      "Owner-Signoff: MISSING"
+    ],
+    "missing_count": 3,
+    "pending_count": 0
+  },
+  {
+    "type": "CR",
+    "id": "CR-032",
+    "title": "Outward Screens Audit (Store Mgmt, Product Catalog, Stock Inventory, Pending Queues, History & Ledger)",
+    "status": "PLANNED",
+    "severity": null,
+    "sprint_key": null,
+    "sprint_name": "Unassigned",
+    "debt_reasons": [
+      "Code-Gate: MISSING",
+      "QA-Report: MISSING",
+      "Owner-Signoff: MISSING"
+    ],
+    "missing_count": 3,
+    "pending_count": 0
+  },
+  {
+    "type": "CR",
+    "id": "CR-033",
+    "title": "Action Screens Audit (Direct Dispatch, Request Stock, Stock Adjustment, Wastage Entry, Transfer Detail)",
+    "status": "PLANNED",
+    "severity": null,
+    "sprint_key": null,
+    "sprint_name": "Unassigned",
+    "debt_reasons": [
+      "Impact-Analysis: MISSING",
+      "Impl-Plan: MISSING",
+      "Code-Gate: MISSING",
+      "QA-Report: MISSING",
+      "Owner-Signoff: MISSING"
+    ],
+    "missing_count": 5,
+    "pending_count": 0
   }
 ]

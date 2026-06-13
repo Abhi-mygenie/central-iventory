@@ -2557,5 +2557,299 @@
       "Owner-Signoff: PENDING"
     ],
     "sprint_name": "API Reality Check + Intelligent PO"
+  },
+  {
+    "type": "CR",
+    "id": "CR-030",
+    "title": "Inward Screens Audit (Vendor Management, Raw Material Master, Purchase)",
+    "status": "PLANNED",
+    "severity": null,
+    "sprint_key": null,
+    "phase": "Screen Audit",
+    "files": [
+      "VendorManagement.jsx",
+      "IngredientCatalogue.jsx",
+      "AddStockPurchaseForm.jsx"
+    ],
+    "notes": "Systematic QA audit of 3 Inward screens. UX freezes for Vendor Management and Raw Material Master produced.",
+    "artifact_refs": [
+      {
+        "artifact": 0,
+        "label": "Session-Start",
+        "status": "DONE",
+        "path": "control/sessions/CR030_SESSION_START.md"
+      },
+      {
+        "artifact": 1,
+        "label": "Intake",
+        "status": "DONE",
+        "path": "control/sessions/CR030_ARTIFACT_1_INTAKE.md"
+      },
+      {
+        "artifact": 2,
+        "label": "Impact-Analysis",
+        "status": "DONE",
+        "path": "control/sessions/CR030_ARTIFACT_2_3_IMPACT_AND_PLAN.md"
+      },
+      {
+        "artifact": 3,
+        "label": "Impl-Plan",
+        "status": "DONE",
+        "path": "control/sessions/CR030_ARTIFACT_2_3_IMPACT_AND_PLAN.md"
+      },
+      {
+        "artifact": 4,
+        "label": "Code-Gate",
+        "status": "MISSING",
+        "path": null
+      },
+      {
+        "artifact": 5,
+        "label": "QA-Report",
+        "status": "MISSING",
+        "path": null
+      },
+      {
+        "artifact": 6,
+        "label": "Owner-Signoff",
+        "status": "MISSING",
+        "path": null
+      }
+    ],
+    "completeness": {
+      "done": 4,
+      "total": 7,
+      "pct": 57
+    },
+    "doc_count": 0,
+    "is_debt": true,
+    "debt_reasons": [
+      "Code-Gate: MISSING",
+      "QA-Report: MISSING",
+      "Owner-Signoff: MISSING"
+    ],
+    "sprint_name": "Unassigned"
+  },
+  {
+    "type": "CR",
+    "id": "CR-031",
+    "title": "Production Screens Audit (Sub-Recipe Master, Run Production, Production History)",
+    "status": "PLANNED",
+    "severity": null,
+    "sprint_key": null,
+    "phase": "Screen Audit",
+    "files": [
+      "SubRecipeMaster.jsx",
+      "ProductionRunForm.jsx",
+      "ProductionHistory.jsx"
+    ],
+    "notes": "QA audit of 3 Production screens post CR-026. UX freezes for all 3 screens produced.",
+    "artifact_refs": [
+      {
+        "artifact": 0,
+        "label": "Session-Start",
+        "status": "DONE",
+        "path": "control/sessions/CR031_SESSION_START.md"
+      },
+      {
+        "artifact": 1,
+        "label": "Intake",
+        "status": "DONE",
+        "path": "control/sessions/CR031_ARTIFACT_1_INTAKE.md"
+      },
+      {
+        "artifact": 2,
+        "label": "Impact-Analysis",
+        "status": "DONE",
+        "path": "control/sessions/CR031_ARTIFACT_2_3_IMPACT_AND_PLAN.md"
+      },
+      {
+        "artifact": 3,
+        "label": "Impl-Plan",
+        "status": "DONE",
+        "path": "control/sessions/CR031_ARTIFACT_2_3_IMPACT_AND_PLAN.md"
+      },
+      {
+        "artifact": 4,
+        "label": "Code-Gate",
+        "status": "MISSING",
+        "path": null
+      },
+      {
+        "artifact": 5,
+        "label": "QA-Report",
+        "status": "MISSING",
+        "path": null
+      },
+      {
+        "artifact": 6,
+        "label": "Owner-Signoff",
+        "status": "MISSING",
+        "path": null
+      }
+    ],
+    "completeness": {
+      "done": 4,
+      "total": 7,
+      "pct": 57
+    },
+    "doc_count": 0,
+    "is_debt": true,
+    "debt_reasons": [
+      "Code-Gate: MISSING",
+      "QA-Report: MISSING",
+      "Owner-Signoff: MISSING"
+    ],
+    "sprint_name": "Unassigned"
+  },
+  {
+    "type": "CR",
+    "id": "CR-032",
+    "title": "Outward Screens Audit (Store Mgmt, Product Catalog, Stock Inventory, Pending Queues, History & Ledger)",
+    "status": "PLANNED",
+    "severity": null,
+    "sprint_key": null,
+    "phase": "Screen Audit",
+    "files": [
+      "StoreManagement.jsx",
+      "ProductCatalogue.jsx",
+      "StockInventorySummary.jsx",
+      "PendingQueues.jsx",
+      "HistoryLedger.jsx"
+    ],
+    "notes": "QA audit of 5 Outward screens post CR-027/029. UX freezes for all 5 screens produced.",
+    "artifact_refs": [
+      {
+        "artifact": 0,
+        "label": "Session-Start",
+        "status": "DONE",
+        "path": "control/sessions/CR032_SESSION_START.md"
+      },
+      {
+        "artifact": 1,
+        "label": "Intake",
+        "status": "DONE",
+        "path": "control/sessions/CR032_ARTIFACT_1_INTAKE.md"
+      },
+      {
+        "artifact": 2,
+        "label": "Impact-Analysis",
+        "status": "DONE",
+        "path": "control/sessions/CR032_ARTIFACT_2_3_IMPACT_AND_PLAN.md"
+      },
+      {
+        "artifact": 3,
+        "label": "Impl-Plan",
+        "status": "DONE",
+        "path": "control/sessions/CR032_ARTIFACT_2_3_IMPACT_AND_PLAN.md"
+      },
+      {
+        "artifact": 4,
+        "label": "Code-Gate",
+        "status": "MISSING",
+        "path": null
+      },
+      {
+        "artifact": 5,
+        "label": "QA-Report",
+        "status": "MISSING",
+        "path": null
+      },
+      {
+        "artifact": 6,
+        "label": "Owner-Signoff",
+        "status": "MISSING",
+        "path": null
+      }
+    ],
+    "completeness": {
+      "done": 4,
+      "total": 7,
+      "pct": 57
+    },
+    "doc_count": 0,
+    "is_debt": true,
+    "debt_reasons": [
+      "Code-Gate: MISSING",
+      "QA-Report: MISSING",
+      "Owner-Signoff: MISSING"
+    ],
+    "sprint_name": "Unassigned"
+  },
+  {
+    "type": "CR",
+    "id": "CR-033",
+    "title": "Action Screens Audit (Direct Dispatch, Request Stock, Stock Adjustment, Wastage Entry, Transfer Detail)",
+    "status": "PLANNED",
+    "severity": null,
+    "sprint_key": null,
+    "phase": "Screen Audit",
+    "files": [
+      "DirectDispatchForm.jsx",
+      "RequestStockForm.jsx",
+      "StockAdjustmentForm.jsx",
+      "WastageEntryForm.jsx",
+      "TransferDetail.jsx"
+    ],
+    "notes": "QA audit of 5 action screens (not in sidebar nav). Artifacts 0-1 only, no code changes planned.",
+    "artifact_refs": [
+      {
+        "artifact": 0,
+        "label": "Session-Start",
+        "status": "DONE",
+        "path": "control/sessions/CR033_SESSION_START.md"
+      },
+      {
+        "artifact": 1,
+        "label": "Intake",
+        "status": "DONE",
+        "path": "control/sessions/CR033_ARTIFACT_1_INTAKE.md"
+      },
+      {
+        "artifact": 2,
+        "label": "Impact-Analysis",
+        "status": "MISSING",
+        "path": null
+      },
+      {
+        "artifact": 3,
+        "label": "Impl-Plan",
+        "status": "MISSING",
+        "path": null
+      },
+      {
+        "artifact": 4,
+        "label": "Code-Gate",
+        "status": "MISSING",
+        "path": null
+      },
+      {
+        "artifact": 5,
+        "label": "QA-Report",
+        "status": "MISSING",
+        "path": null
+      },
+      {
+        "artifact": 6,
+        "label": "Owner-Signoff",
+        "status": "MISSING",
+        "path": null
+      }
+    ],
+    "completeness": {
+      "done": 2,
+      "total": 7,
+      "pct": 29
+    },
+    "doc_count": 0,
+    "is_debt": true,
+    "debt_reasons": [
+      "Impact-Analysis: MISSING",
+      "Impl-Plan: MISSING",
+      "Code-Gate: MISSING",
+      "QA-Report: MISSING",
+      "Owner-Signoff: MISSING"
+    ],
+    "sprint_name": "Unassigned"
   }
 ]
