@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useStockDetail } from "@/hooks/useStockDetail";
+import { useRestaurantMap } from "@/hooks/useRestaurantMap";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -181,7 +182,7 @@ function ItemSummarySection({ summary }) {
 
 // ── Section B: Batch Inventory (FEFO Segments) ──────────────────
 
-function BatchInventorySection({ segments, displayUnit }) {
+function BatchInventorySection({ segments, displayUnit, restaurantMap, onNavigate }) {
   const totalQty = segments.reduce((sum, s) => {
     const days = daysUntilExpiry(s.expiry_date);
     if (days !== null && days < 0) return sum; // exclude expired from total
@@ -279,7 +280,7 @@ function BatchInventorySection({ segments, displayUnit }) {
                             className="text-xs bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded"
                             data-testid={`batch-source-${seg.segment_id || i}`}
                           >
-                            Store #{seg.source_restaurant_id}
+                            {restaurantMap[String(seg.source_restaurant_id)]?.name || `Store #${seg.source_restaurant_id}`}
                           </span>
                         ) : (
                           <span className="text-xs text-muted-foreground">—</span>
@@ -287,12 +288,12 @@ function BatchInventorySection({ segments, displayUnit }) {
                       </TableCell>
                       <TableCell className="py-2.5">
                         {isExpired && (
-                          <span className="text-[10px] font-semibold text-red-600 cursor-pointer hover:underline" data-testid={`wastage-action-${seg.segment_id || i}`}>
+                          <span className="text-[10px] font-semibold text-red-600 cursor-pointer hover:underline" data-testid={`wastage-action-${seg.segment_id || i}`} onClick={() => onNavigate('/wastage/new')}>
                             Record Wastage
                           </span>
                         )}
                         {isFirstExpiry && !isExpired && (
-                          <span className="text-[10px] font-medium text-amber-700 cursor-pointer hover:underline" data-testid={`dispatch-action-${seg.segment_id || i}`}>
+                          <span className="text-[10px] font-medium text-amber-700 cursor-pointer hover:underline" data-testid={`dispatch-action-${seg.segment_id || i}`} onClick={() => onNavigate('/dispatch/new')}>
                             Dispatch
                           </span>
                         )}
@@ -591,6 +592,7 @@ export default function StockDetailPanel() {
     error,
     fetch,
   } = useStockDetail(id);
+  const { restaurantMap } = useRestaurantMap();
 
   useEffect(() => {
     fetch();
@@ -650,7 +652,7 @@ export default function StockDetailPanel() {
       {summary && (
         <div className="space-y-4">
           <ItemSummarySection summary={summary} />
-          <BatchInventorySection segments={segments} displayUnit={displayUnit} />
+          <BatchInventorySection segments={segments} displayUnit={displayUnit} restaurantMap={restaurantMap} onNavigate={navigate} />
           <ReconciliationSection reconciliation={reconciliation} />
           <ConsumptionSection
             consumptionSummary={consumptionSummary}
