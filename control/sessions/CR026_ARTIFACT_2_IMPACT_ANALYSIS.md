@@ -247,12 +247,21 @@ Render:
 
 ## 5. Backend Gap Register (for Owner → Backend Team)
 
-| Gap ID | Title | Endpoint Needed | Priority | Blocker For |
-|--------|-------|----------------|:--------:|-------------|
-| **G-018** | Production run list/history API | `GET /inventory/production-run` — returns paginated list of production runs for the restaurant. Fields: `id, reference_code, bom_sub_recipe_id, recipe_name, planned_output_qty, actual_output_qty, output_unit, output_batch, output_expiry_date, unit_cost, total_cost, status, created_at` | **P0** | F4 (Production History screen) |
-| **G-019** | Segment `unit_cost` in stock-inventory detail | Add `unit_cost` (or `unit_cost_at_intake`) to `segments[]` in `GET /inventory/stock-inventory/{id}` response | **P1** | F2 (Pre-run cost estimation) |
+| Gap ID | Title | Endpoint Needed | Priority | Blocker For | Status |
+|--------|-------|----------------|:--------:|-------------|--------|
+| **G-018** | Production run list/history API | `GET /inventory/production-run?limit=&from_date=` | **P0** | F4 (Production History screen) | **CLOSED** — confirmed working 2026-06-13 |
+| **G-019** | Segment `unit_cost` in stock-inventory detail | Add `unit_cost_at_intake` to `segments[]` in `GET /inventory/stock-inventory/{id}` | **P1** | F2 (Pre-run cost estimation) | OPEN |
 
-### G-018 Suggested API Contract
+### G-018 — CLOSED (2026-06-13)
+
+Backend delivered the list endpoint. Confirmed via curl:
+```
+GET /api/v2/vendoremployee/inventory/production-run?limit=20&from_date=2026-06-01
+Authorization: Bearer {token}
+```
+Frontend `api.js` stub to be replaced with real call in CR-026 Phase 3.
+
+### G-018 Suggested API Contract (Original — for reference)
 
 ```
 GET /v2/vendoremployee/inventory/production-run

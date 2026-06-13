@@ -57,7 +57,7 @@ Multi-store hierarchy stock management module for the MyGenie POS platform. Prox
 | G-015 | Excel/CSV parsing | P2 |
 | G-016 | Invoice number storage | P2 |
 | G-017 | Vendor purchase history | P2 |
-| G-018 | Production run list/history API | P0 |
+| ~~G-018~~ | ~~Production run list/history API~~ | ~~P0~~ | **CLOSED** |
 | G-019 | Segment unit_cost in stock-inventory detail | P1 |
 
 ## Key Architecture Rules

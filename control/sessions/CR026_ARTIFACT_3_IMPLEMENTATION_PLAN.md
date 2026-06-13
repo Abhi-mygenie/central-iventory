@@ -366,7 +366,7 @@ ProductionAuditDetail
 
 ---
 
-## 5. Phase 2b — Production History List (Blocked: G-018) (~2h)
+## 5. Phase 2b — Production History List (G-018 CLOSED) (~2h)
 
 ### 5.1 ProductionHistoryList Structure
 

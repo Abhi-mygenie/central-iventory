@@ -67,6 +67,8 @@
 | G-015 | Excel parsing endpoint | P2 | OPEN — Upload zone ready, pending backend |
 | G-016 | Invoice storage | P2 | OPEN |
 | G-017 | Vendor purchase history API | P2 | OPEN — No workaround |
+| G-018 | Production run list/history | P0 | **CLOSED** — `GET /inventory/production-run?limit=&from_date=` confirmed |
+| G-019 | Segment unit_cost | P1 | OPEN — owner requested backend to add |
 
 ## Next Work — Backlog Priority
 

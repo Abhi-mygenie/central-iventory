@@ -2,7 +2,7 @@
 
 > **CR ID:** CR-026 Phase 3
 > **Title:** Production Intelligence UI
-> **Status:** MOCK COMPLETE — Pending owner approval to freeze
+> **Status:** MOCK COMPLETE — Pending owner approval to freeze (G-018 CLOSED — all 9 elements unblocked)
 > **Date:** 2026-06-13
 > **Preview:** `/__dev/previews/P28_production_intelligence.html`
 
@@ -23,9 +23,9 @@
 - **P3-6** Post-production NBA — green cards below confirmation: "Dispatch to Outlet Direct One (0 in stock, 3 pending requests)" with "Dispatch Now" button
 
 ### Screen 4: Production History — Staleness & Cost Intelligence
-- **P3-7** Summary KPIs — 3 cards: Total Runs, Total FG Produced, Total Material Cost (blocked on G-018)
-- **P3-8** Sub-recipe staleness indicator — per-recipe row: name, avg cost, staleness badge (green "2 days ago", amber "12 days ago", red "Never produced") (blocked on G-018)
-- **P3-9** Cost trend — bar chart: avg unit cost over last 5 runs with % change vs previous (blocked on G-018)
+- **P3-7** Summary KPIs — 3 cards: Total Runs, Total FG Produced, Total Material Cost — **UNBLOCKED (G-018 closed)**
+- **P3-8** Sub-recipe staleness indicator — per-recipe row with staleness badge — **UNBLOCKED (G-018 closed)**
+- **P3-9** Cost trend — bar chart with % change — **UNBLOCKED (G-018 closed)**
 
 ---
 
@@ -39,24 +39,23 @@
 | P3-4 | Ingredient health strip | ProductionRunForm | stockMap (cal_quantity vs min_qty_alert) | No | MEDIUM |
 | P3-5 | Coverage estimate | ProductionRunForm | getDailyConsumptionReport | No | MEDIUM |
 | P3-6 | Post-production NBA | PostProductionConfirmation | getHierarchyDetail + getPendingQueues | No | HIGH |
-| P3-7 | Summary KPIs | ProductionHistory | getProductionRunHistory (G-018) | G-018 | LOW |
-| P3-8 | Staleness indicator | ProductionHistory | getProductionRunHistory (G-018) | G-018 | LOW |
-| P3-9 | Cost trend | ProductionHistory | getProductionRunHistory (G-018) | G-018 | LOW |
+| P3-7 | Summary KPIs | ProductionHistory | getProductionRunHistory | No | HIGH |
+| P3-8 | Staleness indicator | ProductionHistory | getProductionRunHistory | No | HIGH |
+| P3-9 | Cost trend | ProductionHistory | getProductionRunHistory | No | MEDIUM |
 
 ## Implementation Order
 
 ```
-Batch 1 (unblocked, HIGH priority):
+Batch 1 (HIGH priority):
   P3-1 + P3-2 → OperationsHub.jsx + useStockIntelligence.js
   P3-3         → ProductionRunForm.jsx
   P3-6         → ProductionRunForm.jsx (post-confirmation section)
+  P3-7 + P3-8  → ProductionHistory.jsx (wire real API — G-018 CLOSED)
 
-Batch 2 (unblocked, MEDIUM priority):
+Batch 2 (MEDIUM priority):
   P3-4         → ProductionRunForm.jsx (ingredient table enhancement)
   P3-5         → ProductionRunForm.jsx + useProductionRun.js (add consumption fetch)
-
-Batch 3 (blocked on G-018):
-  P3-7 + P3-8 + P3-9 → ProductionHistory.jsx (stub state until backend delivers)
+  P3-9         → ProductionHistory.jsx (cost trend chart)
 ```
 
 ## Files Touched
