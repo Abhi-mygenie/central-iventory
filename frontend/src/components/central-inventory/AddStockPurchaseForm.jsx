@@ -114,6 +114,7 @@ export default function AddStockPurchaseForm() {
   const handleSubmit = async () => {
     if (!isValid || submitting) return;
     let successCount = 0;
+    const failedItems = [];
 
     for (const line of validLines) {
       const payload = {
@@ -131,13 +132,26 @@ export default function AddStockPurchaseForm() {
       try {
         const resp = await execute(() => api.addStockPurchase(line.itemId, payload), { successMsg: null });
         if (resp) successCount++;
-      } catch { /* handled by execute */ }
+        else failedItems.push({ name: line.itemName || `Item #${line.itemId}`, error: "Submission failed" });
+      } catch (err) {
+        failedItems.push({ name: line.itemName || `Item #${line.itemId}`, error: err?.response?.data?.message || "Unknown error" });
+      }
     }
 
-    if (successCount > 0) {
-      toast({ title: `${successCount} item${successCount > 1 ? "s" : ""} added to stock`, variant: "default" });
+    if (successCount > 0 && failedItems.length === 0) {
+      toast({ title: `${successCount} item${successCount > 1 ? "s" : ""} added to stock` });
       setSuccessResult({ count: successCount, vendor: selectedVendor?.vendor_name || "" });
       setConfirmMode(false);
+    } else if (successCount > 0 && failedItems.length > 0) {
+      toast({
+        title: `${successCount} of ${validLines.length} items added. ${failedItems.length} failed.`,
+        description: failedItems.map(f => f.name).join(", "),
+        variant: "destructive",
+      });
+      setSuccessResult({ count: successCount, vendor: selectedVendor?.vendor_name || "", failedItems });
+      setConfirmMode(false);
+    } else {
+      toast({ title: "All items failed to submit", variant: "destructive" });
     }
   };
 
@@ -246,7 +260,9 @@ export default function AddStockPurchaseForm() {
                 <p className="text-sm font-semibold">Drop invoice here or click to browse</p>
                 <p className="text-xs text-muted-foreground mt-1">PDF, JPG, PNG — max 10MB</p>
                 <p className="text-[10px] text-muted-foreground mt-1">Supports printed invoices and handwritten bills</p>
-                <Input type="file" accept="image/*,.pdf" className="mt-3 max-w-xs mx-auto h-8 text-xs" data-testid="invoice-file-input" />
+                <Input type="file" accept="image/*,.pdf" className="mt-3 max-w-xs mx-auto h-8 text-xs" data-testid="invoice-file-input"
+                  onChange={(e) => { e.target.value = ""; toast({ title: "Invoice processing not yet available (G-014)", description: "Use the Manual Entry tab to add stock.", variant: "destructive" }); }}
+                />
               </div>
 
               <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800" data-testid="ocr-pending-notice">
@@ -270,7 +286,9 @@ export default function AddStockPurchaseForm() {
                   <FileSpreadsheet className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
                   <p className="text-xs font-semibold">Drop Excel/CSV here</p>
                   <p className="text-[10px] text-muted-foreground mt-1">.xlsx, .xls, .csv — max 5MB</p>
-                  <Input type="file" accept=".xlsx,.xls,.csv" className="mt-2 max-w-[200px] mx-auto h-7 text-xs" data-testid="excel-file-input" />
+                  <Input type="file" accept=".xlsx,.xls,.csv" className="mt-2 max-w-[200px] mx-auto h-7 text-xs" data-testid="excel-file-input"
+                    onChange={(e) => { e.target.value = ""; toast({ title: "Excel import not yet available (G-015)", description: "Use the Manual Entry tab to add stock.", variant: "destructive" }); }}
+                  />
                 </div>
                 <div className="border border-border rounded-lg p-6 text-center">
                   <p className="text-xs font-semibold mb-1">Need a template?</p>

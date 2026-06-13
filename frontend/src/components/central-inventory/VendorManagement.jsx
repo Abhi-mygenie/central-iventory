@@ -9,6 +9,7 @@ import { LoadingState, ErrorState, EmptyState } from "@/components/common/StateD
 import VendorFormDialog from "./VendorFormDialog";
 import ConfirmActionDialog from "./ConfirmActionDialog";
 import { Building2, Plus, Search, Pencil, Trash2, RefreshCw, Loader2, ShieldX } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 export default function VendorManagement() {
   const { restaurantType, isTopLevel } = useLoginContext();
@@ -70,7 +71,7 @@ export default function VendorManagement() {
       setDeleteConfirm(null);
       fetchVendors();
     } catch (err) {
-      alert(err?.response?.data?.message || "Failed to delete vendor");
+      toast({ title: err?.response?.data?.message || "Failed to delete vendor", variant: "destructive" });
     } finally {
       setDeleting(false);
     }

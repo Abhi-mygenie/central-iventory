@@ -43,6 +43,7 @@ export default function IngredientCatalogue() {
 }
 
 function IngredientsTab() {
+  const { isTopLevel } = useLoginContext();
   const [ingredients, setIngredients] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,13 +53,17 @@ function IngredientsTab() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [addOpen, setAddOpen] = useState(false);
+  const [childStoreCount, setChildStoreCount] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true); setError(null);
     try {
-      const [invResp, catResp, recResp] = await Promise.all([
+      const fetches = [
         api.getStockInventory(), api.getStockItemCategories(), api.getRecipeList(),
-      ]);
+      ];
+      if (isTopLevel) fetches.push(api.getHierarchyList({ limit: 100 }));
+      const results = await Promise.all(fetches);
+      const [invResp, catResp, recResp] = results;
       setIngredients(invResp.data?.current_stocks || []);
       setCategories(catResp.data || []);
       // B8: Build recipe cross-ref map
@@ -71,9 +76,14 @@ function IngredientsTab() {
         });
       });
       setRecipeMap(rMap);
+      // CR-030: Count child stores for "Pushed to" column
+      if (isTopLevel && results[3]) {
+        const children = results[3].data?.data?.children || results[3].data?.children || [];
+        setChildStoreCount(children.length);
+      }
     } catch (e) { setError(e?.message || "Failed to load"); console.warn("[catalogue]", e); }
     finally { setLoading(false); }
-  }, []);
+  }, [isTopLevel]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -106,6 +116,7 @@ function IngredientsTab() {
               <TableHead className="text-xs text-center">Status</TableHead>
               <TableHead className="text-xs text-center">Recipes</TableHead>
               <TableHead className="text-xs text-center">Vendor</TableHead>
+              {isTopLevel && <TableHead className="text-xs text-center">Pushed to</TableHead>}
               <TableHead className="text-xs w-20">Actions</TableHead>
             </TableRow></TableHeader>
             <TableBody>
@@ -116,12 +127,27 @@ function IngredientsTab() {
                   <TableCell className="py-2 text-sm text-right tabular-nums">{item.display_qty} {item.display_unit}</TableCell>
                   <TableCell className="py-2 text-xs text-right tabular-nums text-muted-foreground">{item.min_qty_alert} {item.min_unit_alert}</TableCell>
                   <TableCell className="py-2 text-center">
-                    {item.is_low_stock ? <Badge variant="destructive" className="text-[10px] px-1.5 py-0">Low</Badge> : <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-emerald-700 border-emerald-200 bg-emerald-50">OK</Badge>}
+                    {item.is_low_stock ? (
+                      <Badge variant="destructive" className="text-[10px] px-1.5 py-0">Low</Badge>
+                    ) : Number(item.cal_quantity || item.display_qty) === 0 ? (
+                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-slate-500 border-slate-200 bg-slate-50">Empty</Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-emerald-700 border-emerald-200 bg-emerald-50">OK</Badge>
+                    )}
                   </TableCell>
                   <TableCell className="py-2 text-center text-xs tabular-nums" data-testid={`recipe-count-${item.id}`}>
                     {recipeMap[(item.stock_title || "").toLowerCase()] || 0}
                   </TableCell>
                   <TableCell className="py-2 text-xs text-muted-foreground text-center">{item.vendor_name || "—"}</TableCell>
+                  {isTopLevel && (
+                    <TableCell className="py-2 text-center" data-testid={`pushed-to-${item.id}`}>
+                      {childStoreCount > 0 ? (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">{childStoreCount} stores</span>
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                  )}
                   <TableCell className="py-2">
                     <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => { setEditItem(item); setDialogOpen(true); }} data-testid={`edit-ing-${item.id}`}><Pencil className="h-3.5 w-3.5" /></Button>
                   </TableCell>
@@ -214,7 +240,10 @@ function AddIngredientDialog({ open, onOpenChange, categories, onSaved }) {
     try {
       await api.addInventoryItem([{ category_id: Number(catId), stock_title: title, unit, small_unit: smallUnit, minimun_stock_alert: Number(minAlert) || 0, min_unit_alert: minUnitAlert }]);
       onOpenChange(false); setTitle(""); setCatId(""); setMinAlert(""); onSaved();
-    } catch { }
+      toast({ title: "Ingredient added" });
+    } catch (err) {
+      toast({ title: err?.response?.data?.message || "Failed to add ingredient", variant: "destructive" });
+    }
     finally { setSaving(false); }
   };
 
