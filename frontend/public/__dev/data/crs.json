@@ -1560,9 +1560,9 @@
     "type": "CR",
     "id": "CR-018",
     "title": "P25 — Wastage Report Enhancements",
-    "status": "PLANNED",
+    "status": "IN_PROGRESS",
     "severity": null,
-    "sprint_key": null,
+    "sprint_key": "S3",
     "phase": "P25",
     "files": [],
     "notes": "Enhanced wastage report features. API validated.",
@@ -1570,8 +1570,10 @@
       {
         "artifact": 0,
         "label": "Session-Start",
-        "status": "MISSING",
-        "paths": [],
+        "status": "DONE",
+        "paths": [
+          "control/sessions/CR018_SESSION_START.md"
+        ],
         "tags": []
       },
       {
@@ -1586,8 +1588,10 @@
       {
         "artifact": 2,
         "label": "Impact-Analysis",
-        "status": "MISSING",
-        "paths": [],
+        "status": "DONE",
+        "paths": [
+          "control/sessions/CR018_ARTIFACT_2_IMPACT_ANALYSIS.md"
+        ],
         "tags": []
       },
       {
@@ -1620,21 +1624,19 @@
       }
     ],
     "completeness": {
-      "done": 1,
+      "done": 3,
       "total": 7,
-      "pct": 14
+      "pct": 43
     },
-    "doc_count": 1,
+    "doc_count": 3,
     "is_debt": true,
     "debt_reasons": [
-      "Session-Start: MISSING",
-      "Impact-Analysis: MISSING",
       "Impl-Plan: MISSING",
       "Code-Gate: MISSING",
       "QA-Report: MISSING",
       "Owner-Signoff: MISSING"
     ],
-    "sprint_name": "Unassigned"
+    "sprint_name": "API Reality Check + Intelligent PO"
   },
   {
     "type": "CR",

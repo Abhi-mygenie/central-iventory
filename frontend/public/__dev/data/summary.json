@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-13T17:20:45.928Z",
+  "generated_at": "2026-06-13T18:11:09.268Z",
   "project": "Central Inventory",
   "repo": "parth-mygenie/central_inventory",
   "branch": "13-6-26",
@@ -13,7 +13,7 @@
     "CLOSED": 21,
     "QA": 4,
     "PROPOSED": 3,
-    "PLANNED": 1
+    "IN_PROGRESS": 1
   },
   "bugs_by_status": {
     "ACCEPTED": 11,
@@ -68,7 +68,7 @@
       "start": "2026-06-01",
       "end": null,
       "goal": "Fix 18 API-mismatch bugs (CR-023), add API cache (CR-024), build coverage-based Intelligent PO for Request Stock + Direct Dispatch (CR-025), FEFO Batch Stock Detail (CR-015), wire reference_code as PO number (CR-025 sub-task)",
-      "cr_count": 8,
+      "cr_count": 9,
       "bug_count": 0
     }
   ],
