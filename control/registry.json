@@ -4,7 +4,7 @@
     "repo": "parth-mygenie/central_inventory",
     "branch": "13-6-26",
     "schema_version": "1.0",
-    "last_updated": "2026-06-13",
+    "last_updated": "2026-06-14",
     "generator": "control/gen_dashboard_data.js"
   },
   "sprints": {
@@ -3526,7 +3526,12 @@
       "files": [
         "VendorManagement.jsx",
         "IngredientCatalogue.jsx",
-        "AddStockPurchaseForm.jsx"
+        "AddStockPurchaseForm.jsx",
+        "PurchaseOrderList.jsx",
+        "PurchaseOrderCreate.jsx",
+        "PurchaseOrderDetail.jsx",
+        "services/api.js",
+        "App.js"
       ],
       "notes": "UX Redesign + PO Module. IMPLEMENTED: 3 UX freezes done (Vendor master-detail, Raw Material expandable rows, PO Module 9 screens). AddStockPurchaseForm PO gate redirect DONE. By Item Need mode DONE. G-021 CLOSED. ~28h estimated.",
       "artifact_refs": [

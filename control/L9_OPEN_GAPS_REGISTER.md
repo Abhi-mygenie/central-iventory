@@ -1,6 +1,6 @@
 # L9 — Open Gaps Register
 
-> **Updated:** 2026-06-13 (G-018 CLOSED — production-run list endpoint confirmed)
+> **Updated:** 2026-06-14 (G-017 CLOSED, G-021 CLOSED, G-022 NOT NEEDED)
 
 ---
 
@@ -14,35 +14,39 @@
 | G-004 | History API missing restaurant_type | Store badges | P3 | OPEN |
 | G-005 | Dedicated stock ledger API | N+1 calls | P2 | OPEN |
 | G-006 | Stock return flow API | Return feature | P1 | OPEN |
-| G-009 | Partial dispatch | Dispatch subset | P1 | **CLOSED** — works via `approval_lines` (validated CR-023) |
-| G-010 | Soft stock reservation on approval | Reservation | P1 | **CLOSED** — `reserve_on_approve` setting available (validated CR-023) |
+| G-009 | Partial dispatch | Dispatch subset | P1 | **CLOSED** — works via `approval_lines` |
+| G-010 | Soft stock reservation on approval | Reservation | P1 | **CLOSED** — `reserve_on_approve` setting |
 | G-011 | WebSocket infrastructure | Real-time events | P2 | OPEN |
-| G-012 | request-catalog missing category | Category grouping | P1 | **CLOSED** — `category_id` + `category_name` in response (validated CR-025) |
-| **G-013** | **No PO number in transfer API** | **All screens** | **P0** | **CLOSED** — `reference_code` field returned by API (validated 2026-06-13). Frontend wire planned (CR-025 sub-task). |
-| **G-014** | **Invoice OCR/AI extraction** | **Procurement Upload Invoice tab** | **P1** | **OPEN — UI ready, shows "Coming Soon"** |
-| **G-015** | **Excel/CSV parsing** | **Procurement Excel import** | **P2** | **OPEN — Upload zone ready, pending backend** |
+| G-012 | request-catalog missing category | Category grouping | P1 | **CLOSED** — `category_id` + `category_name` in response |
+| G-013 | No PO number in transfer API | All screens | P0 | **CLOSED** — `reference_code` field. Frontend wired. |
+| **G-014** | **Invoice OCR/AI extraction** | **PO Receive Upload tab** | **P1** | **OPEN — UI shows "Coming Soon"** |
+| **G-015** | **Excel/CSV parsing** | **Procurement Excel import** | **P2** | **OPEN — Upload zone ready** |
 | G-016 | Invoice number storage | Duplicate detection | P2 | OPEN |
-| **G-017** | **Vendor purchase history API** | **VendorManagement intelligence** | **P2** | **OPEN — No workaround** |
-| **G-018** | **Production run list/history API** | **Production History screen** | **P0** | **CLOSED** — `GET /inventory/production-run?limit=&from_date=` confirmed working (2026-06-13). Frontend wire in CR-026 Phase 3. |
-| **G-019** | **Segment `unit_cost` in stock-inventory detail** | **Pre-run cost estimation** | **P1** | **CLOSED** — `unit_cost` field now returned in `segments[]` of `GET /inventory/stock-inventory/{id}` (confirmed 2026-06-13). Frontend wire in CR-026 Phase 2c. |
-| **G-020** | **Custom unit conversion in inventory master** | **Mixed-unit display/calculation** | **P1** | **OPEN — POS backend work required** |
-| **G-021** | **Purchase Order Module** | **Structured PO workflow (create/approve/receive/close)** | **P0** | **CLOSED** — All 10 PO endpoints validated (32/32 checks pass, 2026-06-14). Contract at `AI/Plans/phase3/P35_purchase_order_api_contract.md`. |
+| G-017 | Vendor purchase history API | Vendor + Raw Material intelligence | P2 | **CLOSED** — `vendor-item-list` API confirmed working (75 records, 2026-06-14). Used in CR-030 Vendor Management + Raw Material Master + PO Create. |
+| G-018 | Production run list/history API | Production History | P0 | **CLOSED** — `GET /inventory/production-run` confirmed |
+| G-019 | Segment `unit_cost` | Cost estimation | P1 | **CLOSED** — `unit_cost` in segments[] confirmed |
+| **G-020** | **Custom unit conversion** | **Mixed-unit display** | **P1** | **OPEN — POS backend required** |
+| G-021 | Purchase Order Module | PO lifecycle | P0 | **CLOSED** — All 10 PO endpoints validated (32/32 checks, 2026-06-14). Contract: `AI/Plans/phase3/P35_purchase_order_api_contract.md`. Frontend implemented in CR-030. |
+| G-022 | Aggregated stock with segments/consumption | Expanded stock detail | P1 | **NOT NEEDED** — API supports `include_segments` + `include_consumption` params (confirmed 2026-06-14). Response ~29s — used basic call for page load, purchase data for estimates. |
 
-## Implementation Gaps — Status After CR-023/024/025 Closure
+## Implementation Gaps — Status After CR-030
 
 | # | Item | Status | Notes |
 |---|------|:------:|-------|
 | IG-001 | Catalogue vendor column | DONE | |
-| IG-002 | Consumption days-of-cover | DONE | CR-025 consumption-based coverage |
-| IG-003 | Hierarchy push status | DONE | CR-023 Batch 6 |
-| IG-004 | Request low-stock suggestions | **DONE** | CR-025 Intelligent PO replaces basic banner |
-| IG-005 | Dispatch destination health | **DONE** | CR-025 integrated dispatch table |
-| IG-006 | Procurement 3-mode UI | DONE | AI/Excel blocked on G-014/G-015 |
-| IG-007 | Product Has Recipe column | DONE | CR-023 Batch 6 |
-| IG-008 | Recipe Cost Mapped column | DONE | CR-023 Batch 6 |
-| IG-009 | Addon-Recipe Cost Mapped | DONE | CR-023 Batch 6 |
-| IG-010 | Hierarchy Summary health | DONE | CR-023 Batch 5 |
+| IG-002 | Consumption days-of-cover | DONE | CR-025 + CR-030 |
+| IG-003 | Hierarchy push status | DONE | |
+| IG-004 | Request low-stock suggestions | DONE | CR-025 |
+| IG-005 | Dispatch destination health | DONE | CR-025 |
+| IG-006 | Procurement 3-mode UI | DONE (PO gate) | AI/Excel blocked on G-014/G-015 |
+| IG-007 | Product Has Recipe column | DONE | |
+| IG-008 | Recipe Cost Mapped column | DONE | |
+| IG-009 | Addon-Recipe Cost Mapped | DONE | |
+| IG-010 | Hierarchy Summary health | DONE | |
 | IG-011 | Store Detail health strip | DONE | |
+| IG-012 | Vendor purchase intelligence | **DONE** | CR-030 — vendor-item-list powers 3 KPIs + chart + recent purchases |
+| IG-013 | Raw Material vendor price comparison | **DONE** | CR-030 — horizontal bars per vendor |
+| IG-014 | PO lifecycle management | **DONE** | CR-030 — 9 screens, full create/approve/send/receive/close |
 
 ## Performance — RESOLVED (CR-024)
 
@@ -50,12 +54,11 @@
 |--------|:------:|:-----:|
 | Operations Hub → Queues → Detail → Hub | 71 API calls | 20 calls (72% reduction) |
 | `stock-inventory` calls per session | 8x | 1x (cached 60s) |
-| Back-navigation to Hub | 22 new calls | 2 calls (from cache) |
 
 ## Remaining Preview Gaps (P2)
 
 | Screen | Gap | Blocked By |
 |--------|-----|-----------|
-| DailyConsumptionReport | Trend column (compare current vs previous period) | Needs 2 consumption API calls |
-| ProductCatalogue | "Has Recipe" computed column | Cross-ref recipe data |
-| VendorManagement | Purchase history intelligence | G-017 (backend) |
+| DailyConsumptionReport | Trend column | Needs 2 consumption API calls |
+| PO Receive | Upload Invoice tab | G-014 (backend OCR) |
+| Procurement | Excel import | G-015 (backend parsing) |

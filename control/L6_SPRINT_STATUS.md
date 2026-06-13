@@ -1,80 +1,82 @@
 # L6 — Sprint Status
 
-> **Updated:** 2026-06-13 (CR-023, CR-024, CR-025 CLOSED)
+> **Updated:** 2026-06-14 (CR-030 QA complete)
 > **Source of truth for items:** `control/registry.json`
 
 ---
 
-## Active Sprint: S3 — API Reality Check + Intelligent PO + FEFO Detail
+## Active Sprint: S3 — API Reality Check + Intelligent PO + Screen Audit
 
 - **Period:** 2026-06-01 → ongoing
-- **CRs:** CR-023 (CLOSED), CR-024 (CLOSED), CR-025 (CLOSED), CR-015 (PLANNED)
-- **Branch:** `13-6-26`
+- **Branch:** `14-june-planning`
+- **CRs:** CR-023 (CLOSED), CR-024 (CLOSED), CR-025 (CLOSED), CR-015 (CLOSED), CR-016 (CLOSED), CR-030 (QA)
 
 ### S3 Deliverables
 
 | CR | Title | Status | QA Report | Owner Signoff |
 |----|-------|:------:|:---------:|:-------------:|
 | CR-023 | API Reality Check — 17 bug fixes | **CLOSED** | iteration_34 | DONE |
-| CR-024 | API Response Cache (71→20 calls, 72%) | **CLOSED** | iteration_36 | DONE |
-| CR-025 | Intelligent PO (Request Stock + Direct Dispatch) | **CLOSED** | iteration_39 | DONE |
-| CR-015 | P24 — FEFO Batch Stock Detail Panel | **CLOSED** | iteration_41 | PENDING |
+| CR-024 | API Response Cache (71→20 calls) | **CLOSED** | iteration_36 | DONE |
+| CR-025 | Intelligent PO (Request Stock + Dispatch) | **CLOSED** | iteration_39 | DONE |
+| CR-015 | P24 — FEFO Batch Stock Detail | **CLOSED** | iteration_41 | PENDING |
+| CR-016 | P20-Phase2 — Hierarchy Toggle | **CLOSED** | iteration_44 | PENDING |
+| CR-030 | Inward Screens Audit (Vendor + RawMat + PO) | **QA** | CR030_ARTIFACT_5_QA_REPORT.md | **PENDING** |
 
-### CR-023 Detail — 17 Bugs Fixed
-- Batch 1: OperationsHub field fix + store health grid
-- Batch 2: Restaurant names on Queues, TransferDetail, History
-- Batch 3: TransferDetail Requester Snapshot + Approval Impact
-- Batch 4: Consumption intelligence + Dispatch auto-detect
-- Batch 5: ReceiveDialog + ApproveWaveDialog FEFO + HierarchySummary health
-- Batch 6: Catalogues + HierarchyMgmt + Dialog polish
-- **DEFERRED:** B10 (Vendor purchase history — G-017)
+### CR-030 Detail — Inward Screens (Implemented 2026-06-14)
 
-### CR-024 Detail — Performance
-- Single-file change: `frontend/src/services/api.js`
-- In-memory cache: LONG 60s / MEDIUM 45s / SHORT 30s TTL
-- In-flight dedup eliminates React StrictMode double-fires
-- Auto-invalidation on all 15 write/mutation endpoints
+**Scope:** 3 screen rewrites + 1 new module (9 sub-screens)
 
-### CR-025 Detail — Intelligent PO
-- **Request Stock:** Coverage selector (3/7/10/30d), consumption-based + threshold fallback, category grouping, source cross-validation, pending request count, order summary
-- **Direct Dispatch:** Integrated table (Qty to Send + Source Segment inline), "You'll retain X%", "You only have X" warnings, review section, PO auto-gen note
-- **Sub-task pending:** Wire `reference_code` as PO number (planning artifacts 0-3 complete)
+| Phase | Screen | Change | Status |
+|:-----:|--------|--------|:------:|
+| 0 | api.js | `getVendorItemList` + 10 PO methods + extended `getStockInventory` params | ✅ |
+| 1 | VendorManagement | FULL REWRITE → master-detail + purchase intelligence | ✅ |
+| 2 | IngredientCatalogue | FULL REWRITE → expandable rows + intelligence + filters | ✅ |
+| 3.1 | PurchaseOrderList | NEW — status tabs, 4 KPI cards, filters | ✅ |
+| 3.2 | PurchaseOrderCreate | NEW — By Vendor (intel columns, TIP banner) + By Item Need (urgency, multi-PO) | ✅ |
+| 3.3 | PurchaseOrderDetail | NEW — stock context, card-per-line receive, variance detection | ✅ |
+| 3.4 | AddStockPurchaseForm | EDIT — PO gate redirect (proactive + reactive) | ✅ |
+| 3.5 | App.js | EDIT — 3 PO routes + imports | ✅ |
+
+### S3 Remaining (Planned)
+
+| CR | Title | Status | UX Freezes |
+|----|-------|:------:|:----------:|
+| CR-031 | Production Screens Audit | PLANNED | 3 freezes |
+| CR-032 | Outward Screens Audit | PLANNED | 5 freezes |
 
 ## Closed Sprints
 
-### S2 — Intelligent UI Implementation
-- **CRs:** CR-021 (CLOSED), CR-022 (CLOSED)
-- **Audit:** 55/55 tests covered implemented subset only; 18 bugs found → CR-023
+### S2 — Intelligent UI Implementation (CLOSED)
+- CRs: CR-021, CR-022
 
-### S1 — Governance Setup
-- **CRs:** CR-019 (UI Freeze, CLOSED — 7/7 artifacts)
+### S1 — Governance Setup (CLOSED)
+- CRs: CR-019
 
-### S0 — Pre-Governance (Retroactive)
-- **CRs:** CR-001 to CR-014 (all CLOSED)
-- **BUGs:** BUG-001 to BUG-015 (mixed status)
+### S0 — Pre-Governance (CLOSED)
+- CRs: CR-001 to CR-014
 
-## QA Completed (2026-06-13) — Pending Owner Signoff
+## QA Completed — Pending Owner Signoff
 
-| ID | Title | QA Status | Test Report |
-|----|-------|:---------:|-------------|
-| CR-026 | P28 — Production Unit Module | ✅ PASS (14/14) | `test_reports/iteration_43.json` |
-| CR-027 | Navigation Restructure | ✅ PASS (14/14) | `test_reports/iteration_43.json` |
-| CR-029 | Stock Inventory FG/Raw Split | ✅ PASS (14/14) | `test_reports/iteration_43.json` |
+| ID | Title | QA Status | Report |
+|----|-------|:---------:|--------|
+| CR-026 | P28 Production Unit Module | ✅ PASS | `test_reports/iteration_43.json` |
+| CR-027 | Navigation Restructure | ✅ PASS | `test_reports/iteration_43.json` |
+| CR-029 | Stock Inventory FG/Raw Split | ✅ PASS | `test_reports/iteration_43.json` |
+| CR-030 | Inward Screens Audit | ✅ IMPL | `CR030_ARTIFACT_5_QA_REPORT.md` |
 
 ## Backlog (Next Work)
 
 | ID | Title | Priority | Planning Doc |
 |----|-------|----------|-------------|
-| CR-015 | P24 — FEFO Batch Stock Detail | **CLOSED** | `AI/Plans/phase3/P24_fefo_batch_stock_planning.md` |
-| CR-016 | P20-Phase2 — Hierarchy Toggle | **QA** ✅ | `control/sessions/CR016_ARTIFACT_5_QA_REPORT.md` — 7/7 tests PASS (iteration_44) |
-| CR-028 | Product Catalog Overhaul | **PROPOSED** | `control/sessions/CR027_028_029_ARTIFACT_3_IMPLEMENTATION_PLAN.md` |
-| CR-018 | P25 — Wastage Report Enhancements | P1 | — |
-| CR-017 | P21-Smart — Smart Dispatch Assistance | P2 | `AI/Plans/phase3/P21_smart_dispatch_request_assistance.md` |
-| CR-020 | Daily Intelligence Digest | Future | — |
+| CR-031 | Production Screens Audit | **P0** | `CR031_ARTIFACT_2_3_UNIFIED_IMPLEMENTATION_PLAN.md` |
+| CR-032 | Outward Screens Audit | **P0** | `CR032_ARTIFACT_2_3_UNIFIED_IMPLEMENTATION_PLAN.md` |
+| CR-033 | Action Screens Audit | P1 | `CR033_ARTIFACT_1_INTAKE.md` |
+| CR-018 | P25 Wastage Report | P1 | — |
 
 ## Backlog (Blocked on Backend)
 
 | Item | Blocker |
 |------|---------|
-| Wire Invoice AI extraction | G-014 |
-| Wire Excel import parsing | G-015 |
+| Invoice AI extraction | G-014 |
+| Excel import parsing | G-015 |
+| Unit conversion | G-020 |
