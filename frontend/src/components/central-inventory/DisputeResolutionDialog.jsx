@@ -37,7 +37,7 @@ export default function DisputeResolutionDialog({ open, onOpenChange, transfer, 
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent data-testid="dispute-resolution-dialog" className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Resolve Dispute — {formatPO(transfer?.id)}</DialogTitle>
+          <DialogTitle>Resolve Dispute — {formatPO(transfer?.id, transfer?.reference_code)}</DialogTitle>
           <DialogDescription>
             The receiver flagged a discrepancy. Review and accept or reject the dispute.
           </DialogDescription>

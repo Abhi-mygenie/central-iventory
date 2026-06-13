@@ -46,6 +46,19 @@
 | `RequestStockForm.jsx` | Full rewrite — coverage selector, consumption-based ordering, threshold fallback, category grouping, source cross-validation, order summary |
 | `DirectDispatchForm.jsx` | Full rewrite — integrated dispatch table with inline Source Segment picker, "You'll retain X%", review warnings, coverage selector |
 
+### CR-025 Sub-task: Wire `reference_code` as PO Number (9 files)
+| File | Change |
+|------|--------|
+| `lib/formatters.js` | Added `referenceCode` param to `formatPO` (backwards compatible) |
+| `PendingQueues.jsx` | Pass `item.reference_code` at 2 call sites |
+| `TransferDetail.jsx` | Pass `data?.reference_code` at page title |
+| `HistoryLedger.jsx` | Pass `reference_code` at 3 display sites + propagate into 4 derived ledger entries |
+| `OperationsHub.jsx` | Pass `reference_code` at 2 call sites |
+| `ApproveWaveDialog.jsx` | Pass `transfer?.reference_code` at dialog title |
+| `ReceiveDialog.jsx` | Pass `transfer?.reference_code` at dialog title |
+| `DisputeResolutionDialog.jsx` | Pass `transfer?.reference_code` at dialog title |
+| `StockInventorySummary.jsx` | Removed dead `formatPO` import |
+
 ## Key Dependencies
 
 | Component | Depends On |

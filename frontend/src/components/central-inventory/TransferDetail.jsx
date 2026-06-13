@@ -350,7 +350,7 @@ export default function TransferDetail() {
 
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <div className="flex items-center gap-3">
-          <h1 className="text-lg font-bold">{formatPO(data.id || id)}</h1>
+          <h1 className="text-lg font-bold">{formatPO(data.id || id, data?.reference_code)}</h1>
           <StatusBadge status={data.status} />
           {data.created_at && (
             <span className="text-xs text-muted-foreground">Created {formatRelativeTime(data.created_at)}</span>

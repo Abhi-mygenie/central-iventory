@@ -82,7 +82,7 @@ export default function ReceiveDialog({ open, onOpenChange, transfer, onSubmit, 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent data-testid="receive-dialog" className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Receive Transfer {formatPO(transfer?.id)}</DialogTitle>
+          <DialogTitle>Receive Transfer {formatPO(transfer?.id, transfer?.reference_code)}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-3 py-2">

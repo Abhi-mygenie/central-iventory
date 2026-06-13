@@ -475,7 +475,7 @@ export default function OperationsHub() {
                         <span className="font-semibold truncate">{itemName}</span>
                         {itemCount > 1 && <span className="text-muted-foreground">+{itemCount - 1}</span>}
                         <span className="text-muted-foreground truncate">{isIn ? "from" : "to"} {counterparty}</span>
-                        <span className="ml-auto tabular-nums text-muted-foreground font-mono text-[10px]">{formatPO(t.id)}</span>
+                        <span className="ml-auto tabular-nums text-muted-foreground font-mono text-[10px]">{formatPO(t.id, t.reference_code)}</span>
                       </div>
                     );
                   })}
@@ -496,7 +496,7 @@ export default function OperationsHub() {
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Your Latest Request</p>
                     <p className="text-sm font-semibold mt-1">
-                      {formatPO(latestRequest.id)} — {(latestRequest.lines || []).length} items
+                      {formatPO(latestRequest.id, latestRequest.reference_code)} — {(latestRequest.lines || []).length} items
                     </p>
                     <p className="text-xs text-amber-600 mt-0.5">
                       {latestRequest.status === "requested" ? "Awaiting Approval" : latestRequest.status} — {formatRelativeTime(latestRequest.created_at)}

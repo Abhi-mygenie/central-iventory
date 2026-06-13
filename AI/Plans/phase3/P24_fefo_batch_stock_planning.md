@@ -433,3 +433,252 @@ F2 (784) consumption (legacy — NOT via FEFO):
 4. **Should we show source_restaurant_id as store name?** — Yes — resolve via hierarchy_scope or children list. Use "Unknown" as fallback.
 
 5. **Pagination for consumption_lines?** — Default 50, cap 200. If near cap, show "Showing 200 of potentially more — narrow date range."
+
+
+---
+
+## 11. Post-Implementation Validation — CR-015 Scope (13 Jun 2026)
+
+> **Validated by:** E1 agent
+> **Context:** CR-001 through CR-025 implemented and closed. CR-015 assigned to S3 but not started.
+> **Purpose:** Audit existing code against the plan, identify gaps from CR-023/024/025, determine remaining work.
+
+---
+
+### 11.1 Phase 1 Status: COMPLETE (No Work Remaining)
+
+| Phase 1 Deliverable | Plan Reference | Status | Evidence |
+|---------------------|---------------|:------:|---------|
+| `getStockDetail()` in api.js | §4 Component Architecture | DONE | `api.js` L626-635 — accepts `inventoryMasterId` + `{consumptionFrom, consumptionTo, consumptionLimit}` |
+| `_cached` wrapper (CR-024) | Not in plan | DONE | `api.js` L635 — `_cached("getStockDetail", TTL.MEDIUM, _getStockDetail)` |
+| Cache invalidation | Not in plan | DONE | `api.js` L133 — `"getStockDetail:"` in `_invalidateStockCaches()`. All mutations (approve, dispatch, receive, cancel, wastage, stock-adjust, add-stock) call `_invalidateStockCaches()` |
+| `useStockDetail` hook | §4 Hook | DONE | `hooks/useStockDetail.js` — 53 lines, fetch with stale-guard, returns summary/segments/reconciliation/consumption |
+| Route `/inventory/:id` | §4 Route | DONE | `App.js` L75: `<Route path="/inventory/:id" element={<StockDetailPanel />} />` |
+| Row click navigation | §4 Component Architecture | DONE | `StockInventorySummary.jsx` L335: `onClick={() => navigate(\`/inventory/${item.id}\`)}` |
+| Section A: Item Summary | §5.1 Stock Detail Panel | DONE | `StockDetailPanel.jsx` L120-179 — ingredient, qty, unit, category, min alert, is_low_stock badge |
+| Section B: Batch Inventory | §5.1 FEFO Segments | DONE | `StockDetailPanel.jsx` L184-309 — 126 lines. Table: batch name, cal_qty, display_qty, % of total, expiry badges (green >30d / amber 7-30d / red <7d / EXPIRED), source store, "Dispatch first" tag, "Record Wastage" action |
+| Section C: Reconciliation | §5.3 Reconciliation States | DONE | `StockDetailPanel.jsx` L314-376 — aggregate vs segment vs diff, mismatch warning (red), balanced badge (green), unsegmented note |
+| Expiry badges | §5.4 Expiry Badges | DONE | `StockDetailPanel.jsx` L44-93 — `ExpiryBadge` component: >30d green, 7-30d amber, 1-7d red, expired red bold, no-expiry gray |
+| Loading / Error / Empty states | §7 Risk Analysis | DONE | Uses `LoadingState`, `ErrorState`, `EmptyState` from `StateDisplays.jsx` |
+
+**Conclusion:** Phase 1 is 100% built. Zero work remaining.
+
+---
+
+### 11.2 Phase 2 Status: COMPLETE (No Work Remaining)
+
+| Phase 2 Deliverable | Plan Reference | Status | Evidence |
+|---------------------|---------------|:------:|---------|
+| Consumption Section | §5.2 Consumption Lines | DONE | `StockDetailPanel.jsx` L379-576 — 198 lines |
+| Date range filter | §1 Query Parameters | DONE | `consumptionFrom` / `consumptionTo` HTML date inputs + Apply button (L472-502) |
+| Consumption KPI cards | §5.2 | DONE | Total Consumed, Avg Daily, Days of Cover, Reorder Suggestion (L507-532) |
+| Consumption table | §5.2 | DONE | Per-order: date, food item, qty consumed, allocation column (L546-566) |
+| FEFO allocation drill-down | §5.2 | DONE | Collapsible rows per consumption line: batch name, segment ID, qty deducted, expiry date (L381-444, `ConsumptionLineRow` component) |
+| Legacy marker | §5.2 | DONE | Shows "— (legacy)" when `segment_allocations` is empty (L417) |
+| Pagination cap | §10 Q5 | DONE | "Showing up to 50 consumption lines" warning when `consumptionLines.length >= 50` (L569-573) |
+| Default date range | §1 Query Parameters | DONE | Last 7 days via `getDefaultDates()` (L108-116) |
+
+**Conclusion:** Phase 2 is 100% built. Zero work remaining.
+
+---
+
+### 11.3 Phase 3 Status: ~90% Built (Minor Gaps)
+
+| Phase 3 Deliverable | Plan Reference | Status | Evidence |
+|---------------------|---------------|:------:|---------|
+| `getWastageReport()` accepts `hasBatch` param | §2 New Filters | DONE | `api.js` L567: `if (hasBatch) payload.has_batch = true` |
+| `getWastageReport()` accepts `includeSegments` param | §2 New Filters | DONE | `api.js` L568: `if (includeSegments) payload.include_segments = true` |
+| `segment_snapshot` normalization | §2 segment_snapshot Shape | DONE | `api.js` L575-580: parses `cal_quantity`, `display_qty` to floats |
+| Batch column in wastage table | §2 | DONE | `WastageReport.jsx` L394-397: shows `entry.batch` |
+| Segment allocation expandable rows | §2 | DONE | `WastageReport.jsx` L100-128: collapsible allocation detail (batch, seg ID, qty) |
+| "Batch audited only" toggle | §2 | DONE | `WastageReport.jsx` L310-318: `Switch` + `hasBatchOnly` state |
+| "Batch audited" KPI card | Not in original plan | DONE | `WastageReport.jsx` L270-276: count of entries with allocations |
+| **`segment_snapshot` rendering** | §2 segment_snapshot | **NEEDS VERIFICATION** | API layer normalizes it, but unclear if WastageReport displays it as a section |
+
+**Conclusion:** Phase 3 is ~90% built. One item needs verification.
+
+---
+
+### 11.4 Gaps Found — Impact from CR-023/024/025
+
+#### GAP-1: Source Store Name Resolution (from CR-023)
+
+**What the plan says (§10 Q4):** "Should we show source_restaurant_id as store name? — Yes — resolve via hierarchy_scope or children list."
+
+**What the code does:** `StockDetailPanel.jsx` L282: `Store #{seg.source_restaurant_id}` — shows the raw numeric ID.
+
+**What's now available:** CR-023 added `useRestaurantMap` hook which builds `restaurantId → { name, type }` map from hierarchy data. This was not available when the panel was built.
+
+**Fix:**
+```jsx
+// Import
+import { useRestaurantMap } from "@/hooks/useRestaurantMap";
+
+// In StockDetailPanel main component
+const { restaurantMap } = useRestaurantMap();
+
+// In BatchInventorySection — pass restaurantMap as prop
+// Replace L282:
+//   Store #{seg.source_restaurant_id}
+// With:
+//   restaurantMap[String(seg.source_restaurant_id)]?.name || `Store #${seg.source_restaurant_id}`
+```
+
+**Effort:** 15 min. **Risk:** LOW — additive, fallback preserved.
+
+#### GAP-2: Action Buttons Not Wired
+
+**"Record Wastage" (L290-292):** Shows text for expired batches but has no `onClick` handler. Should navigate to wastage entry form with pre-filled batch context, or be removed if out of scope.
+
+**"Dispatch" (L295-297):** Shows text for near-expiry batches but has no `onClick` handler. Should navigate to dispatch form, or be removed if out of scope.
+
+**Decision needed:** Wire these as navigation links or remove as aspirational? Recommendation: convert to navigation links:
+- "Record Wastage" → `navigate('/wastage/new')` (if that route exists) or just informational
+- "Dispatch" → `navigate('/dispatch/new')` (if route exists)
+
+**Effort:** 15 min if wiring, 5 min if removing. **Risk:** NONE.
+
+#### GAP-3: CR-024 Cache — Already Handled
+
+`getStockDetail` is wrapped by `_cached("getStockDetail", TTL.MEDIUM)` (L635). Cache key includes `inventoryMasterId` + consumption params via `JSON.stringify(args)`. Different items = different cache keys. Same item within 45s = cached.
+
+`_invalidateStockCaches()` at L128-136 includes `"getStockDetail:"` prefix. All mutations (approve L412, dispatch L488, receive L492, cancel L496, wastage L525, stock-adjust L512, add-stock L681) call `_invalidateStockCaches()`.
+
+**No gap. Fully handled.**
+
+#### GAP-4: `segment_snapshot` Display in Wastage Report
+
+The API layer normalizes `segment_snapshot` (api.js L575-580), but need to verify if `WastageReport.jsx` actually renders a "Current Segments" section from this data. The `segment_snapshot_note` field is also normalized (L580).
+
+**Action:** Verify during smoke test. If not rendered, decide if it's needed (plan says "supplementary").
+
+---
+
+### 11.5 Open Questions — Resolved
+
+| # | Original Question (§10) | Resolution | Source |
+|---|------------------------|------------|--------|
+| 1 | Is `fefo_consumption_enabled` ON? | **YES** — ON for all stores. F3 order #869395 proves FEFO consumption. Earlier orders predated FEFO code deployment. | `api_implementation_status_p24_addendum.md` §Follow-Up |
+| 2 | Show `segment_snapshot` from wastage? | **No** — keep separate. Stock detail `segments[]` is authoritative. | Original recommendation stands |
+| 3 | Reconciliation mismatch UX? | **IMPLEMENTED** — red/green badges, mismatch warning with exact diff, balanced badge. | `StockDetailPanel.jsx` L314-376 |
+| 4 | Source store as name? | **PARTIALLY RESOLVED** — currently shows `Store #ID`. Fix: use `useRestaurantMap` (CR-023). | See GAP-1 above |
+| 5 | Pagination for consumption? | **IMPLEMENTED** — 50-line cap with warning text. | `StockDetailPanel.jsx` L569-573 |
+
+---
+
+### 11.6 Dependency Validation Matrix
+
+| # | Dependency | Plan Assumption | Current State | Valid? |
+|---|-----------|----------------|---------------|:------:|
+| 1 | `GET /inventory/stock-inventory/{id}` | New endpoint, working | Confirmed working (19 API probes) | ✅ |
+| 2 | `api.getStockDetail()` | Needs creation | Already exists, cached (TTL.MEDIUM) | ✅ |
+| 3 | `useStockDetail` hook | Needs creation | Already exists (53 lines) | ✅ |
+| 4 | Route `/inventory/:id` | Needs creation | Already exists in `App.js` L75 | ✅ |
+| 5 | Row click in `StockInventorySummary` | Needs wiring | Already wired at L335 | ✅ |
+| 6 | `LoadingState`/`ErrorState`/`EmptyState` | Reusable | Already imported and used | ✅ |
+| 7 | `Collapsible` UI component | Needed for alloc drill-down | Already imported and used | ✅ |
+| 8 | Cache invalidation on mutations | Needed for freshness | `getStockDetail:` in `_invalidateStockCaches()` L133 | ✅ |
+| 9 | `useRestaurantMap` (CR-023) | Not in plan | Available — can resolve source store names | ✅ (new) |
+| 10 | `getWastageReport` batch params | Needs extension | Already extended (`hasBatch`, `includeSegments`) | ✅ |
+| 11 | Backend proxy forwards path params | `/{id}` must pass through | `server.py` catch-all V2 proxy handles `GET /proxy/v2/inventory/stock-inventory/{id}` | ✅ |
+
+**All 11 dependencies validated. No blockers.**
+
+---
+
+### 11.7 Risk Register Update
+
+| Risk (from §7) | Original Severity | Status After Implementation |
+|----------------|:-----------------:|----------------------------|
+| Reconciliation mismatches (agg ≠ seg total) | HIGH | **MITIGATED** — red mismatch warning + diff display + unsegmented note |
+| `consumption_lines` empty `segment_allocations` (legacy) | MEDIUM | **MITIGATED** — "— (legacy)" marker in allocation column |
+| Negative stock values in summary | MEDIUM | **HANDLED** — displays as-is (no special treatment, per plan) |
+| `segment.batch = null` (legacy bucket) | LOW | **MITIGATED** — shows "Legacy (untracked)" italic text |
+| `segment.expiry_date = null` | LOW | **MITIGATED** — shows "No expiry" gray badge |
+| Cross-store item detail returns 404 | LOW | **MITIGATED** — "Item not found or not accessible" error message |
+| `consumption_limit` cap at 200 | LOW | **MITIGATED** — shows cap warning at 50 lines; param passed through to API |
+| `cal_quantity` in summary is STRING | LOW | **MITIGATED** — `Number()` wrapping throughout display code |
+| `segment_snapshot` is current state not event-time | MEDIUM | **ACCEPTED** — wastage report normalizes snapshot; display TBD (verify) |
+| **NEW: Source store shows as `#ID`** | LOW | **GAP** — fix via `useRestaurantMap` (15 min) |
+| **NEW: Action buttons not wired** | LOW | **GAP** — "Record Wastage" / "Dispatch" have no onClick handlers |
+
+---
+
+### 11.8 Revised Implementation Plan (Remaining Work Only)
+
+**Original estimate:** ~10-13h (3 phases)
+**Actual work done:** Phase 1 + Phase 2 + Phase 3 (~90%) = ~10h (already shipped)
+**Remaining estimate:** ~1-2h
+
+#### Step 1: Source Store Name Resolution (~15 min)
+
+**File:** `frontend/src/components/central-inventory/StockDetailPanel.jsx`
+
+- Import `useRestaurantMap` from `@/hooks/useRestaurantMap`
+- In `StockDetailPanel` main component: `const { restaurantMap } = useRestaurantMap()`
+- Pass `restaurantMap` as prop to `BatchInventorySection`
+- Replace L282 `Store #{seg.source_restaurant_id}` with `restaurantMap[String(seg.source_restaurant_id)]?.name || \`Store #${seg.source_restaurant_id}\``
+- Apply terminology badge: use `getStoreTypeBadge(restaurantMap[...]?.type)` for color-coded store type
+
+**Backwards compatible:** Falls back to `Store #{id}` when map hasn't loaded or ID not found.
+
+#### Step 2: Action Button Decision (~15 min)
+
+**Options:**
+- **A) Wire as navigation:** "Record Wastage" → `navigate('/wastage')`, "Dispatch" → `navigate('/dispatch/new')`
+- **B) Remove:** Strip the action column entirely (premature — no wastage/dispatch pre-fill exists)
+- **C) Keep as-is:** Informational text, no action (current state)
+
+**Recommendation:** Option A — simple `navigate()` links. Even without pre-fill context, pointing the user to the right screen is helpful. Don't block closure on this.
+
+#### Step 3: Smoke Test Against 806 Hierarchy (~30 min)
+
+Login as master (806) → Stock Inventory → click any item → verify:
+- Summary section loads with correct data
+- Batch table shows FEFO-ordered segments (if any)
+- Reconciliation shows balanced/mismatch correctly
+- Consumption section shows date filter + lines (if any)
+- Back button returns to inventory list
+
+Login as franchise (809) → same flow → verify scoping (can only see own items).
+
+#### Step 4: Verify Wastage `segment_snapshot` (~15 min)
+
+- Check if `WastageReport.jsx` renders a "Current Segments" section from `segment_snapshot` data
+- If not rendered: decide if needed (plan says supplementary) or defer
+
+#### Step 5: Governance Artifacts (~30 min)
+
+- Create Session-Start (Artifact 0)
+- Create Code-Gate (Artifact 4) — self-review given minimal remaining work
+- Create QA Report (Artifact 5) — from smoke test results
+- Update `registry.json`: CR-015 status `PLANNED` → `IN_PROGRESS` → `QA` → `CLOSED`
+- Run `node control/gen_dashboard_data.js` + `--check`
+- Update L1, L6, L7
+
+---
+
+### 11.9 Files to Change (Complete List)
+
+| File | Change Type | Risk | Phase |
+|------|------------|:----:|:-----:|
+| `StockDetailPanel.jsx` | Modify — add `useRestaurantMap`, resolve store names, wire action buttons | LOW | Step 1+2 |
+
+**1 file. No new files. No backend changes. No API changes. No route changes.**
+
+---
+
+### 11.10 Testing Checklist (Post-Implementation)
+
+| # | Test | Login As | Expected |
+|---|------|---------|----------|
+| 1 | `/inventory` loads, click any item | master (806) | Detail panel opens with summary, batches, reconciliation, consumption |
+| 2 | Source store names resolved | master (806) | Batch table shows store names (e.g. "Central Kitchen Alpha") not `Store #807` |
+| 3 | Expiry badges correct | master (806) | Green >30d, amber 7-30d, red <7d, EXPIRED |
+| 4 | Reconciliation balanced | master (806) | Green "Balanced" badge when agg=seg, red warning when mismatch |
+| 5 | Consumption date filter | master (806) | Change dates → Apply → table refreshes |
+| 6 | FEFO allocation drill-down | master (806) | Click "N batches" → expand shows batch name, seg ID, qty |
+| 7 | Back button | master (806) | Returns to `/inventory` list |
+| 8 | Scoping: franchise can see own items only | franchise (809) | Panel loads for own items, 404 for other store items |
+| 9 | Empty states | any role | "No batches" / "No consumption" when data is empty |
+| 10 | Wastage report batch toggle | master (806) | "Batch audited only" switch filters entries |

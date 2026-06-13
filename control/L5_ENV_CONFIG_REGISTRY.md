@@ -18,7 +18,7 @@
 
 | Variable | Value | Purpose | Protected? |
 |----------|-------|---------|:----------:|
-| `REACT_APP_BACKEND_URL` | `https://580d5a3e-cdeb-4dc3-a9fb-b657bfae5bf2.preview.emergentagent.com` | Backend API URL | YES |
+| `REACT_APP_BACKEND_URL` | `https://7d067d86-11d0-4171-9ae2-57e426a47f39.preview.emergentagent.com` | Backend API URL | YES |
 | `WDS_SOCKET_PORT` | `443` | WebSocket dev server port | YES |
 | `ENABLE_HEALTH_CHECK` | `false` | Health check plugin toggle | NO |
 

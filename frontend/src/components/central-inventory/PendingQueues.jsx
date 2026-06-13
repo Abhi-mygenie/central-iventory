@@ -188,7 +188,7 @@ export default function PendingQueues() {
         {/* Card Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
           <div className="flex items-center gap-3">
-            <span className="font-mono text-sm font-bold" data-testid={`po-${id}`}>{formatPO(id)}</span>
+            <span className="font-mono text-sm font-bold" data-testid={`po-${id}`}>{formatPO(id, item.reference_code)}</span>
             <div>
               <p className="text-xs">{fromName} → {toName}</p>
               <p className="text-[10px] text-muted-foreground">
@@ -322,7 +322,7 @@ export default function PendingQueues() {
       >
         <CardContent className="py-3 px-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <span className="font-mono text-xs font-semibold shrink-0">{formatPO(id)}</span>
+            <span className="font-mono text-xs font-semibold shrink-0">{formatPO(id, item.reference_code)}</span>
             <div className="min-w-0">
               <p className="text-xs truncate">
                 {restaurantMap[String(item.from_restaurant_id)]?.name || item.from_restaurant_name || "—"} → {restaurantMap[String(item.to_restaurant_id)]?.name || item.to_restaurant_name || "—"}
