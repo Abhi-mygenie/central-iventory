@@ -1,9 +1,11 @@
-# CR-030 — Unified Implementation Plan (UX Redesign + Bug Fixes)
+# CR-030 — Unified Implementation Plan (UX Redesign + PO Module)
 
-> **Date:** 2026-06-14
-> **Scope:** Vendor Management, Raw Material Master, Purchase
+> **Date:** 2026-06-14 (Updated with PO UX Freeze)
+> **Scope:** Vendor Management, Raw Material Master, Purchase Order Module
 > **Replaces:** Previous Artifact 2-3 (bug-fix-only plan)
-> **Estimated effort:** ~26.5h
+> **Estimated effort:** ~28h
+> **UX Freezes:** `CR030_VENDOR_MANAGEMENT_UX_FREEZE.md`, `CR030_RAW_MATERIAL_MASTER_UX_FREEZE.md`, `CR030_PURCHASE_ORDER_UX_FREEZE.md`
+> **API Contract:** `AI/Plans/phase3/P35_purchase_order_api_contract.md`
 
 ---
 
@@ -13,22 +15,57 @@
 |-----|:------:|----------|
 | `GET /inventory/vendor-item-list?restaurant_ids[]={rid}&from_date=&to_date=` | ✅ WORKS | 70 records. Fields: `ID`, `restaurant_id`, `ingredient_id`, `Ingredient_Name`, `Purchase_Date`, `Vendor_Name`, `vendor_id`, `Quantity`, `stock_quantity_raw`, `Amount`, `line_total`, `unit_price`, `Payment_Type` |
 | `GET /inventory/stock-inventory?include_segments=true&segment_limit=3&include_consumption=true` | ✅ WORKS | Returns `segments_preview[]`, `consumption_summary{}`, `consumption_lines[]` per item. **G-022 not needed.** |
+| `POST /inventory/purchase-order/create` | ✅ VALIDATED | 32/32 checks pass. Full PO lifecycle confirmed. G-021 CLOSED. |
+| `GET /inventory/purchase-order/list` | ✅ VALIDATED | Supports status, vendor_id, dates, restaurant_ids filters |
+| `GET /inventory/purchase-order/{id}` | ✅ VALIDATED | Returns lines + receipts with variance_pct, variance_flagged |
+| `POST /inventory/purchase-order/{id}/receive` | ✅ VALIDATED | GRN creation with batch/expiry per line, variance detection |
+| All 10 PO endpoints | ✅ VALIDATED | See `P35_purchase_order_api_contract.md` |
 
 ---
 
-## Files Affected
+## Impact Analysis (Revised)
+
+### Files Affected
 
 | File | Change Type | Current Lines | Estimated After | Risk |
 |------|-------------|:------------:|:---------------:|:----:|
-| `services/api.js` | Add `getVendorItemList()` | 1035 | ~1050 | LOW |
-| `VendorManagement.jsx` | **FULL REWRITE** | 212 | ~450 | HIGH |
+| `services/api.js` | Add `getVendorItemList()` + 10 PO methods | 1035 | ~1120 | MEDIUM |
+| `VendorManagement.jsx` | **FULL REWRITE** (master-detail) | 212 | ~450 | HIGH |
 | `VendorFormDialog.jsx` | DELETE (inline form replaces popup) | 93 | 0 | LOW |
-| `IngredientCatalogue.jsx` | **FULL REWRITE** | 326 | ~550 | HIGH |
+| `IngredientCatalogue.jsx` | **FULL REWRITE** (expandable rows) | 326 | ~550 | HIGH |
 | `AddStockPurchaseForm.jsx` | EDIT (add PO gate redirect) | 442 | ~470 | LOW |
-| `PurchaseOrderList.jsx` | **NEW** | 0 | ~300 | HIGH |
-| `PurchaseOrderCreate.jsx` | **NEW** | 0 | ~350 | HIGH |
-| `PurchaseOrderDetail.jsx` | **NEW** | 0 | ~400 | HIGH |
+| `PurchaseOrderList.jsx` | **NEW** | 0 | ~300 | MEDIUM |
+| `PurchaseOrderCreate.jsx` | **NEW** (By Vendor + By Item Need + Review) | 0 | ~600 | HIGH |
+| `PurchaseOrderDetail.jsx` | **NEW** (Detail + Receive + GRN History) | 0 | ~500 | HIGH |
 | `App.js` | EDIT (add PO routes) | — | — | LOW |
+
+### Risk Assessment
+
+| Risk | Probability | Impact | Mitigation |
+|------|:-----------:|:------:|------------|
+| PO Create multi-vendor split logic | MEDIUM | HIGH | Group items by vendorId → sequential createPO calls. Test with 1, 2, 3 vendor splits. |
+| Receive variance calculation mismatch | LOW | MEDIUM | Use same formula as API: `(actual - expected) / expected × 100`. API returns `variance_flagged` as ground truth. |
+| Multi-PO review → submit atomicity | MEDIUM | MEDIUM | If PO #1 creates but PO #2 fails: show partial success with retry. Each PO is independent API call. |
+| Vendor-item-list cache stale after receive | LOW | LOW | Invalidate `getVendorItemList` cache after PO receive completes. |
+| FEFO segment ordering after receive | LOW | LOW | API handles segment ordering — frontend just shows result. FEFO note in receive summary is informational. |
+| `require_po_approval` flow not tested with real approval | MEDIUM | LOW | Settings currently `false`. When `true`, Approve button shown on draft PO. Optional path — does not block core flow. |
+
+### Dependencies
+
+| Dependency | Status |
+|-----------|:------:|
+| `vendor-item-list` API | ✅ CONFIRMED |
+| `stock-inventory` with segments+consumption | ✅ CONFIRMED |
+| 10 PO lifecycle APIs | ✅ ALL VALIDATED (32/32) |
+| `getVendors()` | ✅ EXISTS |
+| `getInventoryMaster()` | ✅ EXISTS |
+| `getStockInventory()` | ✅ EXISTS |
+| `getOperationalSettings()` | ✅ EXISTS (PO settings confirmed) |
+| recharts (bar chart) | ✅ IN package.json |
+| G-017 (vendor history) | ✅ CLOSED |
+| G-021 (PO module) | ✅ CLOSED |
+| G-014 (Invoice OCR) | OPEN — "Coming Soon" tab |
+| G-022 (aggregated stock) | NOT NEEDED — API supports params |
 
 ---
 
@@ -297,9 +334,9 @@ The Purchase screen transforms from direct stock entry to a **structured PO life
 
 | File | Purpose | Lines |
 |------|---------|:-----:|
-| `PurchaseOrderList.jsx` | PO list with status tabs, vendor filter, date range | ~300 |
-| `PurchaseOrderCreate.jsx` | Create/edit PO form (vendor, lines, rates) | ~350 |
-| `PurchaseOrderDetail.jsx` | PO detail with lines, receipts, receive action, status timeline | ~400 |
+| `PurchaseOrderList.jsx` | Screen 1 — PO list with status tabs, KPIs, filters | ~300 |
+| `PurchaseOrderCreate.jsx` | Screens 2+3+4 — By Vendor mode + By Item Need mode + Multi-PO Review | ~600 |
+| `PurchaseOrderDetail.jsx` | Screens 5+6+7+8 — PO Detail + Receive with invoice matching + Post-receive + GRN History | ~500 |
 
 ### Modified Files
 
@@ -379,101 +416,75 @@ function closePO(poId) {
 - Click row → navigate to PO detail
 - "+ Create PO" → navigate to create form
 
-### 3.3 — PurchaseOrderCreate.jsx (~350 lines)
+### 3.3 — PurchaseOrderCreate.jsx (~600 lines)
 
-**Layout:**
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│ ← Back to POs          New Purchase Order                            │
-│                                                                      │
-│ Vendor: [Premium Organics Ltd ▾]   Expected Delivery: [2026-06-20]  │
-│ Payment Type: [Cash ▾]            Notes: [Monthly flour order    ]  │
-│                                                                      │
-│ ┌── LINE ITEMS ────────────────────────────────────────────────────┐ │
-│ │ Item (dropdown)     │ Qty  │ Unit │ Exp Rate │ Line Total │ ✕   │ │
-│ │ Baking Powder       │ 30   │ kg   │ ₹150     │ ₹4,500    │ ✕   │ │
-│ │ Milk                │ 5    │ ltr  │ ₹40      │ ₹200      │ ✕   │ │
-│ │ [+ Add Line]                                                     │ │
-│ └──────────────────────────────────────────────────────────────────┘ │
-│                                                                      │
-│ ┌── PRICE INTELLIGENCE (from vendor-item-list) ────────────────────┐ │
-│ │ Baking Powder: Last rate ₹150/kg (Premium). Best: ₹100/kg (Bud) │ │
-│ │ Milk: Last rate ₹40/ltr (Premium). Best: ₹38/ltr (Budget)       │ │
-│ └──────────────────────────────────────────────────────────────────┘ │
-│                                                                      │
-│ ┌── SUMMARY ───────────────────────────────────────────────────────┐ │
-│ │ 2 items · ₹4,700 total                                          │ │
-│ │ [Save as Draft]                      [Create & Send to Vendor]   │ │
-│ └──────────────────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────────────────┘
-```
+This is the largest new component. It handles 3 sub-views:
 
-- Vendor dropdown from `api.getVendors()`
-- Item dropdown from `api.getInventoryMaster()`
-- **Price intelligence per line**: from `vendor-item-list` — show last rate, best rate across vendors
-- Two submit paths: "Save as Draft" (create only) or "Create & Send" (create + send in sequence)
-- Also used for editing draft POs (pre-fill from `getPODetail`)
+**Sub-view A: By Vendor mode**
+- Vendor selection cards with intelligence (last order, frequency, avg order, cheapest-for count)
+- Purchase history table for selected vendor: all items bought, with last/avg rate, cheapest vendor comparison, stock levels, days of cover, suggested qty
+- Row sorting: critical stock first → moderate → adequate → by frequency
+- Auto-check items where stock is low/out
+- Tip banner when items are cheaper from other vendors
 
-### 3.4 — PurchaseOrderDetail.jsx (~400 lines)
+**Sub-view B: By Item Need mode**
+- KPI cards: Out of Stock, Low Stock, Below Reorder, Total Items
+- Items sorted by urgency (lowest cover first)
+- Per-item vendor picker dropdown (pre-selects cheapest)
+- Auto-group by vendor → shows PO groups with subtotals + savings calculation
+- Multiple vendors = multiple POs
 
-**Layout:**
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│ ← Back to POs     PO-806-2026-0001     [Sent]    14 Jun 2026       │
-│                                                                      │
-│ Vendor: Premium Organics Ltd       Expected: 20 Jun 2026            │
-│ Notes: Monthly flour order         Payment: Cash                    │
-│                                                                      │
-│ ┌── STATUS TIMELINE ───────────────────────────────────────────────┐ │
-│ │ ● Created (14 Jun 1:05) → ● Approved (1:07) → ● Sent (1:07)    │ │
-│ └──────────────────────────────────────────────────────────────────┘ │
-│                                                                      │
-│ ┌── LINE ITEMS ────────────────────────────────────────────────────┐ │
-│ │ Item        │ Ordered │ Unit │ Exp Rate │ Received │ Remaining  │ │
-│ │ Baking Pwdr │ 30 kg   │ kg   │ ₹150     │ 25 kg    │ 5 kg      │ │
-│ │ Milk        │ 5 ltr   │ ltr  │ ₹40      │ 0        │ 5 ltr     │ │
-│ └──────────────────────────────────────────────────────────────────┘ │
-│                                                                      │
-│ ┌── RECEIPTS (GRN History) ────────────────────────────────────────┐ │
-│ │ #1 — 15 Jun: Baking Powder 25kg @ ₹160 (⚠ +10.3% variance)    │ │
-│ │     Batch: GSM-JUN-001  Expiry: 2026-12-31                      │ │
-│ └──────────────────────────────────────────────────────────────────┘ │
-│                                                                      │
-│ ┌── ACTIONS ───────────────────────────────────────────────────────┐ │
-│ │ [Edit] [Approve] [Send] [Receive Goods] [Cancel] [Close]        │ │
-│ │ (contextual — only valid actions shown per status)               │ │
-│ └──────────────────────────────────────────────────────────────────┘ │
-│                                                                      │
-│ ┌── RECEIVE FORM (shown when "Receive Goods" clicked) ─────────── │ │
-│ │ Purchase Date: [2026-06-15]  Payment: [Cash ▾]                   │ │
-│ │ Line        │ Remaining │ Receive Qty │ Actual Rate │ Batch │ Exp│ │
-│ │ Baking Pwdr │ 5 kg      │ [5]         │ [155]       │ [B-2] │[..]│ │
-│ │ Milk        │ 5 ltr     │ [5]         │ [42]        │ [M-1] │[..]│ │
-│ │                                                                  │ │
-│ │ ⚠ Baking Powder: ₹155 vs expected ₹150 (+3.3%)                 │ │
-│ │                        [Cancel]  [Confirm & Receive]             │ │
-│ └──────────────────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────────────────┘
-```
+**Sub-view C: Review (Multi-PO)**
+- Shows each PO group separately with: vendor, items, rates, stock impact per line
+- Combined total + PO count
+- "Send both POs immediately" checkbox
+- Submit: sequential `createPO()` + optional `sendPO()` per group
 
-**Contextual actions per status:**
+**Data loading on mount:**
+1. `api.getVendors()` → vendor list
+2. `api.getVendorItemList(rid, { fromDate: 1yr, toDate: today })` → purchase history (cached, shared with VendorManagement)
+3. `api.getStockInventory({ includeConsumption: true })` → stock context + daily consumption
+4. `api.getInventoryMaster()` → item dropdown for manual additions
 
-| Status | Available Actions |
-|--------|------------------|
-| `draft` | Edit, Send (if approval not required), Approve, Delete |
-| `approved` | Send, Cancel |
-| `sent` | Receive Goods, Cancel |
-| `partially_received` | Receive Goods (remaining), Close, Cancel |
-| `received` | Close |
-| `closed` | (none — read only) |
-| `cancelled` | (none — read only) |
+### 3.4 — PurchaseOrderDetail.jsx (~500 lines)
 
-**Receive form:**
-- Inline expandable section (not a separate page)
-- Shows remaining qty per line — user enters: received_qty, actual_rate, batch, expiry_date
-- **Variance indicator**: if actual_rate differs from expected_rate by > `po_variance_alert_pct`, show amber/red warning
-- On confirm: `api.receivePO(poId, { purchase_date, payment_type, receive_lines })` → refresh detail
-- Over-receive blocked by API (`PO_LINE_OVER_RECEIVE`)
+Handles 4 views within one component:
+
+**View A: PO Detail (status=any)**
+- Header: vendor, expected delivery, payment, total, notes
+- Status timeline: Created → [Approved] → Sent → Received → Closed
+- Order lines with stock context: item, ordered, rate, total, your stock now, days left, after receive projection
+- Contextual action buttons per status (see UX freeze)
+- GRN history section (for partially_received/received/closed)
+
+**View B: Receive Form (inline, when "Receive Goods" clicked)**
+- Two tabs: [Manual Entry (Match Physical Invoice)] [Upload Invoice — Coming Soon]
+- Header: invoice date, vendor invoice #, payment type
+- Per-line card with: invoice qty, actual rate, batch, expiry, invoice total
+- Per-line intelligence strip: Rate Variance (% + threshold check), Rate History (last/avg/best from vendor-item-list), Stock Impact (before → after + days of cover)
+- Skip checkbox for lines not on this invoice
+- Summary: lines matched, skipped, invoice total, PO expected, variance flags
+- Variance warning banner for flagged lines
+- FEFO note about segment ordering
+- Confirm & Receive button
+
+**View C: Post-Receive Confirmation**
+- Success card with GRN reference, KPIs (received, total, flags)
+- Stock impact summary per item
+- Navigation buttons
+
+**View D: GRN History (for closed POs)**
+- Final line status: ordered vs received, avg rate, cost, variance, GRN event count
+- GRN events as cards: each delivery with per-line details
+- Cost analysis: expected vs actual total, overrun attribution
+
+**Receive data flow:**
+1. User enters qty + rate from physical invoice
+2. Frontend computes variance: `(actual - expected) / expected × 100`
+3. Compares against `po_variance_alert_pct` from operational settings
+4. Rate history from cached `vendor-item-list` data
+5. Stock impact from `getStockInventory()` current quantities
+6. On confirm: `api.receivePO(id, { purchase_date, payment_type, receive_lines })` → refresh detail
 
 ### 3.5 — Gate: AddStockPurchaseForm.jsx Update
 
@@ -512,9 +523,19 @@ The price comparison intelligence (I-10, previously planned as standalone) is no
 | 1 | Phase 0 | api.js (add `getVendorItemList`, update `getStockInventory`) | 30min | LOW |
 | 2 | Phase 1 | VendorManagement.jsx full rewrite | 6h | HIGH |
 | 3 | Phase 2 | IngredientCatalogue.jsx full rewrite | 8h | HIGH |
-| 4 | Phase 3 | Purchase Order Module (3 new components + api.js + gate) | 12h | HIGH |
+| 4 | Phase 3 | Purchase Order Module (3 new components + api.js + gate) | 14h | HIGH |
 
-**Total estimated: ~26.5h**
+**Total estimated: ~28h**
+
+### Phase 3 Breakdown
+
+| Sub-phase | Component | Effort |
+|-----------|-----------|:------:|
+| 3.1 | api.js — 10 PO methods | 1h |
+| 3.2 | PurchaseOrderList.jsx | 2h |
+| 3.3 | PurchaseOrderCreate.jsx (By Vendor + By Item Need + Multi-PO Review) | 6h |
+| 3.4 | PurchaseOrderDetail.jsx (Detail + Receive with intelligence + GRN History) | 4h |
+| 3.5 | AddStockPurchaseForm gate + App.js routes | 1h |
 
 ---
 
@@ -548,14 +569,14 @@ The price comparison intelligence (I-10, previously planned as standalone) is no
 | Action | File | Reason |
 |--------|------|--------|
 | DELETE | `VendorFormDialog.jsx` | Replaced by inline form in VendorManagement |
-| MODIFY | `services/api.js` | Add `getVendorItemList()`, update `getStockInventory()`, add 10 PO methods |
-| REWRITE | `VendorManagement.jsx` | Master-detail layout |
-| REWRITE | `IngredientCatalogue.jsx` | Expandable rows with intelligence |
+| MODIFY | `services/api.js` | Add `getVendorItemList()`, update `getStockInventory()`, add 10 PO methods (~85 new lines) |
+| REWRITE | `VendorManagement.jsx` | Master-detail layout per UX freeze |
+| REWRITE | `IngredientCatalogue.jsx` | Expandable rows with intelligence per UX freeze |
 | EDIT | `AddStockPurchaseForm.jsx` | PO gate redirect for hierarchy stores |
-| **NEW** | `PurchaseOrderList.jsx` | PO list with status tabs, filters |
-| **NEW** | `PurchaseOrderCreate.jsx` | Create/edit PO form with price intelligence |
-| **NEW** | `PurchaseOrderDetail.jsx` | PO detail with receive flow, variance detection |
-| EDIT | `App.js` | Add PO routes |
+| **NEW** | `PurchaseOrderList.jsx` | PO list with status tabs, KPIs, filters (~300 lines) |
+| **NEW** | `PurchaseOrderCreate.jsx` | By Vendor + By Item Need + Multi-PO Review (~600 lines) |
+| **NEW** | `PurchaseOrderDetail.jsx` | Detail + Receive with invoice matching + GRN History (~500 lines) |
+| EDIT | `App.js` | Add PO routes: `/purchase/orders`, `/purchase/orders/new`, `/purchase/orders/:id` |
 
 ---
 

@@ -3528,7 +3528,7 @@
         "IngredientCatalogue.jsx",
         "AddStockPurchaseForm.jsx"
       ],
-      "notes": "UX Redesign plan created 2026-06-14. Previous bug-fix-only plan superseded. Vendor master-detail, Raw Material expandable rows, Purchase bug fixes.",
+      "notes": "UX Redesign + PO Module plan 2026-06-14. 3 UX freezes: Vendor Management (master-detail), Raw Material Master (expandable rows), Purchase Order Module (9 screens, full PO lifecycle). G-021 CLOSED. ~28h estimated.",
       "artifact_refs": [
         {
           "artifact": 0,
