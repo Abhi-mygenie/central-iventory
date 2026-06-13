@@ -45,6 +45,7 @@
 | CR-023 | API Reality Check — 17 bug fixes | CLOSED | 2026-06-13 |
 | CR-024 | API Response Cache (71→20 calls, 72%) | CLOSED | 2026-06-13 |
 | CR-025 | Intelligent PO (Request Stock + Direct Dispatch) | CLOSED | 2026-06-13 |
+| CR-015 | P24 — FEFO Batch Stock Detail Panel (GAP fixes) | CLOSED | 2026-06-13 |
 
 ## Registry: 25 CRs, 16 BUGs, 3 Sprints (S0-S2 closed, S3 active)
 

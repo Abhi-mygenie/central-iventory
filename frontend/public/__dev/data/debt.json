@@ -199,18 +199,15 @@
     "type": "CR",
     "id": "CR-015",
     "title": "P24 — FEFO Batch Stock Detail Panel",
-    "status": "PLANNED",
+    "status": "CLOSED",
     "severity": null,
     "sprint_key": "S3",
     "sprint_name": "API Reality Check + Intelligent PO",
     "debt_reasons": [
-      "Session-Start: MISSING",
-      "Code-Gate: MISSING",
-      "QA-Report: MISSING",
-      "Owner-Signoff: MISSING"
+      "Owner-Signoff: PENDING"
     ],
-    "missing_count": 4,
-    "pending_count": 0
+    "missing_count": 0,
+    "pending_count": 1
   },
   {
     "type": "CR",

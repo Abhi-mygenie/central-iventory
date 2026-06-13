@@ -1180,18 +1180,22 @@
       "type": "CR",
       "id": "CR-015",
       "title": "P24 \u2014 FEFO Batch Stock Detail Panel",
-      "status": "PLANNED",
+      "status": "CLOSED",
       "severity": null,
       "sprint_key": "S3",
       "phase": "P24",
-      "files": [],
-      "notes": "API validated (19 probes). 3-phase implementation planned. ~10-13h estimate.",
+      "files": [
+        "frontend/src/components/central-inventory/StockDetailPanel.jsx"
+      ],
+      "notes": "API validated (19 probes). 3-phase implementation complete. GAP-1 (store name) + GAP-2 (action buttons) fixed. QA PASS iteration_41.",
       "artifact_refs": [
         {
           "artifact": 0,
           "label": "Session-Start",
-          "status": "MISSING",
-          "paths": [],
+          "status": "DONE",
+          "paths": [
+            "control/sessions/CR015_SESSION_START.md"
+          ],
           "tags": []
         },
         {
@@ -1224,23 +1228,30 @@
         {
           "artifact": 4,
           "label": "Code-Gate",
-          "status": "MISSING",
-          "paths": [],
+          "status": "DONE",
+          "paths": [
+            "control/sessions/CR015_ARTIFACT_4_CODE_GATE.md"
+          ],
           "tags": []
         },
         {
           "artifact": 5,
           "label": "QA-Report",
-          "status": "MISSING",
-          "paths": [],
+          "status": "DONE",
+          "paths": [
+            "control/sessions/CR015_ARTIFACT_5_QA_REPORT.md",
+            "test_reports/iteration_41.json"
+          ],
           "tags": []
         },
         {
           "artifact": 6,
           "label": "Owner-Signoff",
-          "status": "MISSING",
+          "status": "PENDING",
           "paths": [],
-          "tags": []
+          "tags": [
+            "AWAITING-OWNER"
+          ]
         }
       ]
     },

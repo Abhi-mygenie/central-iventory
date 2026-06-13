@@ -18,7 +18,7 @@
 | CR-023 | API Reality Check — 17 bug fixes | **CLOSED** | iteration_34 | DONE |
 | CR-024 | API Response Cache (71→20 calls, 72%) | **CLOSED** | iteration_36 | DONE |
 | CR-025 | Intelligent PO (Request Stock + Direct Dispatch) | **CLOSED** | iteration_39 | DONE |
-| CR-015 | P24 — FEFO Batch Stock Detail Panel | **PLANNED** | — | — |
+| CR-015 | P24 — FEFO Batch Stock Detail Panel | **CLOSED** | iteration_41 | PENDING |
 
 ### CR-023 Detail — 17 Bugs Fixed
 - Batch 1: OperationsHub field fix + store health grid

@@ -46,6 +46,11 @@
 | `RequestStockForm.jsx` | Full rewrite — coverage selector, consumption-based ordering, threshold fallback, category grouping, source cross-validation, order summary |
 | `DirectDispatchForm.jsx` | Full rewrite — integrated dispatch table with inline Source Segment picker, "You'll retain X%", review warnings, coverage selector |
 
+### CR-015: FEFO Batch Stock Detail Panel (1 file)
+| File | Change |
+|------|--------|
+| `StockDetailPanel.jsx` | GAP-1: import `useRestaurantMap`, resolve source store names in batch table. GAP-2: wire `onClick` handlers for "Record Wastage" → `/wastage/new` and "Dispatch" → `/dispatch/new` |
+
 ### CR-025 Sub-task: Wire `reference_code` as PO Number (9 files)
 | File | Change |
 |------|--------|
