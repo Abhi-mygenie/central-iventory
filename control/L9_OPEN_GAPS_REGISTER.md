@@ -1,6 +1,6 @@
 # L9 — Open Gaps Register
 
-> **Updated:** 2026-06-02 (Post CR-023/024/025)
+> **Updated:** 2026-06-13 (G-009, G-010, G-012, G-013 CLOSED after CR-023/024/025 closure)
 
 ---
 
@@ -14,17 +14,17 @@
 | G-004 | History API missing restaurant_type | Store badges | P3 | OPEN |
 | G-005 | Dedicated stock ledger API | N+1 calls | P2 | OPEN |
 | G-006 | Stock return flow API | Return feature | P1 | OPEN |
-| G-009 | Partial dispatch | Dispatch subset | P1 | OPEN |
-| G-010 | Soft stock reservation on approval | Reservation | P1 | OPEN |
+| G-009 | Partial dispatch | Dispatch subset | P1 | **CLOSED** — works via `approval_lines` (validated CR-023) |
+| G-010 | Soft stock reservation on approval | Reservation | P1 | **CLOSED** — `reserve_on_approve` setting available (validated CR-023) |
 | G-011 | WebSocket infrastructure | Real-time events | P2 | OPEN |
-| G-012 | request-catalog missing category | Category grouping | P1 | OPEN |
-| **G-013** | **No PO number in transfer API** | **All screens** | **P0** | **OPEN — Frontend workaround: formatPO(id)** |
+| G-012 | request-catalog missing category | Category grouping | P1 | **CLOSED** — `category_id` + `category_name` in response (validated CR-025) |
+| **G-013** | **No PO number in transfer API** | **All screens** | **P0** | **CLOSED** — `reference_code` field returned by API (validated 2026-06-13). Frontend wire planned (CR-025 sub-task). |
 | **G-014** | **Invoice OCR/AI extraction** | **Procurement Upload Invoice tab** | **P1** | **OPEN — UI ready, shows "Coming Soon"** |
 | **G-015** | **Excel/CSV parsing** | **Procurement Excel import** | **P2** | **OPEN — Upload zone ready, pending backend** |
 | G-016 | Invoice number storage | Duplicate detection | P2 | OPEN |
 | **G-017** | **Vendor purchase history API** | **VendorManagement intelligence** | **P2** | **OPEN — No workaround** |
 
-## Implementation Gaps — Status After CR-023/024/025
+## Implementation Gaps — Status After CR-023/024/025 Closure
 
 | # | Item | Status | Notes |
 |---|------|:------:|-------|

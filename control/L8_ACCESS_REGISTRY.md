@@ -1,11 +1,22 @@
 # L8 — Access Registry (Test Accounts & Credentials)
 
+> **Updated:** 2026-06-13 (Added 806 hierarchy accounts)
 > **Rule:** Updated on credential rotation or new account creation.
-> **Note:** References only. No raw secrets.
 
 ---
 
-## Test Accounts (POS Preprod)
+## Test Accounts — Primary Hierarchy (Restaurant 806)
+
+| Email | Password | API Type | RID | Business Label | Hierarchy |
+|-------|----------|----------|:---:|----------------|:---------:|
+| `manager@germanfluid.com` | `Qplazm@10` | master | 806 | Central Store (german fluid) | TOP |
+| `manager@centralkitchenalpha.com` | `Qplazm@10` | central | 807 | Master Store (Central Kitchen Alpha) | MIDDLE |
+| `manager@centralkitchenbeta.com` | `Qplazm@10` | central | 808 | Master Store (Central Kitchen Beta) | MIDDLE |
+| `manager@outletdirectone.com` | `Qplazm@10` | franchise | 809 | Outlet (Outlet Direct One) | BOTTOM |
+| `manager@alphaoutletone.com` | `Qplazm@10` | franchise | 810 | Outlet (Alpha Outlet One) | BOTTOM |
+| `manager@costtestoutlet.com` | `Qplazm@10` | franchise | 811 | Outlet (Cost Test Outlet) | BOTTOM |
+
+## Test Accounts — Legacy Hierarchy (Restaurant 1)
 
 | Email | Password | API Type | RID | Business Label | Hierarchy |
 |-------|----------|----------|:---:|----------------|:---------:|
