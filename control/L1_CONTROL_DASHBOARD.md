@@ -43,7 +43,8 @@
 - Backend fully validated (43/43 tests, P28 smoke report)
 - Sub-recipe BOM → production-run/complete → FG segment + FEFO cost + blended cost
 - Missing: Production Run form, production history/log, audit detail view
-- Intake DONE (Artifact 0 + 1 complete). Impact Analysis next.
+- Intake + Impact Analysis DONE (Artifacts 0-2 complete). Implementation Plan next.
+- **Backend Gaps:** G-018 (production history list API — P0), G-019 (segment unit_cost — P1)
 
 ## Owner Signoff Pending
 
@@ -63,6 +64,8 @@
 | G-012 | Catalog category fields | P1 | Open |
 | G-016 | Invoice storage | P2 | Open |
 | G-017 | Vendor purchase history API | P2 | Open |
+| **G-018** | **Production run list/history API** | **P0** | **Open — CR-026 dependency. Suggested contract in Impact Analysis.** |
+| **G-019** | **Segment unit_cost in stock-inventory detail** | **P1** | **Open — CR-026 dependency. Owner requesting backend add immediately.** |
 
 ## Quick Links
 
