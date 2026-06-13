@@ -2641,7 +2641,7 @@
       "ProductionRunForm.jsx",
       "ProductionHistory.jsx"
     ],
-    "notes": "UX Redesign plan created 2026-06-14. Sub-Recipe master-detail, Production confirmation, History expandable rows + date filter.",
+    "notes": "UX Redesign plan FROZEN 2026-06-14. 3 UX freezes: Sub-Recipe Master (master-detail+BOM), Run Production (confirmation step), Production History (expandable+date filter). ~17.5h estimated.",
     "artifact_refs": [
       {
         "artifact": 0,
@@ -2714,7 +2714,7 @@
       "PendingQueues.jsx",
       "HistoryLedger.jsx"
     ],
-    "notes": "UX Redesign plan created 2026-06-14. Store Management single view (Summary tab killed), Product Catalog 5 tabs with BOM editor, Stock Inventory expandable rows, Queues/History bug fixes.",
+    "notes": "UX Redesign plan FROZEN 2026-06-14. 5 UX freezes: Store Management (single view, Summary tab killed), Product Catalog (5 tabs+BOM editor), Stock Inventory (expandable rows), Pending Queues (bug fixes), History Ledger (bug fix). G-022 NOT NEEDED. ~24h estimated.",
     "artifact_refs": [
       {
         "artifact": 0,
