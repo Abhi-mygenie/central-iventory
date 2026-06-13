@@ -2,8 +2,8 @@
  * Central Inventory — Screen Visibility Matrix
  *
  * Derived from: CENTRAL_INVENTORY_LOGIN_CONTEXT_AND_SCREEN_VISIBILITY_MATRIX.md
+ * CR-027: Restructured with NAV_SECTIONS (grouped sidebar)
  *
- * Defines which screens and actions are visible per login context.
  * Uses backend restaurant_type_flag values (master / central / franchise).
  */
 
@@ -15,7 +15,6 @@ const LIMITED = "limited";
 const HIDDEN = "hidden";
 
 export const SCREEN_VISIBILITY = {
-  // Screen ID : { backendType: accessLevel }
   "scr-00-context":        { master: FULL,    central: FULL,    franchise: READ  },
   "scr-01-operations-hub": { master: FULL,    central: FULL,    franchise: LIMITED },
   "scr-02-hierarchy":      { master: FULL,    central: FULL,    franchise: LIMITED },
@@ -37,8 +36,16 @@ export const SCREEN_VISIBILITY = {
   "scr-stock-inventory":   { master: FULL,    central: FULL,    franchise: FULL  },
   "scr-catalogue":         { master: FULL,    central: HIDDEN,  franchise: HIDDEN },
   "scr-hierarchy-manage":  { master: FULL,    central: FULL,    franchise: HIDDEN },
-  "scr-21-api-verify":     { master: HIDDEN,  central: HIDDEN,  franchise: HIDDEN }, // admin only
-  "scr-production":        { master: FULL,    central: FULL,    franchise: HIDDEN }, // P28 Production
+  "scr-21-api-verify":     { master: HIDDEN,  central: HIDDEN,  franchise: HIDDEN },
+  "scr-production":        { master: FULL,    central: FULL,    franchise: HIDDEN },
+  // CR-027: New screen IDs for restructured navigation
+  "scr-raw-material-master": { master: FULL,  central: HIDDEN,  franchise: HIDDEN },
+  "scr-product-catalog":     { master: FULL,  central: HIDDEN,  franchise: HIDDEN },
+  "scr-sub-recipe-master":   { master: FULL,  central: HIDDEN,  franchise: HIDDEN },
+  "scr-purchase":            { master: FULL,  central: FULL,    franchise: HIDDEN },
+  "scr-vendor-management":   { master: FULL,  central: FULL,    franchise: HIDDEN },
+  "scr-store-management":    { master: FULL,  central: FULL,    franchise: HIDDEN },
+  "scr-wastage-report":      { master: FULL,  central: FULL,    franchise: FULL  },
 };
 
 // ── Action permission matrix ─────────────────────────────────────
@@ -60,115 +67,64 @@ export const ACTION_PERMISSIONS = {
   "run-production":    { master: true, central: true,  franchise: false },
 };
 
-// ── Navigation items (for sidebar) ───────────────────────────────
+// ── CR-027: Section-aware navigation (grouped sidebar) ───────────
 
-export const NAV_ITEMS = [
+export const NAV_SECTIONS = [
   {
-    id: "operations-hub",
-    screen: "scr-01-operations-hub",
-    label: "Operations Hub",
-    path: "/",
-    icon: "LayoutDashboard",
+    id: "dashboard",
+    label: "Dashboard",
+    items: [
+      { id: "operations-hub", screen: "scr-01-operations-hub", label: "Operations Hub", path: "/", icon: "LayoutDashboard" },
+    ],
   },
   {
-    id: "stock-inventory",
-    screen: "scr-stock-inventory",
-    label: "Stock Inventory",
-    path: "/inventory",
-    icon: "Package",
+    id: "inward",
+    label: "Inward",
+    items: [
+      { id: "vendor-management", screen: "scr-vendor-management", label: "Vendor Management", path: "/vendor-management", icon: "Building2" },
+      { id: "raw-material-master", screen: "scr-raw-material-master", label: "Raw Material Master", path: "/raw-materials", icon: "Beaker" },
+      { id: "purchase", screen: "scr-purchase", label: "Purchase", path: "/purchase", icon: "ShoppingCart" },
+    ],
   },
   {
     id: "production",
-    screen: "scr-production",
     label: "Production",
-    path: "/production/new",
-    icon: "Factory",
+    items: [
+      { id: "sub-recipe-master", screen: "scr-sub-recipe-master", label: "Sub-Recipe Master", path: "/sub-recipe-master", icon: "BookOpen" },
+      { id: "run-production", screen: "scr-production", label: "Run Production", path: "/production/new", icon: "Factory" },
+      { id: "production-history", screen: "scr-production", label: "Production History", path: "/production/history", icon: "ClipboardList" },
+    ],
   },
   {
-    id: "production-history",
-    screen: "scr-production",
-    label: "Production History",
-    path: "/production/history",
-    icon: "ClipboardList",
+    id: "outward",
+    label: "Outward",
+    items: [
+      { id: "store-management", screen: "scr-store-management", label: "Store Management", path: "/store-management", icon: "GitBranch" },
+      { id: "product-catalog", screen: "scr-product-catalog", label: "Product Catalog", path: "/product-catalog", icon: "UtensilsCrossed" },
+      { id: "stock-inventory", screen: "scr-stock-inventory", label: "Stock Inventory", path: "/inventory", icon: "Package" },
+      { id: "pending-queues", screen: "scr-05-pending-queues", label: "Pending Queues", path: "/queues", icon: "Inbox" },
+      { id: "history-ledger", screen: "scr-history-ledger", label: "History & Ledger", path: "/history", icon: "ScrollText" },
+    ],
   },
   {
-    id: "hierarchy",
-    screen: "scr-02-hierarchy",
-    label: "Hierarchy Summary",
-    path: "/hierarchy",
-    icon: "Network",
-  },
-  {
-    id: "hierarchy-manage",
-    screen: "scr-hierarchy-manage",
-    label: "Store Management",
-    path: "/hierarchy/manage",
-    icon: "GitBranch",
-  },
-  {
-    id: "pending-queues",
-    screen: "scr-05-pending-queues",
-    label: "Pending Queues",
-    path: "/queues",
-    icon: "Inbox",
-  },
-  {
-    id: "history-ledger",
-    screen: "scr-history-ledger",
-    label: "History & Ledger",
-    path: "/history",
-    icon: "ScrollText",
-  },
-  {
-    id: "consumption-report",
-    screen: "scr-consumption-report",
-    label: "Consumption Report",
-    path: "/reports/consumption",
-    icon: "BarChart3",
-  },
-  {
-    id: "vendors",
-    screen: "scr-vendors",
-    label: "Vendors",
-    path: "/vendors",
-    icon: "Building2",
-  },
-  {
-    id: "catalogue-ingredients",
-    screen: "scr-catalogue",
-    label: "Ingredients",
-    path: "/catalogue/ingredients",
-    icon: "Beaker",
-  },
-  {
-    id: "catalogue-products",
-    screen: "scr-catalogue",
-    label: "Products",
-    path: "/catalogue/products",
-    icon: "UtensilsCrossed",
-  },
-  {
-    id: "catalogue-recipes",
-    screen: "scr-catalogue",
-    label: "Recipes",
-    path: "/catalogue/recipes",
-    icon: "BookOpen",
-  },
-  {
-    id: "catalogue-addon-recipes",
-    screen: "scr-catalogue",
-    label: "Addon Recipes",
-    path: "/catalogue/addon-recipes",
-    icon: "Link2",
+    id: "reports",
+    label: "Reports",
+    items: [
+      { id: "consumption-report", screen: "scr-consumption-report", label: "Consumption Report", path: "/reports/consumption", icon: "BarChart3" },
+      { id: "wastage-report", screen: "scr-wastage-report", label: "Wastage Report", path: "/wastage/report", icon: "TrendingDown" },
+    ],
   },
   {
     id: "settings",
-    screen: "scr-settings",
     label: "Settings",
-    path: "/settings",
-    icon: "Settings",
+    items: [
+      { id: "settings", screen: "scr-settings", label: "Settings", path: "/settings", icon: "Settings" },
+    ],
   },
 ];
+
+// ── Flat NAV_ITEMS (backwards compat for any code using old export) ──
+export const NAV_ITEMS = NAV_SECTIONS.flatMap((s) => s.items);
 
 // ── Utility functions ────────────────────────────────────────────
 
@@ -198,6 +154,13 @@ export function canPerformAction(actionId, restaurantType) {
 
 export function getVisibleNavItems(restaurantType) {
   return NAV_ITEMS.filter((item) => canAccessScreen(item.screen, restaurantType));
+}
+
+export function getVisibleNavSections(restaurantType) {
+  return NAV_SECTIONS.map((section) => ({
+    ...section,
+    items: section.items.filter((item) => canAccessScreen(item.screen, restaurantType)),
+  })).filter((section) => section.items.length > 0);
 }
 
 export { FULL, READ, LIMITED, HIDDEN };

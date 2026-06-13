@@ -285,5 +285,39 @@
     ],
     "missing_count": 0,
     "pending_count": 2
+  },
+  {
+    "type": "CR",
+    "id": "CR-027",
+    "title": "Navigation Restructure — Grouped Sidebar (INWARD / PRODUCTION / OUTWARD / REPORTS / SETTINGS)",
+    "status": "IN_PROGRESS",
+    "severity": null,
+    "sprint_key": null,
+    "sprint_name": "Unassigned",
+    "debt_reasons": [
+      "Session-Start: PENDING",
+      "Code-Gate: PENDING",
+      "QA-Report: PENDING",
+      "Owner-Signoff: PENDING"
+    ],
+    "missing_count": 0,
+    "pending_count": 4
+  },
+  {
+    "type": "CR",
+    "id": "CR-029",
+    "title": "Stock Inventory Split — Finished Goods vs Raw Materials Tabs",
+    "status": "IN_PROGRESS",
+    "severity": null,
+    "sprint_key": null,
+    "sprint_name": "Unassigned",
+    "debt_reasons": [
+      "Session-Start: PENDING",
+      "Code-Gate: PENDING",
+      "QA-Report: PENDING",
+      "Owner-Signoff: PENDING"
+    ],
+    "missing_count": 0,
+    "pending_count": 4
   }
 ]

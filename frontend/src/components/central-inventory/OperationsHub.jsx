@@ -368,7 +368,7 @@ export default function OperationsHub() {
             <div className="mb-5">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Store Health Across Hierarchy</h2>
-                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => navigate("/hierarchy")}>
+                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => navigate("/store-management")}>
                   View Hierarchy <ArrowRight className="h-3 w-3 ml-1" />
                 </Button>
               </div>
@@ -430,9 +430,9 @@ export default function OperationsHub() {
                 </Card>
               )}
               {canDo("add-stock-purchase") && (
-                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/procurement/new")}>
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/purchase")}>
                   <CardContent className="py-3 px-4">
-                    <p className="text-xs font-semibold" data-testid="qa-procure">Add Stock (Vendor)</p>
+                    <p className="text-xs font-semibold" data-testid="qa-procure">Purchase</p>
                     <p className="text-[10px] text-muted-foreground mt-0.5">Procure from vendors</p>
                   </CardContent>
                 </Card>

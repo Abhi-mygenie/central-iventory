@@ -57,8 +57,19 @@ export function useStockInventory({ staleAfterMs = 5 * 60 * 1000 } = {}) {
     categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
   }
 
+  // CR-029: Stock type split (FG vs Raw Materials)
+  const [stockType, setStockType] = useState("all"); // "all" | "fg" | "raw"
+  const fgCount = stocks.filter((s) => s.type === "SubRecipe" || s.is_sub_recipe === true).length;
+  const rawCount = stocks.filter((s) => s.type === "inventory" && !s.is_sub_recipe).length;
+  const filteredStocks = stockType === "fg"
+    ? stocks.filter((s) => s.type === "SubRecipe" || s.is_sub_recipe === true)
+    : stockType === "raw"
+    ? stocks.filter((s) => s.type === "inventory" && !s.is_sub_recipe)
+    : stocks;
+
   return {
     stocks,
+    filteredStocks,
     loading,
     error,
     refresh: fetchInventory,
@@ -74,5 +85,10 @@ export function useStockInventory({ staleAfterMs = 5 * 60 * 1000 } = {}) {
     setShowHierarchy,
     hierarchySummary,
     hierarchyContext,
+    // CR-029: Stock type split
+    stockType,
+    setStockType,
+    fgCount,
+    rawCount,
   };
 }

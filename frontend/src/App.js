@@ -21,23 +21,12 @@ import StockInventorySummary from "@/components/central-inventory/StockInventory
 import StockDetailPanel from "@/components/central-inventory/StockDetailPanel";
 import IngredientCatalogue from "@/components/central-inventory/IngredientCatalogue";
 import ProductCatalogue from "@/components/central-inventory/ProductCatalogue";
-import RecipeCatalogue from "@/components/central-inventory/RecipeCatalogue";
-import AddonRecipeCatalogue from "@/components/central-inventory/AddonRecipeCatalogue";
 import DailyConsumptionReport from "@/components/central-inventory/DailyConsumptionReport";
-import HierarchyManagement from "@/components/central-inventory/HierarchyManagement";
 import ProductionRunForm from "@/components/central-inventory/ProductionRunForm";
 import ProductionHistory from "@/components/central-inventory/ProductionHistory";
+import SubRecipeMaster from "@/components/central-inventory/SubRecipeMaster";
+import StoreManagement from "@/components/central-inventory/StoreManagement";
 import { PermissionDenied } from "@/components/common/StateDisplays";
-
-/**
- * Route structure per CENTRAL_INVENTORY_LOGIN_CONTEXT_AND_SCREEN_VISIBILITY_MATRIX.md
- *
- * /              → SCR-01 Operations Hub
- * /hierarchy     → SCR-02 Hierarchy Summary
- * /store/:id     → SCR-03 Store Detail
- * /queues        → SCR-05 Pending Queues
- * /transfer/:id  → SCR-09 Transfer Detail
- */
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useLoginContext();
@@ -54,7 +43,6 @@ function AuthRoute({ children }) {
 function AppRoutes() {
   return (
     <Routes>
-      {/* Login — NOT redesigned, minimal login for auth token */}
       <Route
         path="/login"
         element={
@@ -72,10 +60,25 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       >
+        {/* Dashboard */}
         <Route path="/" element={<OperationsHub />} />
+
+        {/* Inward */}
+        <Route path="/vendor-management" element={<VendorManagement />} />
+        <Route path="/raw-materials" element={<IngredientCatalogue />} />
+        <Route path="/purchase" element={<AddStockPurchaseForm />} />
+
+        {/* Production */}
+        <Route path="/sub-recipe-master" element={<SubRecipeMaster />} />
+        <Route path="/production/new" element={<ProductionRunForm />} />
+        <Route path="/production/history" element={<ProductionHistory />} />
+        <Route path="/production/:id" element={<ProductionHistory />} />
+
+        {/* Outward */}
+        <Route path="/store-management" element={<StoreManagement />} />
+        <Route path="/product-catalog" element={<ProductCatalogue />} />
         <Route path="/inventory" element={<StockInventorySummary />} />
         <Route path="/inventory/:id" element={<StockDetailPanel />} />
-        <Route path="/hierarchy" element={<HierarchySummary />} />
         <Route path="/store/:id" element={<StoreDetail />} />
         <Route path="/queues" element={<PendingQueues />} />
         <Route path="/history" element={<HistoryLedger />} />
@@ -83,26 +86,29 @@ function AppRoutes() {
         <Route path="/request/new" element={<RequestStockForm />} />
         <Route path="/adjustment/new" element={<StockAdjustmentForm />} />
         <Route path="/wastage/new" element={<WastageEntryForm />} />
-        <Route path="/wastage/report" element={<WastageReport />} />
-        <Route path="/settings" element={<OperationalSettings />} />
-        <Route path="/vendors" element={<VendorManagement />} />
-        <Route path="/procurement/new" element={<AddStockPurchaseForm />} />
-        <Route path="/catalogue/ingredients" element={<IngredientCatalogue />} />
-        <Route path="/catalogue/products" element={<ProductCatalogue />} />
-        <Route path="/catalogue/recipes" element={<RecipeCatalogue />} />
-        <Route path="/catalogue/addon-recipes" element={<AddonRecipeCatalogue />} />
-        <Route path="/reports/consumption" element={<DailyConsumptionReport />} />
-        <Route path="/hierarchy/manage" element={<HierarchyManagement />} />
-        <Route path="/production/new" element={<ProductionRunForm />} />
-        <Route path="/production/history" element={<ProductionHistory />} />
-        <Route path="/production/:id" element={<ProductionHistory />} />
         <Route path="/transfer/:id" element={<TransferDetail />} />
 
-        {/* Catch-all → redirect to hub */}
+        {/* Reports */}
+        <Route path="/reports/consumption" element={<DailyConsumptionReport />} />
+        <Route path="/wastage/report" element={<WastageReport />} />
+
+        {/* Settings */}
+        <Route path="/settings" element={<OperationalSettings />} />
+
+        {/* CR-027: Redirects (old routes → new routes) */}
+        <Route path="/vendors" element={<Navigate to="/vendor-management" replace />} />
+        <Route path="/catalogue/ingredients" element={<Navigate to="/raw-materials" replace />} />
+        <Route path="/catalogue/products" element={<Navigate to="/product-catalog" replace />} />
+        <Route path="/catalogue/recipes" element={<Navigate to="/product-catalog" replace />} />
+        <Route path="/catalogue/addon-recipes" element={<Navigate to="/product-catalog" replace />} />
+        <Route path="/procurement/new" element={<Navigate to="/purchase" replace />} />
+        <Route path="/hierarchy" element={<Navigate to="/store-management" replace />} />
+        <Route path="/hierarchy/manage" element={<Navigate to="/store-management" replace />} />
+
+        {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
 
-      {/* Catch-all for unauthenticated */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );

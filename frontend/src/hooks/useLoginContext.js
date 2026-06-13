@@ -4,6 +4,7 @@ import {
   isScreenReadOnly,
   canPerformAction,
   getVisibleNavItems,
+  getVisibleNavSections,
 } from "@/lib/screenVisibility";
 import { mapRestaurantType, mapRole, HIERARCHY_LEVEL } from "@/lib/terminology";
 import api from "@/services/api";
@@ -152,6 +153,7 @@ export function LoginContextProvider({ children }) {
   );
 
   const visibleNav = getVisibleNavItems(restaurantType);
+  const visibleNavSections = getVisibleNavSections(restaurantType);
 
   const value = {
     // Auth
@@ -179,6 +181,7 @@ export function LoginContextProvider({ children }) {
     isReadOnly,
     canDo,
     visibleNav,
+    visibleNavSections,
   };
 
   return <LoginContext.Provider value={value}>{children}</LoginContext.Provider>;

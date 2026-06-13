@@ -64,6 +64,7 @@ export default function StockInventorySummary() {
   const { userLevelLabel, restaurantId } = useLoginContext();
   const {
     stocks,
+    filteredStocks: typeFilteredStocks,
     loading,
     error,
     refresh,
@@ -77,6 +78,10 @@ export default function StockInventorySummary() {
     setShowHierarchy,
     hierarchySummary,
     hierarchyContext,
+    stockType,
+    setStockType,
+    fgCount,
+    rawCount,
   } = useStockInventory();
 
   const [search, setSearch] = useState("");
@@ -87,7 +92,7 @@ export default function StockInventorySummary() {
   const categories = useMemo(() => Object.keys(categoryCounts).sort(), [categoryCounts]);
 
   const filtered = useMemo(() => {
-    let items = [...stocks];
+    let items = [...typeFilteredStocks];
 
     if (search.trim()) {
       const q = search.toLowerCase().trim();
@@ -120,7 +125,7 @@ export default function StockInventorySummary() {
     }
 
     return items;
-  }, [stocks, search, categoryFilter, sortField]);
+  }, [typeFilteredStocks, search, categoryFilter, sortField]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -228,6 +233,28 @@ export default function StockInventorySummary() {
             CSV
           </Button>
         </div>
+      </div>
+
+      {/* CR-029: Stock type tabs (FG / Raw / All) */}
+      <div className="flex gap-1 mb-4" data-testid="stock-type-tabs">
+        {[
+          { value: "all", label: `All (${totalItems})` },
+          { value: "fg", label: `Finished Goods (${fgCount})` },
+          { value: "raw", label: `Raw Materials (${rawCount})` },
+        ].map((tab) => (
+          <button
+            key={tab.value}
+            data-testid={`stock-type-tab-${tab.value}`}
+            onClick={() => setStockType(tab.value)}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+              stockType === tab.value
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground hover:bg-accent"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {/* KPI Cards */}

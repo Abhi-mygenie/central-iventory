@@ -2350,7 +2350,7 @@
     "type": "CR",
     "id": "CR-027",
     "title": "Navigation Restructure — Grouped Sidebar (INWARD / PRODUCTION / OUTWARD / REPORTS / SETTINGS)",
-    "status": "PROPOSED",
+    "status": "IN_PROGRESS",
     "severity": null,
     "sprint_key": null,
     "phase": "UX",
@@ -2410,7 +2410,7 @@
       "pct": 43
     },
     "doc_count": 0,
-    "is_debt": false,
+    "is_debt": true,
     "debt_reasons": [
       "Session-Start: PENDING",
       "Code-Gate: PENDING",
@@ -2494,7 +2494,7 @@
     "type": "CR",
     "id": "CR-029",
     "title": "Stock Inventory Split — Finished Goods vs Raw Materials Tabs",
-    "status": "PROPOSED",
+    "status": "IN_PROGRESS",
     "severity": null,
     "sprint_key": null,
     "phase": "UX",
@@ -2553,7 +2553,7 @@
       "pct": 43
     },
     "doc_count": 0,
-    "is_debt": false,
+    "is_debt": true,
     "debt_reasons": [
       "Session-Start: PENDING",
       "Code-Gate: PENDING",
