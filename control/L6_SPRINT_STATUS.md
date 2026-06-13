@@ -8,7 +8,7 @@
 ## Active Sprint: S3 — API Reality Check + Intelligent PO + FEFO Detail
 
 - **Period:** 2026-06-01 → ongoing
-- **CRs:** CR-023 (CLOSED), CR-024 (CLOSED), CR-025 (CLOSED), CR-015 (PLANNED)
+- **CRs:** CR-023 (CLOSED), CR-024 (CLOSED), CR-025 (CLOSED), CR-015 (PLANNED), CR-016 (PLANNED)
 - **Branch:** `13-6-26`
 
 ### S3 Deliverables
@@ -19,6 +19,7 @@
 | CR-024 | API Response Cache (71→20 calls, 72%) | **CLOSED** | iteration_36 | DONE |
 | CR-025 | Intelligent PO (Request Stock + Direct Dispatch) | **CLOSED** | iteration_39 | DONE |
 | CR-015 | P24 — FEFO Batch Stock Detail Panel | **PLANNED** | — | — |
+| CR-016 | P20-Phase2 — Stock Inventory Hierarchy Toggle | **PLANNED** | — | — |
 
 ### CR-023 Detail — 17 Bugs Fixed
 - Batch 1: OperationsHub field fix + store health grid

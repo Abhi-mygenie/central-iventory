@@ -1379,7 +1379,7 @@
     "title": "P20-Phase2 — Stock Inventory Hierarchy Toggle",
     "status": "PLANNED",
     "severity": null,
-    "sprint_key": null,
+    "sprint_key": "S3",
     "phase": "P20-Phase2",
     "files": [],
     "notes": "Cross-store stock comparison. API validated. ~3-4h estimate.",
@@ -1451,7 +1451,7 @@
       "QA-Report: MISSING",
       "Owner-Signoff: MISSING"
     ],
-    "sprint_name": "Unassigned"
+    "sprint_name": "API Reality Check + Intelligent PO"
   },
   {
     "type": "CR",

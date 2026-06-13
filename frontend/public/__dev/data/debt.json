@@ -218,8 +218,8 @@
     "title": "P20-Phase2 — Stock Inventory Hierarchy Toggle",
     "status": "PLANNED",
     "severity": null,
-    "sprint_key": null,
-    "sprint_name": "Unassigned",
+    "sprint_key": "S3",
+    "sprint_name": "API Reality Check + Intelligent PO",
     "debt_reasons": [
       "Session-Start: MISSING",
       "Impact-Analysis: MISSING",
