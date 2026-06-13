@@ -3236,6 +3236,61 @@
           "path": null
         }
       ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-026",
+      "title": "P28 — Production Unit Module (Production Run UI + History)",
+      "status": "PROPOSED",
+      "severity": null,
+      "sprint_key": null,
+      "phase": "P28",
+      "files": [],
+      "notes": "Frontend UI for production runs. Backend API fully validated (43/43 tests, P28 smoke report). Sub-recipe BOM → production-run/complete → FG segment + FEFO cost. Blended segment cost verified across 3 vendors. Missing: Production Run form, production history/log, production audit detail view.",
+      "artifact_refs": [
+        {
+          "artifact": 0,
+          "label": "Session-Start",
+          "status": "DONE",
+          "path": "control/sessions/CR026_SESSION_START.md"
+        },
+        {
+          "artifact": 1,
+          "label": "Intake",
+          "status": "DONE",
+          "path": "control/sessions/CR026_ARTIFACT_1_INTAKE.md"
+        },
+        {
+          "artifact": 2,
+          "label": "Impact-Analysis",
+          "status": "MISSING",
+          "path": null
+        },
+        {
+          "artifact": 3,
+          "label": "Impl-Plan",
+          "status": "MISSING",
+          "path": null
+        },
+        {
+          "artifact": 4,
+          "label": "Code-Gate",
+          "status": "MISSING",
+          "path": null
+        },
+        {
+          "artifact": 5,
+          "label": "QA-Report",
+          "status": "MISSING",
+          "path": null
+        },
+        {
+          "artifact": 6,
+          "label": "Owner-Signoff",
+          "status": "MISSING",
+          "path": null
+        }
+      ]
     }
   ]
 }

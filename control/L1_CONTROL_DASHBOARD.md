@@ -1,6 +1,6 @@
 # L1 — Control Dashboard (Project Status)
 
-> **Updated:** 2026-06-02 (CR-024 + CR-025 complete, pending owner signoff)
+> **Updated:** 2026-06-13 (CR-026 registered — Production Unit Module)
 
 ---
 
@@ -37,7 +37,13 @@
 - Direct Dispatch: Integrated dispatch table with inline Source Segment picker, "You'll retain X%" projection, review warnings, order summary
 - Gate waived (velocity exception). **Owner Signoff PENDING**
 
-## Registry: 25 CRs, 16 BUGs, 3 Sprints (S0-S2 closed, S3 active)
+## Registry: 26 CRs, 16 BUGs, 3 Sprints (S0-S2 closed, S3 active)
+
+### CR-026: Production Unit Module (Production Run UI + History) — **PROPOSED**
+- Backend fully validated (43/43 tests, P28 smoke report)
+- Sub-recipe BOM → production-run/complete → FG segment + FEFO cost + blended cost
+- Missing: Production Run form, production history/log, audit detail view
+- Intake DONE (Artifact 0 + 1 complete). Impact Analysis next.
 
 ## Owner Signoff Pending
 
