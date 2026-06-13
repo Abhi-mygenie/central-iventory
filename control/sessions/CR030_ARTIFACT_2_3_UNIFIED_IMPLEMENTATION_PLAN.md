@@ -3,7 +3,7 @@
 > **Date:** 2026-06-14
 > **Scope:** Vendor Management, Raw Material Master, Purchase
 > **Replaces:** Previous Artifact 2-3 (bug-fix-only plan)
-> **Estimated effort:** ~19.5h
+> **Estimated effort:** ~26.5h
 
 ---
 
@@ -24,7 +24,11 @@
 | `VendorManagement.jsx` | **FULL REWRITE** | 212 | ~450 | HIGH |
 | `VendorFormDialog.jsx` | DELETE (inline form replaces popup) | 93 | 0 | LOW |
 | `IngredientCatalogue.jsx` | **FULL REWRITE** | 326 | ~550 | HIGH |
-| `AddStockPurchaseForm.jsx` | EDIT (price intelligence + bug fixes) | 442 | ~520 | MEDIUM |
+| `AddStockPurchaseForm.jsx` | EDIT (add PO gate redirect) | 442 | ~470 | LOW |
+| `PurchaseOrderList.jsx` | **NEW** | 0 | ~300 | HIGH |
+| `PurchaseOrderCreate.jsx` | **NEW** | 0 | ~350 | HIGH |
+| `PurchaseOrderDetail.jsx` | **NEW** | 0 | ~400 | HIGH |
+| `App.js` | EDIT (add PO routes) | — | — | LOW |
 
 ---
 
@@ -270,58 +274,234 @@ else → "OK" (green)
 
 ---
 
-## Phase 3: Purchase — Price Intelligence + Bug Fixes (5h)
+## Phase 3: Purchase → Purchase Order Module — Full Rewrite (12h)
 
-### 3.1 — Price Comparison Intelligence (I-10) — HIGH — **NOW UNBLOCKED**
+### G-021 CLOSED (2026-06-14) — All PO APIs Validated
 
-G-017 is CLOSED. `vendor-item-list` API returns per-item purchase history with `Vendor_Name`, `Amount`, `unit_price`, `Ingredient_Name`. This enables:
+The Purchase screen transforms from direct stock entry to a **structured PO lifecycle module**. Direct `add-stock` is now gated behind `require_po_for_purchase: true` for hierarchy stores.
 
-**Per-line price intelligence in Manual Entry mode:**
+**API Contract:** `AI/Plans/phase3/P35_purchase_order_api_contract.md`
 
-When user selects an inventory item for a purchase line, show a price comparison tooltip/panel:
+### Current → Target
 
+| Current (442 lines) | Target (~800 lines + new components) |
+|---------------------|--------------------------------------|
+| Direct `add-stock/{id}` per item | **PO lifecycle**: create → approve → send → receive → close |
+| No PO concept | PO list with status tabs + PO detail + PO create form |
+| Upload Invoice / Manual Entry tabs | **PO List / Create PO** (Upload Invoice deferred — G-014) |
+| Sequential item submission | PO create = single API call with all lines |
+| No variance detection | **Variance flagging** on receive (actual vs expected rate) |
+| No GRN concept | **Receive against PO lines** with batch + expiry per line |
+
+### New Files
+
+| File | Purpose | Lines |
+|------|---------|:-----:|
+| `PurchaseOrderList.jsx` | PO list with status tabs, vendor filter, date range | ~300 |
+| `PurchaseOrderCreate.jsx` | Create/edit PO form (vendor, lines, rates) | ~350 |
+| `PurchaseOrderDetail.jsx` | PO detail with lines, receipts, receive action, status timeline | ~400 |
+
+### Modified Files
+
+| File | Change |
+|------|--------|
+| `services/api.js` | Add 10 PO methods: `createPO`, `listPOs`, `getPODetail`, `updatePO`, `deletePO`, `approvePO`, `sendPO`, `receivePO`, `cancelPO`, `closePO` |
+| `AddStockPurchaseForm.jsx` | Redirect to PO flow when `DIRECT_PURCHASE_REQUIRES_PO`. Keep as fallback for standalone stores or when `require_po_for_purchase: false`. |
+| `App.js` | Add routes: `/purchase/orders`, `/purchase/orders/new`, `/purchase/orders/:id` |
+| `lib/screenVisibility.js` | Add PO screens to nav (if not frozen — check first) |
+
+### 3.1 — API Layer: Add PO Methods to api.js
+
+```javascript
+// Purchase Order APIs
+function createPO(payload) {
+  return client.post("/proxy/v2/inventory/purchase-order/create", payload);
+}
+function listPOs({ status, vendorId, fromDate, toDate, restaurantIds, limit, offset } = {}) {
+  const params = new URLSearchParams();
+  if (status) params.set("status", status);
+  if (vendorId) params.set("vendor_id", vendorId);
+  if (fromDate) params.set("from_date", fromDate);
+  if (toDate) params.set("to_date", toDate);
+  if (restaurantIds) restaurantIds.forEach(id => params.append("restaurant_ids[]", id));
+  if (limit) params.set("limit", limit);
+  if (offset) params.set("offset", offset);
+  return client.get(`/proxy/v2/inventory/purchase-order/list?${params.toString()}`);
+}
+function getPODetail(poId) {
+  return client.get(`/proxy/v2/inventory/purchase-order/${poId}`);
+}
+function updatePO(poId, payload) {
+  return client.put(`/proxy/v2/inventory/purchase-order/${poId}/update`, payload);
+}
+function deletePO(poId) {
+  return client.delete(`/proxy/v2/inventory/purchase-order/${poId}`);
+}
+function approvePO(poId) {
+  return client.post(`/proxy/v2/inventory/purchase-order/${poId}/approve`, {});
+}
+function sendPO(poId) {
+  return client.post(`/proxy/v2/inventory/purchase-order/${poId}/send`, {});
+}
+function receivePO(poId, payload) {
+  return client.post(`/proxy/v2/inventory/purchase-order/${poId}/receive`, payload);
+}
+function cancelPO(poId, cancelReason) {
+  return client.post(`/proxy/v2/inventory/purchase-order/${poId}/cancel`, { cancel_reason: cancelReason });
+}
+function closePO(poId) {
+  return client.post(`/proxy/v2/inventory/purchase-order/${poId}/close`, {});
+}
 ```
-┌─ Best Price for Baking Powder ─────────────────────────┐
-│ Budget Ingredients Co   ₹100/kg  ████████████ ✓ best   │
-│ Premium Organics Ltd    ₹150/kg  ██████████████████     │
-│ bakery raw wala         ₹240/kg  ████████████████████████│
-│                                                          │
-│ Your price: ₹___/kg   [above/below avg]                 │
-└──────────────────────────────────────────────────────────┘
+
+### 3.2 — PurchaseOrderList.jsx (~300 lines)
+
+**Layout:**
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│ Purchase Orders                                      [+ Create PO]   │
+│                                                                      │
+│ [All] [Draft 2] [Sent 3] [Partial 1] [Received] [Closed 5] [Canc]  │
+│                                                                      │
+│ [Vendor ▾]  [📅 From] [📅 To]  [🔍 Search PO#...]                   │
+│                                                                      │
+│ ┌── TABLE ─────────────────────────────────────────────────────────┐ │
+│ │ PO#              │ Vendor         │ Items │ Total  │ Status │Date│ │
+│ │ PO-806-2026-0001 │ Premium Organics│ 3     │ ₹4,500 │ Sent   │13J│ │
+│ │ PO-806-2026-0002 │ Budget Ingred.  │ 2     │ ₹1,200 │ Draft  │12J│ │
+│ └──────────────────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
-Implementation in `AddStockPurchaseForm.jsx`:
-- Load `api.getVendorItemList(restaurantId, { fromDate: 1yr ago, toDate: today })` on mount (same cached call as Vendor Management)
-- When user selects an item in a purchase line, filter `purchaseData` by `Ingredient_Name`
-- Group by `Vendor_Name`, compute avg rate per vendor: `sum(Amount) / sum(stock_quantity_raw)`
-- Show inline comparison below the item row (collapsible, not blocking)
-- Highlight if entered price is above/below historical average
-- Selected vendor in the purchase form → highlight that vendor's bar
+- Status tab pills with counts
+- Vendor dropdown filter
+- Date range picker
+- Click row → navigate to PO detail
+- "+ Create PO" → navigate to create form
 
-**Data source:** Same `vendor-item-list` API already cached from Phase 1.
+### 3.3 — PurchaseOrderCreate.jsx (~350 lines)
 
-### 3.2 — Partial Failure UX (I-9) — HIGH
+**Layout:**
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│ ← Back to POs          New Purchase Order                            │
+│                                                                      │
+│ Vendor: [Premium Organics Ltd ▾]   Expected Delivery: [2026-06-20]  │
+│ Payment Type: [Cash ▾]            Notes: [Monthly flour order    ]  │
+│                                                                      │
+│ ┌── LINE ITEMS ────────────────────────────────────────────────────┐ │
+│ │ Item (dropdown)     │ Qty  │ Unit │ Exp Rate │ Line Total │ ✕   │ │
+│ │ Baking Powder       │ 30   │ kg   │ ₹150     │ ₹4,500    │ ✕   │ │
+│ │ Milk                │ 5    │ ltr  │ ₹40      │ ₹200      │ ✕   │ │
+│ │ [+ Add Line]                                                     │ │
+│ └──────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│ ┌── PRICE INTELLIGENCE (from vendor-item-list) ────────────────────┐ │
+│ │ Baking Powder: Last rate ₹150/kg (Premium). Best: ₹100/kg (Bud) │ │
+│ │ Milk: Last rate ₹40/ltr (Premium). Best: ₹38/ltr (Budget)       │ │
+│ └──────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│ ┌── SUMMARY ───────────────────────────────────────────────────────┐ │
+│ │ 2 items · ₹4,700 total                                          │ │
+│ │ [Save as Draft]                      [Create & Send to Vendor]   │ │
+│ └──────────────────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────────────┘
+```
 
-Current: Sequential per-item submission in a loop. If item 3 of 5 fails, 1-2 are committed, 4-5 are skipped. No feedback.
+- Vendor dropdown from `api.getVendors()`
+- Item dropdown from `api.getInventoryMaster()`
+- **Price intelligence per line**: from `vendor-item-list` — show last rate, best rate across vendors
+- Two submit paths: "Save as Draft" (create only) or "Create & Send" (create + send in sequence)
+- Also used for editing draft POs (pre-fill from `getPODetail`)
 
-Fix in `AddStockPurchaseForm.jsx`:
-- Track per-line results: `{ item, success: true/false, error: null/string }`
-- After loop, show summary:
-  - All success: "All X items purchased successfully" (toast + PostSubmitConfirmation)
-  - Partial: "X of Y items added. Z failed:" + list of failed items with errors + "Retry Failed" button
-  - All fail: error toast
+### 3.4 — PurchaseOrderDetail.jsx (~400 lines)
 
-### 3.3 — File Input Disabling (I-12/I-13) — LOW
+**Layout:**
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│ ← Back to POs     PO-806-2026-0001     [Sent]    14 Jun 2026       │
+│                                                                      │
+│ Vendor: Premium Organics Ltd       Expected: 20 Jun 2026            │
+│ Notes: Monthly flour order         Payment: Cash                    │
+│                                                                      │
+│ ┌── STATUS TIMELINE ───────────────────────────────────────────────┐ │
+│ │ ● Created (14 Jun 1:05) → ● Approved (1:07) → ● Sent (1:07)    │ │
+│ └──────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│ ┌── LINE ITEMS ────────────────────────────────────────────────────┐ │
+│ │ Item        │ Ordered │ Unit │ Exp Rate │ Received │ Remaining  │ │
+│ │ Baking Pwdr │ 30 kg   │ kg   │ ₹150     │ 25 kg    │ 5 kg      │ │
+│ │ Milk        │ 5 ltr   │ ltr  │ ₹40      │ 0        │ 5 ltr     │ │
+│ └──────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│ ┌── RECEIPTS (GRN History) ────────────────────────────────────────┐ │
+│ │ #1 — 15 Jun: Baking Powder 25kg @ ₹160 (⚠ +10.3% variance)    │ │
+│ │     Batch: GSM-JUN-001  Expiry: 2026-12-31                      │ │
+│ └──────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│ ┌── ACTIONS ───────────────────────────────────────────────────────┐ │
+│ │ [Edit] [Approve] [Send] [Receive Goods] [Cancel] [Close]        │ │
+│ │ (contextual — only valid actions shown per status)               │ │
+│ └──────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│ ┌── RECEIVE FORM (shown when "Receive Goods" clicked) ─────────── │ │
+│ │ Purchase Date: [2026-06-15]  Payment: [Cash ▾]                   │ │
+│ │ Line        │ Remaining │ Receive Qty │ Actual Rate │ Batch │ Exp│ │
+│ │ Baking Pwdr │ 5 kg      │ [5]         │ [155]       │ [B-2] │[..]│ │
+│ │ Milk        │ 5 ltr     │ [5]         │ [42]        │ [M-1] │[..]│ │
+│ │                                                                  │ │
+│ │ ⚠ Baking Powder: ₹155 vs expected ₹150 (+3.3%)                 │ │
+│ │                        [Cancel]  [Confirm & Receive]             │ │
+│ └──────────────────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────────────┘
+```
 
-- Upload Invoice `<input type="file">`: add `onChange` that clears file + shows toast "Invoice processing not yet available (G-014)"
-- Excel upload: same → "Excel import not yet available (G-015)"
+**Contextual actions per status:**
+
+| Status | Available Actions |
+|--------|------------------|
+| `draft` | Edit, Send (if approval not required), Approve, Delete |
+| `approved` | Send, Cancel |
+| `sent` | Receive Goods, Cancel |
+| `partially_received` | Receive Goods (remaining), Close, Cancel |
+| `received` | Close |
+| `closed` | (none — read only) |
+| `cancelled` | (none — read only) |
+
+**Receive form:**
+- Inline expandable section (not a separate page)
+- Shows remaining qty per line — user enters: received_qty, actual_rate, batch, expiry_date
+- **Variance indicator**: if actual_rate differs from expected_rate by > `po_variance_alert_pct`, show amber/red warning
+- On confirm: `api.receivePO(poId, { purchase_date, payment_type, receive_lines })` → refresh detail
+- Over-receive blocked by API (`PO_LINE_OVER_RECEIVE`)
+
+### 3.5 — Gate: AddStockPurchaseForm.jsx Update
+
+When hierarchy store attempts direct add-stock and gets `DIRECT_PURCHASE_REQUIRES_PO`:
+- Show redirect card: "Direct stock intake is disabled for your store. Purchase orders are required."
+- CTA button: "Go to Purchase Orders" → navigates to `/purchase/orders`
+- Keep existing form as fallback for standalone stores or `require_po_for_purchase: false`
 
 ### Test checkpoint:
-- Purchase → Manual Entry → select item → verify price comparison panel shows vendor rates
-- Purchase → enter price above avg → verify "above average" indicator
-- Purchase → add 3 items → submit → verify success flow
-- Purchase → click Upload Invoice file input → verify toast
-- Purchase → click Excel upload → verify toast
+- Login as Central (806) → /purchase/orders → PO list renders with status tabs
+- Create PO → select vendor + items + rates → save draft → appears in list
+- Edit draft → change qty → save
+- Send PO → status changes to "sent"
+- Receive → fill batch/expiry/actual rate → variance warning shows → confirm → stock updated
+- Partial receive → status "partially_received" → receive remaining → auto-close
+- Cancel PO → reason dialog → cancelled
+- Direct add-stock → blocked → redirect to PO flow
+- Login as Franchise (811) → PO create → blocked (`VENDOR_PURCHASE_NOT_ALLOWED`)
+
+---
+
+## ALSO: Price Intelligence (from vendor-item-list) — included in PO Create
+
+The price comparison intelligence (I-10, previously planned as standalone) is now **integrated into PO Create form** (Phase 3.3). When user selects an item and vendor, show:
+- Last purchase rate for this item from this vendor
+- Best rate across all vendors for this item
+- Historical avg rate
+- Source: same `getVendorItemList()` API from Phase 0
 
 ---
 
@@ -332,9 +512,9 @@ Fix in `AddStockPurchaseForm.jsx`:
 | 1 | Phase 0 | api.js (add `getVendorItemList`, update `getStockInventory`) | 30min | LOW |
 | 2 | Phase 1 | VendorManagement.jsx full rewrite | 6h | HIGH |
 | 3 | Phase 2 | IngredientCatalogue.jsx full rewrite | 8h | HIGH |
-| 4 | Phase 3 | AddStockPurchaseForm.jsx price intelligence + bug fixes | 5h | MEDIUM |
+| 4 | Phase 3 | Purchase Order Module (3 new components + api.js + gate) | 12h | HIGH |
 
-**Total estimated: ~19.5h**
+**Total estimated: ~26.5h**
 
 ---
 
@@ -368,10 +548,14 @@ Fix in `AddStockPurchaseForm.jsx`:
 | Action | File | Reason |
 |--------|------|--------|
 | DELETE | `VendorFormDialog.jsx` | Replaced by inline form in VendorManagement |
-| MODIFY | `services/api.js` | Add `getVendorItemList()`, update `getStockInventory()` params |
+| MODIFY | `services/api.js` | Add `getVendorItemList()`, update `getStockInventory()`, add 10 PO methods |
 | REWRITE | `VendorManagement.jsx` | Master-detail layout |
 | REWRITE | `IngredientCatalogue.jsx` | Expandable rows with intelligence |
-| EDIT | `AddStockPurchaseForm.jsx` | Price comparison intelligence + partial failure UX + file input disabling |
+| EDIT | `AddStockPurchaseForm.jsx` | PO gate redirect for hierarchy stores |
+| **NEW** | `PurchaseOrderList.jsx` | PO list with status tabs, filters |
+| **NEW** | `PurchaseOrderCreate.jsx` | Create/edit PO form with price intelligence |
+| **NEW** | `PurchaseOrderDetail.jsx` | PO detail with receive flow, variance detection |
+| EDIT | `App.js` | Add PO routes |
 
 ---
 

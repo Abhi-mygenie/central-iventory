@@ -64,7 +64,7 @@
 | ID | Gap | Priority | Status |
 |----|-----|:--------:|--------|
 | G-020 | Custom unit conversion in inventory master | P1 | OPEN — POS backend required |
-| G-021 | Purchase Order Module (create/approve/receive/close) | P0 | OPEN — POS backend required |
+| G-021 | Purchase Order Module (create/approve/receive/close) | P0 | **CLOSED** — All PO APIs validated 2026-06-14 |
 
 ## Owner Signoff Pending
 

@@ -26,7 +26,7 @@
 | **G-018** | **Production run list/history API** | **Production History screen** | **P0** | **CLOSED** — `GET /inventory/production-run?limit=&from_date=` confirmed working (2026-06-13). Frontend wire in CR-026 Phase 3. |
 | **G-019** | **Segment `unit_cost` in stock-inventory detail** | **Pre-run cost estimation** | **P1** | **CLOSED** — `unit_cost` field now returned in `segments[]` of `GET /inventory/stock-inventory/{id}` (confirmed 2026-06-13). Frontend wire in CR-026 Phase 2c. |
 | **G-020** | **Custom unit conversion in inventory master** | **Mixed-unit display/calculation** | **P1** | **OPEN — POS backend work required** |
-| **G-021** | **Purchase Order Module** | **Structured PO workflow (create/approve/receive/close)** | **P0** | **OPEN — POS backend work required** |
+| **G-021** | **Purchase Order Module** | **Structured PO workflow (create/approve/receive/close)** | **P0** | **CLOSED** — All 10 PO endpoints validated (32/32 checks pass, 2026-06-14). Contract at `AI/Plans/phase3/P35_purchase_order_api_contract.md`. |
 
 ## Implementation Gaps — Status After CR-023/024/025 Closure
 
