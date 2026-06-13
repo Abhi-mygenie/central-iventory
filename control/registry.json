@@ -1444,15 +1444,19 @@
         {
           "artifact": 3,
           "label": "Impl-Plan",
-          "status": "MISSING",
-          "paths": [],
+          "status": "DONE",
+          "paths": [
+            "control/sessions/CR018_ARTIFACT_3_IMPLEMENTATION_PLAN.md"
+          ],
           "tags": []
         },
         {
           "artifact": 4,
           "label": "Code-Gate",
-          "status": "MISSING",
-          "paths": [],
+          "status": "DONE",
+          "paths": [
+            "control/sessions/CR018_ARTIFACT_4_CODE_GATE.md"
+          ],
           "tags": []
         },
         {
