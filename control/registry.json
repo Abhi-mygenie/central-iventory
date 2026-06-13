@@ -3557,8 +3557,8 @@
         {
           "artifact": 4,
           "label": "Code-Gate",
-          "status": "MISSING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR030_ARTIFACT_4_CODE_GATE.md"
         },
         {
           "artifact": 5,
@@ -3616,8 +3616,8 @@
         {
           "artifact": 4,
           "label": "Code-Gate",
-          "status": "MISSING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR031_ARTIFACT_4_CODE_GATE.md"
         },
         {
           "artifact": 5,
@@ -3677,8 +3677,8 @@
         {
           "artifact": 4,
           "label": "Code-Gate",
-          "status": "MISSING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR032_ARTIFACT_4_CODE_GATE.md"
         },
         {
           "artifact": 5,
