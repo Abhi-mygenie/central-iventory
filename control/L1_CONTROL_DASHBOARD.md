@@ -43,7 +43,7 @@
 - Backend fully validated (43/43 tests, P28 smoke report)
 - Sub-recipe BOM → production-run/complete → FG segment + FEFO cost + blended cost
 - Missing: Production Run form, production history/log, audit detail view
-- Intake + Impact Analysis DONE (Artifacts 0-2 complete). Implementation Plan next.
+- Intake + Impact Analysis + Implementation Plan DONE (Artifacts 0-3 complete). Ready for Code Gate.
 - **Backend Gaps:** G-018 (production history list API — P0), G-019 (segment unit_cost — P1)
 
 ## Owner Signoff Pending

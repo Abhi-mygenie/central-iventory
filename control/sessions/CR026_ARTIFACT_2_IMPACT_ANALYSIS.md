@@ -156,20 +156,35 @@ When `allow_negative_stock === true` AND ingredient stock < required:
 - Show amber warning per insufficient ingredient row
 - Message: "Warning: {N} ingredients have insufficient stock. Production will result in negative inventory."
 
-### 3.4 Intelligence UI Integration (CR-019/CR-021 Pattern)
+### 3.4 Phase 1 Infrastructure (Navigation, Routes, Quick Action)
 
-#### OperationsHub — New Production Section
+**CRITICAL:** These items MUST be in Phase 1, not Phase 3. Without them, the production form is unreachable.
+
+| Item | File | Phase |
+|------|------|:-----:|
+| Route `/production/new` | `App.js` | **1** |
+| Route `/production/history` | `App.js` | **1** |
+| Route `/production/:id` | `App.js` | **1** |
+| Screen `scr-production` | `screenVisibility.js` | **1** |
+| Nav items (Production, Production History) | `screenVisibility.js` | **1** |
+| Sidebar icon import (`Factory`) | `Sidebar.jsx` | **1** |
+| OperationsHub "Run Production" quick action button | `OperationsHub.jsx` | **1** |
+
+### 3.5 Intelligence UI Integration (CR-019/CR-021 Pattern) — Phase 3 Only
+
+Phase 3 adds **smart contextual layers on top** of the working screens. These are enhancements, not navigation.
+
+#### OperationsHub — Intelligence Overlays (Phase 3)
 - **"Production" KPI card:** Last production run date, total FG items, FG low-stock count
 - **Next-best-action banner:** "2 FG items have low stock at outlets — consider running production" (when FG items in `stocks` have `is_low_stock === true`)
-- **Quick action:** "Run Production" button → navigates to `/production/new`
 
-#### ProductionRunForm — Intelligence Layers
+#### ProductionRunForm — Intelligence Layers (Phase 3)
 1. **Sub-recipe selector intelligence:** Sort by "most needed" (FG with lowest stock / highest outlet demand first)
 2. **Ingredient health strip:** Per-ingredient row shows stock level + expiry proximity
 3. **Coverage estimate:** "At current consumption rate, {qty} {FG} covers ~{N} days across {M} stores" (requires consumption report data)
 4. **Post-production next-best-action:** "Dispatch to {store} ({stock level}, {pending requests})"
 
-#### ProductionHistory — Intelligence Layers
+#### ProductionHistory — Intelligence Layers (Phase 3)
 1. **Summary KPIs:** Total runs, total FG produced, total material cost
 2. **Cost trend:** Average unit cost per FG over time (if history data available)
 3. **Staleness indicator:** "Last produced {X} days ago" per sub-recipe
@@ -335,12 +350,12 @@ CR-026 Production Run Form
 
 | Phase | Scope | Files | Est. | Blocked? |
 |-------|-------|-------|:----:|:--------:|
-| **Phase 1a: Core Production Form** | Sub-recipe selector, qty/batch/expiry input, pre-production preview (availability only, no cost), execute, post-production confirmation | F1, F3, M1, M2, M3, M4 | 4-5h | No |
+| **Phase 1a: Core Production Form + Navigation** | Routes, nav items, sidebar icon, screen visibility, sub-recipe selector, qty/batch/expiry input, pre-production preview (availability only, no cost), execute, post-production confirmation, OperationsHub "Run Production" quick action button | F1, F3, M1, M2, M3, M4, M5 (quick action only) | 5-6h | No |
 | **Phase 1b: Settings Gate + Negative Stock Logic** | `production_enabled` blocked state, `allow_negative_stock` gating | F1 (enhance) | 1h | No |
 | **Phase 2a: Production Audit Detail** | Drill-down view: consumed allocations with segment breakdown | F2 (partial), M1 | 2-3h | No |
 | **Phase 2b: Production History** | List view with date filters, summary KPIs | F2 (complete), M1 | 2h | G-018 (stub until backend delivers) |
 | **Phase 2c: Pre-Run Cost Estimation** | Segment cost display in preview, total estimated cost | F1 (enhance), F3 (enhance) | 1-2h | G-019 (add when backend delivers) |
-| **Phase 3: Intelligence UI** | OperationsHub production section, coverage suggestions, staleness indicators, next-best-actions | M5, M6, F1 (enhance), F2 (enhance) | 3-4h | No (progressive) |
+| **Phase 3: Intelligence UI** | OperationsHub production KPI card + next-best-action banners, coverage estimates, staleness indicators, sub-recipe sort-by-demand, post-production next-action suggestions | M5, M6, F1 (enhance), F2 (enhance) | 3-4h | No (progressive) |
 | **Total** | | | **~13-17h** | |
 
 ---

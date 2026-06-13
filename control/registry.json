@@ -3241,7 +3241,7 @@
       "type": "CR",
       "id": "CR-026",
       "title": "P28 — Production Unit Module (Production Run UI + History)",
-      "status": "PROPOSED",
+      "status": "PLANNED",
       "severity": null,
       "sprint_key": null,
       "phase": "P28",
@@ -3269,8 +3269,8 @@
         {
           "artifact": 3,
           "label": "Impl-Plan",
-          "status": "MISSING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR026_ARTIFACT_3_IMPLEMENTATION_PLAN.md"
         },
         {
           "artifact": 4,
