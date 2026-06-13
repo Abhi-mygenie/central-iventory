@@ -2345,5 +2345,227 @@
       "Owner-Signoff: PENDING"
     ],
     "sprint_name": "API Reality Check + Intelligent PO"
+  },
+  {
+    "type": "CR",
+    "id": "CR-027",
+    "title": "Navigation Restructure — Grouped Sidebar (INWARD / PRODUCTION / OUTWARD / REPORTS / SETTINGS)",
+    "status": "PROPOSED",
+    "severity": null,
+    "sprint_key": null,
+    "phase": "UX",
+    "files": [
+      "frontend/src/lib/screenVisibility.js",
+      "frontend/src/components/layout/Sidebar.jsx",
+      "frontend/src/App.js"
+    ],
+    "notes": "Grouped sidebar sections: DASHBOARD, INWARD (Vendor Management, Raw Material Master, Purchase), PRODUCTION (Sub-Recipe Master, Run Production, Production History), OUTWARD (Store Management, Product Catalog, Stock Inventory, Pending Queues, History & Ledger), REPORTS (Consumption, Wastage), SETTINGS. Renames: Vendors→Vendor Management, Ingredients→Raw Material Master, Add Stock→Purchase, Products→Product Catalog. Remove Recipe + Addon Recipe as separate nav items (absorbed into Product Catalog). Hierarchy Summary merged into Store Management.",
+    "artifact_refs": [
+      {
+        "artifact": 0,
+        "label": "Session-Start",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 1,
+        "label": "Intake",
+        "status": "DONE",
+        "path": null
+      },
+      {
+        "artifact": 2,
+        "label": "Impact-Analysis",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 3,
+        "label": "Impl-Plan",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 4,
+        "label": "Code-Gate",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 5,
+        "label": "QA-Report",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 6,
+        "label": "Owner-Signoff",
+        "status": "PENDING",
+        "path": null
+      }
+    ],
+    "completeness": {
+      "done": 1,
+      "total": 7,
+      "pct": 14
+    },
+    "doc_count": 0,
+    "is_debt": false,
+    "debt_reasons": [
+      "Session-Start: PENDING",
+      "Impact-Analysis: PENDING",
+      "Impl-Plan: PENDING",
+      "Code-Gate: PENDING",
+      "QA-Report: PENDING",
+      "Owner-Signoff: PENDING"
+    ],
+    "sprint_name": "Unassigned"
+  },
+  {
+    "type": "CR",
+    "id": "CR-028",
+    "title": "Product Catalog Overhaul — Excel-like Bulk Editor + Inline Recipe/Addon/Sub-Recipe Linking",
+    "status": "PROPOSED",
+    "severity": null,
+    "sprint_key": null,
+    "phase": "UX",
+    "files": [
+      "frontend/src/components/central-inventory/ProductCatalogue.jsx"
+    ],
+    "notes": "Full redesign of Products page → Product Catalog. Excel-like spreadsheet UI with: inline cell editing, bulk upload (Excel import), Excel export, column toggles, mandatory category enforcement, search + filter, unsaved changes indicator, + Add Item quick row. Each product shows linked Recipe, Sub-Recipe, and Addons inline. Expand row to see ingredient BOM from sub-recipe. Category is compulsory — UX enforces without friction. Reference: owner-shared screenshot of bulk editor pattern.",
+    "artifact_refs": [
+      {
+        "artifact": 0,
+        "label": "Session-Start",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 1,
+        "label": "Intake",
+        "status": "DONE",
+        "path": null
+      },
+      {
+        "artifact": 2,
+        "label": "Impact-Analysis",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 3,
+        "label": "Impl-Plan",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 4,
+        "label": "Code-Gate",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 5,
+        "label": "QA-Report",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 6,
+        "label": "Owner-Signoff",
+        "status": "PENDING",
+        "path": null
+      }
+    ],
+    "completeness": {
+      "done": 1,
+      "total": 7,
+      "pct": 14
+    },
+    "doc_count": 0,
+    "is_debt": false,
+    "debt_reasons": [
+      "Session-Start: PENDING",
+      "Impact-Analysis: PENDING",
+      "Impl-Plan: PENDING",
+      "Code-Gate: PENDING",
+      "QA-Report: PENDING",
+      "Owner-Signoff: PENDING"
+    ],
+    "sprint_name": "Unassigned"
+  },
+  {
+    "type": "CR",
+    "id": "CR-029",
+    "title": "Stock Inventory Split — Finished Goods vs Raw Materials Tabs",
+    "status": "PROPOSED",
+    "severity": null,
+    "sprint_key": null,
+    "phase": "UX",
+    "files": [
+      "frontend/src/components/central-inventory/StockInventorySummary.jsx",
+      "frontend/src/hooks/useStockInventory.js"
+    ],
+    "notes": "Split Stock Inventory into tabs: Finished Goods (items with subrecipe_id / is_sub_recipe) and Raw Materials (ingredient type). Each tab shows own KPIs, own table. Optional 'All' tab for power users. Clarifies the inward/outward confusion — raw materials are inward procurement, FG is outward distribution.",
+    "artifact_refs": [
+      {
+        "artifact": 0,
+        "label": "Session-Start",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 1,
+        "label": "Intake",
+        "status": "DONE",
+        "path": null
+      },
+      {
+        "artifact": 2,
+        "label": "Impact-Analysis",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 3,
+        "label": "Impl-Plan",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 4,
+        "label": "Code-Gate",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 5,
+        "label": "QA-Report",
+        "status": "PENDING",
+        "path": null
+      },
+      {
+        "artifact": 6,
+        "label": "Owner-Signoff",
+        "status": "PENDING",
+        "path": null
+      }
+    ],
+    "completeness": {
+      "done": 1,
+      "total": 7,
+      "pct": 14
+    },
+    "doc_count": 0,
+    "is_debt": false,
+    "debt_reasons": [
+      "Session-Start: PENDING",
+      "Impact-Analysis: PENDING",
+      "Impl-Plan: PENDING",
+      "Code-Gate: PENDING",
+      "QA-Report: PENDING",
+      "Owner-Signoff: PENDING"
+    ],
+    "sprint_name": "Unassigned"
   }
 ]
