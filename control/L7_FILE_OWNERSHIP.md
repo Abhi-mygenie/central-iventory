@@ -71,6 +71,18 @@
 | `DisputeResolutionDialog.jsx` | Pass `transfer?.reference_code` at dialog title |
 | `StockInventorySummary.jsx` | Removed dead `formatPO` import |
 
+### CR-026: P28 Production Unit Module — Phase 1a+1b (9 files: 3 new + 6 modified)
+| File | Change |
+|------|--------|
+| `hooks/useProductionRun.js` **(NEW)** | Hook: loads sub-recipes, stock, operational settings |
+| `components/central-inventory/ProductionRunForm.jsx` **(NEW)** | Production run form with pre-production preview and post-production confirmation |
+| `components/central-inventory/ProductionHistory.jsx` **(NEW)** | Production history list (G-018 stub) + audit detail drill-down |
+| `services/api.js` | Added: `runProduction()`, `getProductionRunDetail()`, `getProductionRunHistory()` (G-018 stub) |
+| `lib/screenVisibility.js` | Added: `scr-production` screen, `run-production` action, 2 nav items |
+| `App.js` | Added: 3 routes + 2 imports for production screens |
+| `components/layout/Sidebar.jsx` | Added: `Factory`, `ClipboardList` icons |
+| `components/central-inventory/OperationsHub.jsx` | Added: "Run Production" quick action card |
+
 ## Key Dependencies
 
 | Component | Depends On |

@@ -21,6 +21,7 @@ import {
   Send,
   Minus,
   RefreshCw,
+  Factory,
 } from "lucide-react";
 import { LoadingState, ErrorState } from "@/components/common/StateDisplays";
 
@@ -391,6 +392,14 @@ export default function OperationsHub() {
                   <CardContent className="py-3 px-4">
                     <p className="text-xs font-semibold" data-testid="qa-procure">Add Stock (Vendor)</p>
                     <p className="text-[10px] text-muted-foreground mt-0.5">Procure from vendors</p>
+                  </CardContent>
+                </Card>
+              )}
+              {canDo("run-production") && (
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/production/new")}>
+                  <CardContent className="py-3 px-4">
+                    <p className="text-xs font-semibold" data-testid="qa-production">Run Production</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Execute a production run</p>
                   </CardContent>
                 </Card>
               )}

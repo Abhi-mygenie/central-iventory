@@ -38,6 +38,7 @@ export const SCREEN_VISIBILITY = {
   "scr-catalogue":         { master: FULL,    central: HIDDEN,  franchise: HIDDEN },
   "scr-hierarchy-manage":  { master: FULL,    central: FULL,    franchise: HIDDEN },
   "scr-21-api-verify":     { master: HIDDEN,  central: HIDDEN,  franchise: HIDDEN }, // admin only
+  "scr-production":        { master: FULL,    central: FULL,    franchise: HIDDEN }, // P28 Production
 };
 
 // ── Action permission matrix ─────────────────────────────────────
@@ -56,6 +57,7 @@ export const ACTION_PERMISSIONS = {
   "view-cross-reports": { master: true, central: false, franchise: false },
   "manage-vendors":    { master: true, central: true,  franchise: false },
   "add-stock-purchase":{ master: true, central: true,  franchise: false },
+  "run-production":    { master: true, central: true,  franchise: false },
 };
 
 // ── Navigation items (for sidebar) ───────────────────────────────
@@ -74,6 +76,20 @@ export const NAV_ITEMS = [
     label: "Stock Inventory",
     path: "/inventory",
     icon: "Package",
+  },
+  {
+    id: "production",
+    screen: "scr-production",
+    label: "Production",
+    path: "/production/new",
+    icon: "Factory",
+  },
+  {
+    id: "production-history",
+    screen: "scr-production",
+    label: "Production History",
+    path: "/production/history",
+    icon: "ClipboardList",
   },
   {
     id: "hierarchy",

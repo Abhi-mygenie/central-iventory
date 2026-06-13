@@ -3269,7 +3269,7 @@
       "type": "CR",
       "id": "CR-026",
       "title": "P28 \u2014 Production Unit Module (Production Run UI + History)",
-      "status": "PLANNED",
+      "status": "IN_PROGRESS",
       "severity": null,
       "sprint_key": "S3",
       "phase": "Production",
@@ -3313,8 +3313,8 @@
         {
           "artifact": 4,
           "label": "Code-Gate",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR026_ARTIFACT_4_CODE_GATE.md"
         },
         {
           "artifact": 5,

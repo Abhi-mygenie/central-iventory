@@ -16,6 +16,8 @@ import {
   BookOpen,
   Link2,
   GitBranch,
+  Factory,
+  ClipboardList,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -34,6 +36,8 @@ const ICON_MAP = {
   BookOpen,
   Link2,
   GitBranch,
+  Factory,
+  ClipboardList,
 };
 
 export default function Sidebar() {

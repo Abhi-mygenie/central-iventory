@@ -12,30 +12,42 @@ Multi-store hierarchy stock management module for the MyGenie POS platform. Prox
 
 ## Repo
 - **Source**: `Abhi-mygenie/central-iventory`
-- **Branch**: `planning-final`
-- **Deploy URL**: `https://580d5a3e-cdeb-4dc3-a9fb-b657bfae5bf2.preview.emergentagent.com`
+- **Branch**: `Implementation`
+- **Deploy URL**: `https://43894dcf-1c17-4bc1-8cf4-77568885cca0.preview.emergentagent.com`
 
 ## What's Been Implemented (Timeline)
 - **S0 (Pre-Governance)**: CR-001 to CR-014 — all 24 screens built
 - **S1**: CR-019 — Intelligent UI Freeze (24/24 screens approved)
 - **S2**: CR-021 (Intelligence layer), CR-022 (Code quality fixes)
 - **S3**: CR-023 (API Reality Check, 17 bug fixes), CR-024 (API Cache, 72% reduction), CR-025 (Intelligent PO + reference_code wire)
-- **2026-06-13**: CR-015 FEFO Batch Stock Detail Panel — GAP-1 (source store name resolution via useRestaurantMap) + GAP-2 (action button onClick wiring) fixed. QA PASS iteration_41. CLOSED.
+- **2026-06-13**: CR-015 FEFO Batch Stock Detail Panel — CLOSED
+- **2026-06-13**: CR-016 Stock Inventory Hierarchy Toggle — QA complete
+- **2026-06-13**: CR-026 P28 Production Unit Module — Phase 1a+1b IMPLEMENTED (form, preview, confirmation, routes, nav, settings gate, negative stock logic)
 
-## Current Sprint: S3 — All Items CLOSED
+## Current Sprint: S3
 | CR | Title | Status |
 |----|-------|:------:|
 | CR-023 | API Reality Check — 17 bug fixes | CLOSED |
 | CR-024 | API Response Cache (71→20 calls) | CLOSED |
 | CR-025 | Intelligent PO + reference_code wire | CLOSED |
 | CR-015 | FEFO Batch Stock Detail Panel | CLOSED |
+| CR-026 | P28 Production Unit Module | IN_PROGRESS |
+
+## CR-026 Phase Status
+| Phase | Scope | Status |
+|-------|-------|:------:|
+| 1a | Core Form + Nav + Routes + API + Hook | DONE |
+| 1b | Settings Gate + Negative Stock Logic | DONE |
+| 2a | Audit Detail (drill-down) | DONE |
+| 2b | Production History List | DONE (G-018 stub — empty state) |
+| 3 | Intelligence UI (KPIs, coverage, NBA) | PENDING |
 
 ## Prioritized Backlog
 | Priority | CR | Title | Status |
 |----------|-----|-------|--------|
-| P1 | CR-016 | Hierarchy Toggle (cross-store comparison) | PLANNED |
+| P0 | CR-026 Phase 3 | Intelligence UI for Production | PENDING |
 | P1 | CR-018 | Wastage Report Enhancements | PLANNED |
-| P2 | CR-017 | Smart Dispatch Assistance (~95% done via CR-025) | PROPOSED |
+| P2 | CR-017 | Smart Dispatch Assistance | PROPOSED |
 | Future | CR-020 | Daily Intelligence Digest | PROPOSED |
 
 ## Open Backend Gaps
@@ -45,6 +57,8 @@ Multi-store hierarchy stock management module for the MyGenie POS platform. Prox
 | G-015 | Excel/CSV parsing | P2 |
 | G-016 | Invoice number storage | P2 |
 | G-017 | Vendor purchase history | P2 |
+| G-018 | Production run list/history API | P0 |
+| G-019 | Segment unit_cost in stock-inventory detail | P1 |
 
 ## Key Architecture Rules
 1. **Terminology inversion**: UI "Central Store" = API `master`, UI "Master Store" = API `central`, UI "Outlet" = API `franchise`
@@ -52,3 +66,9 @@ Multi-store hierarchy stock management module for the MyGenie POS platform. Prox
 3. **Stock source of truth**: Segment ledger (`inventory_stock_segments`), not aggregate
 4. **`display_qty` is STRING**: Always `Number()` wrap before arithmetic
 5. **Frozen files**: `terminology.js`, `screenVisibility.js`, Phase 7 Freeze doc, all L0 baseline docs
+
+## Next Tasks
+1. CR-026 Phase 3: Intelligence UI (OperationsHub KPI card, NBA banner, coverage estimates, staleness indicators)
+2. CR-026 Phase 2c: Pre-run cost estimation (when G-019 delivered)
+3. Wire G-018 production history list (when backend delivers)
+4. CR-018: Wastage Report Enhancements

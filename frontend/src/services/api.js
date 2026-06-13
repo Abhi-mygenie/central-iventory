@@ -875,6 +875,42 @@ function normalizeHierarchyChild(raw) {
   };
 }
 
+// ── P28 Production Run ────────────────────────────────────────────
+
+function runProduction({ subRecipeId, quantity, unit, batch, expiryDate }) {
+  return client.post("/proxy/v2/inventory/production-run/complete", {
+    sub_recipe_id: subRecipeId,
+    quantity,
+    unit,
+    batch,
+    expiry_date: expiryDate,
+  }).then(r => {
+    _invalidateStockCaches();
+    _invalidateCache(["getProductionRunHistory:", "getProductionRunDetail:"]);
+    return r;
+  });
+}
+
+function _getProductionRunDetail(runId) {
+  return client.get(`/proxy/v2/inventory/production-run/${runId}`);
+}
+const getProductionRunDetail = _cached("getProductionRunDetail", TTL.MEDIUM, _getProductionRunDetail);
+
+// G-018 STUB: production-run list endpoint does not exist yet.
+// Returns empty until backend delivers GET /inventory/production-run.
+function _getProductionRunHistory(/* { fromDate, toDate, limit, page } = {} */) {
+  // STUB — backend gap G-018
+  return Promise.resolve({ data: { data: [], pagination: { total: 0 } } });
+  // REAL (uncomment when G-018 is delivered):
+  // const params = {};
+  // if (fromDate) params.from_date = fromDate;
+  // if (toDate) params.to_date = toDate;
+  // if (limit) params.limit = limit;
+  // if (page) params.page = page;
+  // return client.get("/proxy/v2/inventory/production-run", { params });
+}
+const getProductionRunHistory = _cached("getProductionRunHistory", TTL.SHORT, _getProductionRunHistory);
+
 // ── P22 Daily Consumption Report ──────────────────────────────────
 
 function getDailyConsumptionReport({ fromDate, toDate, restaurantIds, includeHierarchy } = {}) {
@@ -982,6 +1018,10 @@ const api = {
   createAddonRecipe,
   updateAddonRecipe,
   deleteAddonRecipe,
+  // P28 Production
+  runProduction,
+  getProductionRunDetail,
+  getProductionRunHistory,
   // P22 Daily Consumption Report
   getDailyConsumptionReport,
   // P23 Hierarchy Management
