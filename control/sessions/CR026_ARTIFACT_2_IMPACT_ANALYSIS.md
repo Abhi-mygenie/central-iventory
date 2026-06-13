@@ -250,7 +250,7 @@ Render:
 | Gap ID | Title | Endpoint Needed | Priority | Blocker For | Status |
 |--------|-------|----------------|:--------:|-------------|--------|
 | **G-018** | Production run list/history API | `GET /inventory/production-run?limit=&from_date=` | **P0** | F4 (Production History screen) | **CLOSED** — confirmed working 2026-06-13 |
-| **G-019** | Segment `unit_cost` in stock-inventory detail | Add `unit_cost_at_intake` to `segments[]` in `GET /inventory/stock-inventory/{id}` | **P1** | F2 (Pre-run cost estimation) | OPEN |
+| **G-019** | Segment `unit_cost` in stock-inventory detail | `unit_cost` in `segments[]` of `GET /inventory/stock-inventory/{id}` | **P1** | F2 (Pre-run cost estimation) | **CLOSED** — confirmed 2026-06-13. Field: `unit_cost` (number, per smallest unit) |
 
 ### G-018 — CLOSED (2026-06-13)
 

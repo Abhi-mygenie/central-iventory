@@ -24,7 +24,7 @@
 | G-016 | Invoice number storage | Duplicate detection | P2 | OPEN |
 | **G-017** | **Vendor purchase history API** | **VendorManagement intelligence** | **P2** | **OPEN — No workaround** |
 | **G-018** | **Production run list/history API** | **Production History screen** | **P0** | **CLOSED** — `GET /inventory/production-run?limit=&from_date=` confirmed working (2026-06-13). Frontend wire in CR-026 Phase 3. |
-| **G-019** | **Segment `unit_cost` in stock-inventory detail** | **Pre-run cost estimation** | **P1** | **OPEN — owner requested backend to add** |
+| **G-019** | **Segment `unit_cost` in stock-inventory detail** | **Pre-run cost estimation** | **P1** | **CLOSED** — `unit_cost` field now returned in `segments[]` of `GET /inventory/stock-inventory/{id}` (confirmed 2026-06-13). Frontend wire in CR-026 Phase 2c. |
 
 ## Implementation Gaps — Status After CR-023/024/025 Closure
 

@@ -401,7 +401,7 @@ data-testid="history-empty-state"
 
 ---
 
-## 6. Phase 2c — Pre-Run Cost Estimation (Blocked: G-019) (~1-2h)
+## 6. Phase 2c — Pre-Run Cost Estimation (G-019 CLOSED) (~1-2h)
 
 When backend adds `unit_cost_at_intake` to stock-inventory segments:
 
