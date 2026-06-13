@@ -1385,7 +1385,7 @@
     "type": "CR",
     "id": "CR-016",
     "title": "P20-Phase2 — Stock Inventory Hierarchy Toggle",
-    "status": "CLOSED",
+    "status": "IN_PROGRESS",
     "severity": null,
     "sprint_key": "S3",
     "phase": "P20-Phase2",
@@ -1394,7 +1394,7 @@
       "frontend/src/hooks/useStockInventory.js",
       "frontend/src/components/central-inventory/StockInventorySummary.jsx"
     ],
-    "notes": "Hierarchy toggle for Master/Central users. Heatmap, KPI, alert banner. 12/12 tests pass. ~155 lines added.",
+    "notes": "Hierarchy toggle for Master/Central users. Heatmap, KPI, alert banner. 12/12 tests pass. ~155 lines added. | Re-QA required: useStockInventory.js hook + api.js getStockInventory param lost during repo sync. Fixed 2026-06-13. Awaiting re-test.",
     "artifact_refs": [
       {
         "artifact": 0,
@@ -1444,12 +1444,14 @@
       {
         "artifact": 5,
         "label": "QA-Report",
-        "status": "DONE",
+        "status": "PENDING",
         "paths": [
           "control/sessions/CR016_ARTIFACT_5_QA_REPORT.md",
           "test_reports/iteration_42.json"
         ],
-        "tags": []
+        "tags": [
+          "RE-QA-REQUIRED"
+        ]
       },
       {
         "artifact": 6,
@@ -1462,13 +1464,14 @@
       }
     ],
     "completeness": {
-      "done": 6,
+      "done": 5,
       "total": 7,
-      "pct": 86
+      "pct": 71
     },
     "doc_count": 7,
     "is_debt": true,
     "debt_reasons": [
+      "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
     ],
     "sprint_name": "API Reality Check + Intelligent PO"

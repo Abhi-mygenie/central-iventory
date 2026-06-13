@@ -75,7 +75,7 @@
 | Priority | CR | Title | Status |
 |----------|-----|-------|--------|
 | **P0** | CR-015 | P24 — FEFO Batch Stock Detail Panel | PLANNED |
-| P1 | CR-016 | P20-Phase2 — Hierarchy Toggle | **CLOSED** |
+| P1 | CR-016 | P20-Phase2 — Hierarchy Toggle | **IN_PROGRESS** — Re-QA needed |
 | P1 | CR-018 | P25 — Wastage Report Enhancements | PLANNED |
 | P2 | CR-017 | P21-Smart — Smart Dispatch Assistance | PROPOSED |
 | Future | CR-020 | Daily Intelligence Digest | PROPOSED |
