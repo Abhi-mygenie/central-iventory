@@ -227,18 +227,22 @@ export default function PurchaseOrderCreate() {
 
   const checkedNeedLines = useMemo(() => needLines.filter((l) => l.checked && Number(l.ordered_qty) > 0 && l.selectedVendorId), [needLines]);
 
-  // Auto-group by vendor for multi-PO
+  // Auto-group by vendor for multi-PO with savings calc
   const poGroups = useMemo(() => {
     const groups = {};
     checkedNeedLines.forEach((l) => {
       const vid = l.selectedVendorId;
       if (!groups[vid]) {
         const v = vendors.find((v) => String(v.id) === vid);
-        groups[vid] = { vendorId: vid, vendorName: v?.vendor_name || `Vendor ${vid}`, items: [], total: 0 };
+        groups[vid] = { vendorId: vid, vendorName: v?.vendor_name || `Vendor ${vid}`, items: [], total: 0, altTotal: 0 };
       }
       const lineTotal = Number(l.ordered_qty) * Number(l.expected_rate || 0);
+      // Compute what this would cost from the most expensive vendor
+      const mostExpensive = l.vendorOptions.length > 1 ? l.vendorOptions[l.vendorOptions.length - 1] : null;
+      const altCost = mostExpensive ? Number(l.ordered_qty) * mostExpensive.rate : lineTotal;
       groups[vid].items.push({ ...l, lineTotal });
       groups[vid].total += lineTotal;
+      groups[vid].altTotal += altCost;
     });
     return Object.values(groups);
   }, [checkedNeedLines, vendors]);
@@ -364,17 +368,45 @@ export default function PurchaseOrderCreate() {
               {vendors.map((v) => {
                 const records = purchaseData.filter((r) => r.Vendor_Name === v.vendor_name || r.vendor_id === v.id);
                 const totalSpend = records.reduce((s, r) => s + (Number(r.Amount) || 0), 0);
-                const last = records.sort((a, b) => new Date(b.Purchase_Date) - new Date(a.Purchase_Date))[0];
+                const sorted = [...records].sort((a, b) => new Date(b.Purchase_Date) - new Date(a.Purchase_Date));
+                const last = sorted[0];
+                const lastDaysAgo = last ? Math.floor((Date.now() - new Date(last.Purchase_Date).getTime()) / (1000*60*60*24)) : null;
+                const isActive = lastDaysAgo !== null && lastDaysAgo <= 60;
+                // Orders in last 30d
+                const now = new Date();
+                const thirtyAgo = new Date(now.getTime() - 30*24*60*60*1000);
+                const recentRecords = records.filter((r) => new Date(r.Purchase_Date) >= thirtyAgo);
+                const distinctDates = [...new Set(recentRecords.map((r) => r.Purchase_Date))];
+                const avgOrder = distinctDates.length > 0 ? totalSpend / distinctDates.length : 0;
+                const distinctItems = [...new Set(records.map((r) => r.Ingredient_Name))];
+                // Cheapest for X items
+                let cheapestCount = 0;
+                const allItems = [...new Set(purchaseData.map((r) => r.Ingredient_Name))];
+                allItems.forEach((itemName) => {
+                  const rates = getCheapestVendor(itemName, null, purchaseData, vendors);
+                  if (rates.length > 0 && String(rates[0].vendorId) === String(v.id)) cheapestCount++;
+                });
                 return (
                   <Card key={v.id} data-testid={`po-vendor-card-${v.id}`} className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleSelectVendor(String(v.id))}>
                     <CardContent className="p-3">
-                      <p className="text-sm font-semibold">{v.vendor_name}</p>
-                      <p className="text-[10px] text-muted-foreground">{v.contact_number || "\u2014"}</p>
-                      <div className="flex gap-3 mt-1.5 text-[10px] text-muted-foreground">
-                        <span>{records.length} purchases</span>
-                        <span>{formatCurrency(totalSpend)}</span>
-                        {last && <span>Last: {last.Purchase_Date}</span>}
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold">{v.vendor_name}</p>
+                        {records.length > 0 ? (
+                          isActive ? <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span>
+                          : <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">Inactive {lastDaysAgo}d</span>
+                        ) : <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-50 text-slate-500 border border-slate-200">New</span>}
                       </div>
+                      <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 mt-2 text-[10px] text-muted-foreground">
+                        <span>Last: {last ? (lastDaysAgo === 0 ? "Today" : lastDaysAgo === 1 ? "Yesterday" : `${lastDaysAgo}d ago`) : "Never"}</span>
+                        <span>{distinctDates.length} orders/30d</span>
+                        <span>Avg: {formatCurrency(avgOrder)}</span>
+                        <span>{distinctItems.length} items &middot; {formatCurrency(totalSpend)}</span>
+                      </div>
+                      {cheapestCount > 0 && (
+                        <div className="mt-1.5">
+                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium" data-testid={`vendor-cheapest-${v.id}`}>Cheapest for {cheapestCount} items</span>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 );
@@ -446,6 +478,22 @@ export default function PurchaseOrderCreate() {
               </TableBody>
             </Table>
           </CardContent></Card>
+
+          {/* TIP banner: items cheaper from another vendor */}
+          {(() => {
+            const cheaperElsewhere = checkedVendorLines.filter((l) => l.checked && !l.isCheapest && l.cheapestVendorName && l.avgRate > 0);
+            if (cheaperElsewhere.length === 0) return null;
+            const names = [...new Set(cheaperElsewhere.map((l) => l.cheapestVendorName))];
+            return (
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-50 border border-amber-200" data-testid="po-tip-banner">
+                <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+                <div className="text-xs text-amber-800">
+                  <span className="font-semibold">TIP:</span> {cheaperElsewhere.map((l) => l.stock_title).join(", ")} {cheaperElsewhere.length === 1 ? "is" : "are"} cheaper from {names.join(" / ")}. Consider splitting your order.
+                </div>
+              </div>
+            );
+          })()}
+
           <div className="flex items-center justify-between">
             <p className="text-xs text-muted-foreground">{checkedVendorLines.length} items</p>
             <div className="flex items-center gap-3">
@@ -578,6 +626,11 @@ export default function PurchaseOrderCreate() {
                           <span className="tabular-nums">{item.ordered_qty} {item.unit} @ {formatCurrency(Number(item.expected_rate))}</span>
                         </div>
                       ))}
+                      {g.altTotal > g.total && (
+                        <div className="mt-2 pt-1.5 border-t text-[10px] text-emerald-700 font-medium" data-testid={`po-group-savings-${gi}`}>
+                          Savings: {formatCurrency(g.altTotal - g.total)} ({Math.round((1 - g.total / g.altTotal) * 100)}%) vs most expensive option
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 ))}

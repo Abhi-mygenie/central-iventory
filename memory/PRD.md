@@ -8,24 +8,28 @@ Multi-store hierarchy stock management module for MyGenie POS platform. FastAPI 
 - **Frontend:** React 19 + CRACO + Tailwind + Radix UI (shadcn) on port 3000
 - **Database:** MongoDB (token sessions only)
 
-## What's Been Implemented (2026-06-14)
+## CR-030: Inward Screens — COMPLETE (All Spec Gaps Closed)
 
-### CR-030: Inward Screens — COMPLETE (Gap Analysis Pass Done)
-- **api.js:** `getVendorItemList()`, `getStockInventory()` extended params, 10 PO lifecycle methods
-- **VendorManagement:** master-detail with purchase intelligence (KPIs, bar chart, recent purchases)
-- **IngredientCatalogue:** expandable rows, inline edit, vendor price comparison, category/status filters
-- **PurchaseOrderList:** Status tabs + 4 KPI cards (Total/Awaiting/Partial/Month Value) + Expected column
-- **PurchaseOrderCreate — By Vendor:** Vendor cards with intel, items sorted by urgency, Last Rate/Avg Rate/Cheapest/DoC columns, reorder-point suggested qty (30d target), auto-check low stock
-- **PurchaseOrderCreate — By Item Need:** KPI cards, urgency sort, per-item vendor picker (cheapest pre-selected), Other Vendors column, stock status sub-labels, reorder-point suggested qty, auto-group multi-PO preview with subtotals
-- **PurchaseOrderDetail:** Status timeline, order lines with Your Stock/Days/After Receive context columns, GRN history, full action lifecycle
-- **Receive Form:** Inline variance detection with per-line intelligence
-- **AddStockPurchaseForm PO gate:** Proactive settings check + reactive API error handling
+### Phase 0: API Layer
+- `getVendorItemList()` with TTL.LONG cache
+- `getStockInventory()` extended with `includeSegments`, `segmentLimit`, `includeConsumption`
+- 10 PO lifecycle methods with proper cache invalidation
 
-### Gap Analysis Fixes Applied (2026-06-14)
-1. PO List: Added 4 KPI cards + Expected column
-2. By Vendor: Added Last Rate, Avg Rate, Cheapest, DoC columns + urgency sorting + calculated suggested qty
-3. By Item Need: Added Other Vendors column, stock sub-labels, reorder-point qty
-4. PO Detail: Added Your Stock, Days, After Receive columns with stock map
+### Phase 1: Vendor Management (master-detail)
+- Left 35%: vendor list, search, Active/Inactive from real purchase dates
+- Right 65%: inline form + purchase intelligence (3 KPIs, monthly bar chart, recent purchases)
+
+### Phase 2: Raw Material Master (expandable rows)
+- Inline edit + intelligence: Avg Rate, Consumption, Days of Stock, Vendor Price Comparison bars
+- Category/Status dropdown filters, inline add form, "Pushed to X stores"
+
+### Phase 3: Purchase Order Module (full lifecycle)
+- **PO List:** Status tabs + 4 KPI cards + Expected column
+- **By Vendor:** Vendor cards with Active/Inactive, Orders/30d, Avg, Items·Spend, "Cheapest for X items" badge. Items table with Last Rate, Avg Rate, Cheapest Vendor comparison, DoC, urgency sort, reorder-point auto-suggest (30d target). TIP banner for items cheaper elsewhere.
+- **By Item Need:** KPI cards, urgency sort, per-item vendor picker, Other Vendors column, stock sub-labels, reorder-point qty, auto-group multi-PO preview with savings calculation.
+- **PO Detail:** Status timeline, order lines with Your Stock/Days/After Receive context columns, GRN history.
+- **Receive Form:** Card-per-line layout with Vendor Invoice # field, Rate Variance panel, Stock Impact panel, per-line Invoice Total, summary with matched/skipped/flags/FEFO note.
+- **Add-Stock Gate:** Proactive `require_po_for_purchase` detection + reactive API error handling.
 
 ## Prioritized Backlog
 - **P0:** CR-031 Production Screens, CR-032 Outward Screens

@@ -72,6 +72,7 @@ export default function PurchaseOrderDetail() {
   const [receiveLines, setReceiveLines] = useState([]);
   const [receiveDate, setReceiveDate] = useState(new Date().toISOString().split("T")[0]);
   const [receivePayment, setReceivePayment] = useState("Cash");
+  const [invoiceNumber, setInvoiceNumber] = useState("");
   const [receiving, setReceiving] = useState(false);
 
   const fetchDetail = useCallback(async () => {
@@ -89,6 +90,7 @@ export default function PurchaseOrderDetail() {
       if (data?.lines) {
         setReceiveLines(data.lines.map((l) => ({
           line_id: l.id,
+          inventory_master_id: l.inventory_master_id,
           stock_title: l.stock_title || l.ingredient_name || `Item ${l.inventory_master_id}`,
           ordered_qty: Number(l.ordered_qty) || 0,
           ordered_unit: l.ordered_unit || l.unit,
@@ -346,6 +348,10 @@ export default function PurchaseOrderDetail() {
                   <Input type="date" value={receiveDate} onChange={(e) => setReceiveDate(e.target.value)} className="h-8 text-xs" data-testid="receive-date" />
                 </div>
                 <div>
+                  <Label className="text-xs">Vendor Invoice #</Label>
+                  <Input value={invoiceNumber} onChange={(e) => setInvoiceNumber(e.target.value)} className="h-8 text-xs" placeholder="INV-001" data-testid="receive-invoice-number" />
+                </div>
+                <div>
                   <Label className="text-xs">Payment Type</Label>
                   <Select value={receivePayment} onValueChange={setReceivePayment}>
                     <SelectTrigger className="h-8 text-xs" data-testid="receive-payment"><SelectValue /></SelectTrigger>
@@ -358,55 +364,112 @@ export default function PurchaseOrderDetail() {
                 </div>
               </div>
 
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-[10px] w-10">Skip</TableHead>
-                    <TableHead className="text-[10px]">Item</TableHead>
-                    <TableHead className="text-[10px] text-right">Ordered</TableHead>
-                    <TableHead className="text-[10px] text-right">Received Qty</TableHead>
-                    <TableHead className="text-[10px] text-right">Actual Rate</TableHead>
-                    <TableHead className="text-[10px]">Batch</TableHead>
-                    <TableHead className="text-[10px]">Expiry</TableHead>
-                    <TableHead className="text-[10px] text-right">Variance</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {receiveLines.map((rl, idx) => {
-                    const variance = rl.actual_rate && rl.expected_rate ? ((Number(rl.actual_rate) - rl.expected_rate) / rl.expected_rate * 100) : null;
-                    const flagged = variance !== null && Math.abs(variance) > 10;
+              {/* Card-per-line layout */}
+              <div className="space-y-3">
+                {receiveLines.map((rl, idx) => {
+                  const variance = rl.actual_rate && rl.expected_rate ? ((Number(rl.actual_rate) - rl.expected_rate) / rl.expected_rate * 100) : null;
+                  const flagged = variance !== null && Math.abs(variance) > 10;
+                  const invoiceTotal = Number(rl.received_qty || 0) * Number(rl.actual_rate || rl.expected_rate || 0);
+                  const poLineTotal = rl.ordered_qty * rl.expected_rate;
+                  const stock = stockMap[rl.stock_title] || stockMap[rl.inventory_master_id];
+                  const currentQty = stock ? Number(stock.cal_quantity) || 0 : null;
+                  const afterQty = currentQty !== null && rl.received_qty ? currentQty + Number(rl.received_qty) : null;
+
+                  if (rl.skip) {
                     return (
-                      <TableRow key={rl.line_id} data-testid={`receive-line-${idx}`} className={rl.skip ? "opacity-50" : ""}>
-                        <TableCell className="py-1.5">
-                          <Checkbox checked={rl.skip} onCheckedChange={() => updateReceiveLine(idx, "skip", !rl.skip)} data-testid={`receive-skip-${idx}`} />
-                        </TableCell>
-                        <TableCell className="py-1.5 text-xs font-medium">{rl.stock_title}</TableCell>
-                        <TableCell className="py-1.5 text-xs text-right tabular-nums">{rl.ordered_qty} {rl.ordered_unit}</TableCell>
-                        <TableCell className="py-1.5">
-                          <Input type="number" value={rl.received_qty} onChange={(e) => updateReceiveLine(idx, "received_qty", e.target.value)} className="h-7 text-xs w-20 ml-auto text-right" disabled={rl.skip} data-testid={`receive-qty-${idx}`} />
-                        </TableCell>
-                        <TableCell className="py-1.5">
-                          <Input type="number" value={rl.actual_rate} onChange={(e) => updateReceiveLine(idx, "actual_rate", e.target.value)} className="h-7 text-xs w-20 ml-auto text-right" placeholder={String(rl.expected_rate)} disabled={rl.skip} data-testid={`receive-rate-${idx}`} />
-                        </TableCell>
-                        <TableCell className="py-1.5">
-                          <Input value={rl.batch} onChange={(e) => updateReceiveLine(idx, "batch", e.target.value)} className="h-7 text-xs w-24" placeholder="Batch" disabled={rl.skip} data-testid={`receive-batch-${idx}`} />
-                        </TableCell>
-                        <TableCell className="py-1.5">
-                          <Input type="date" value={rl.expiry_date} onChange={(e) => updateReceiveLine(idx, "expiry_date", e.target.value)} className="h-7 text-xs w-32" disabled={rl.skip} data-testid={`receive-expiry-${idx}`} />
-                        </TableCell>
-                        <TableCell className="py-1.5 text-xs text-right">
-                          {variance !== null && !rl.skip ? (
-                            <span className={`tabular-nums ${flagged ? "text-red-600 font-semibold" : "text-muted-foreground"}`}>
-                              {variance > 0 ? "+" : ""}{variance.toFixed(1)}%
-                              {flagged && " \u26A0"}
-                            </span>
-                          ) : "\u2014"}
-                        </TableCell>
-                      </TableRow>
+                      <Card key={rl.line_id} className="opacity-60 border-dashed" data-testid={`receive-line-${idx}`}>
+                        <CardContent className="p-3 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Checkbox checked={rl.skip} onCheckedChange={() => updateReceiveLine(idx, "skip", !rl.skip)} data-testid={`receive-skip-${idx}`} />
+                            <span className="text-xs font-medium">{rl.stock_title}</span>
+                            <span className="text-[10px] text-muted-foreground">PO: {rl.ordered_qty} {rl.ordered_unit} @ {formatCurrency(rl.expected_rate)}</span>
+                          </div>
+                          <span className="text-[10px] text-muted-foreground">Skipped \u2014 will remain open on PO</span>
+                        </CardContent>
+                      </Card>
                     );
-                  })}
-                </TableBody>
-              </Table>
+                  }
+
+                  return (
+                    <Card key={rl.line_id} className={flagged ? "border-red-200" : ""} data-testid={`receive-line-${idx}`}>
+                      <CardContent className="p-3">
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <Checkbox checked={rl.skip} onCheckedChange={() => updateReceiveLine(idx, "skip", !rl.skip)} data-testid={`receive-skip-${idx}`} />
+                            <span className="text-xs font-semibold">{rl.stock_title}</span>
+                            <span className="text-[10px] text-muted-foreground">PO: {rl.ordered_qty} {rl.ordered_unit} @ {formatCurrency(rl.expected_rate)} = {formatCurrency(poLineTotal)}</span>
+                          </div>
+                          {currentQty === 0 && <Badge variant="destructive" className="text-[8px]">OUT OF STOCK</Badge>}
+                          {flagged && <Badge variant="destructive" className="text-[8px]">VARIANCE FLAGGED</Badge>}
+                        </div>
+                        {/* Input row */}
+                        <div className="grid grid-cols-4 gap-2 mb-2">
+                          <div>
+                            <Label className="text-[10px]">Invoice Qty</Label>
+                            <Input type="number" value={rl.received_qty} onChange={(e) => updateReceiveLine(idx, "received_qty", e.target.value)} className="h-7 text-xs" data-testid={`receive-qty-${idx}`} />
+                          </div>
+                          <div>
+                            <Label className="text-[10px]">Rate</Label>
+                            <Input type="number" value={rl.actual_rate} onChange={(e) => updateReceiveLine(idx, "actual_rate", e.target.value)} className="h-7 text-xs" placeholder={String(rl.expected_rate)} data-testid={`receive-rate-${idx}`} />
+                          </div>
+                          <div>
+                            <Label className="text-[10px]">Batch</Label>
+                            <Input value={rl.batch} onChange={(e) => updateReceiveLine(idx, "batch", e.target.value)} className="h-7 text-xs" placeholder="Batch" data-testid={`receive-batch-${idx}`} />
+                          </div>
+                          <div>
+                            <Label className="text-[10px]">Expiry</Label>
+                            <Input type="date" value={rl.expiry_date} onChange={(e) => updateReceiveLine(idx, "expiry_date", e.target.value)} className="h-7 text-xs" data-testid={`receive-expiry-${idx}`} />
+                          </div>
+                        </div>
+                        {/* Invoice total */}
+                        {rl.received_qty && (
+                          <p className="text-[10px] text-muted-foreground mb-2">Invoice Total: <span className="font-mono font-medium">{formatCurrency(invoiceTotal)}</span> (PO: {formatCurrency(poLineTotal)})</p>
+                        )}
+                        {/* Intelligence strip: Variance | Stock Impact */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="bg-slate-50 rounded p-2 border border-slate-200">
+                            <p className="text-[9px] text-muted-foreground uppercase">Rate Variance</p>
+                            {variance !== null ? (
+                              <p className={`text-xs font-semibold ${flagged ? "text-red-600" : Math.abs(variance) <= 5 ? "text-emerald-600" : "text-amber-600"}`}>
+                                {variance > 0 ? "+" : ""}{variance.toFixed(1)}% {flagged ? "\u26A0 Exceeds threshold" : variance <= 5 ? "\u2713 OK" : "Warning"}
+                              </p>
+                            ) : <p className="text-xs text-muted-foreground">\u2014</p>}
+                          </div>
+                          <div className="bg-slate-50 rounded p-2 border border-slate-200">
+                            <p className="text-[9px] text-muted-foreground uppercase">Stock Impact</p>
+                            {afterQty !== null ? (
+                              <p className="text-xs font-semibold text-emerald-600">{currentQty} \u2192 {afterQty.toFixed(1)} {stock?.unit || ""} {currentQty === 0 ? "(restores)" : ""}</p>
+                            ) : <p className="text-xs text-muted-foreground">\u2014</p>}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+
+              {/* Summary */}
+              {(() => {
+                const active = receiveLines.filter((l) => !l.skip && Number(l.received_qty) > 0);
+                const skipped = receiveLines.filter((l) => l.skip);
+                const invoiceTotal = active.reduce((s, l) => s + Number(l.received_qty || 0) * Number(l.actual_rate || l.expected_rate || 0), 0);
+                const flagCount = active.filter((l) => {
+                  const v = l.actual_rate && l.expected_rate ? Math.abs((Number(l.actual_rate) - l.expected_rate) / l.expected_rate * 100) : 0;
+                  return v > 10;
+                }).length;
+                return (
+                  <div className="mt-4 p-3 bg-slate-50 rounded-lg border text-xs" data-testid="receive-summary">
+                    <div className="flex gap-4">
+                      <span>{active.length} matched</span>
+                      <span>{skipped.length} skipped</span>
+                      <span className="font-mono font-medium">{formatCurrency(invoiceTotal)} invoice total</span>
+                      {flagCount > 0 && <span className="text-red-600 font-semibold">{flagCount} variance flag{flagCount > 1 ? "s" : ""}</span>}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-1">FEFO: New batches enter after existing segments in expiry queue</p>
+                  </div>
+                );
+              })()}
             </CardContent>
           </Card>
 
