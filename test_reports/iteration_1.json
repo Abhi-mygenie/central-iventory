@@ -1,0 +1,121 @@
+{
+  "summary": "QA testing of 10 CRs/bugs in POS React frontend app. All 10 items verified successfully through UI testing and code review.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "BUG-132_Settlement_Panel": {
+      "status": "VERIFIED",
+      "details": [
+        "6 KPI cards present: Opening Balance, Cash Collected, Total Funds, Settled, Remaining, Pilferage",
+        "Total Funds formula verified: Opening Balance + Cash Collected (line 269 in code)",
+        "Expected formula verified: Total Funds - Settled (NOT minus pilferage) - line 250 in code",
+        "TOTAL row Expected = sum(Total Funds) - sum(Settled) - line 355 in code"
+      ]
+    },
+    "CR-040_Sidebar_Rename": {
+      "status": "VERIFIED",
+      "details": [
+        "Order Reports children correctly named: 'Daily Report', 'Daily Summary', 'Daily Room Report'",
+        "No X/Y/Z Report entries found",
+        "Code verified: lines 54-60 in Sidebar.jsx"
+      ]
+    },
+    "CR-042_Item_Ledger_Rename": {
+      "status": "VERIFIED",
+      "details": [
+        "Insights section shows 'Item Ledger' (not 'Items & Menu')",
+        "Code verified: line 74 in Sidebar.jsx"
+      ]
+    },
+    "BUG-131_Sidebar_Bottom_Pinned": {
+      "status": "VERIFIED",
+      "details": [
+        "Bottom section (Ringer/Refresh/User/Logout) stays pinned when nav sections expanded",
+        "All 4 elements visible after expanding all sidebar sections",
+        "CSS verified: nav has 'flex-1 overflow-y-auto min-h-0', bottom section has 'flex-shrink-0'"
+      ]
+    },
+    "CR-037_Remove_Popular_Items": {
+      "status": "VERIFIED",
+      "details": [
+        "Loading screen shows 6 items (not 7)",
+        "Items: Profile & Permissions, Categories, Products, Tables, Settings, Running Orders",
+        "No 'Popular' tab in API_LOADING_ORDER (lines 281-288 in constants.js)"
+      ]
+    },
+    "CR-038_Boot_Retry_Policy": {
+      "status": "VERIFIED",
+      "details": [
+        "MAX_RETRIES = 3 (line 70 in LoadingPage.jsx)",
+        "Retry button shows 'Attempt N of 3' format (line 813)",
+        "After 3 retries shows disabled button with data-testid='retry-exhausted' (line 816)",
+        "Disabled button has data-testid='retry-button-disabled' (line 821)"
+      ]
+    },
+    "CR-039_Credit_Management_KPIs": {
+      "status": "VERIFIED",
+      "details": [
+        "TOTAL CREDIT shows real value: ₹1,64,638.05",
+        "TOTAL PAID shows real value: ₹13,055.50",
+        "OUTSTANDING shows: ₹1,51,582.55",
+        "Values are NOT dashes/placeholders"
+      ]
+    },
+    "BUG-133_Check_In_Filter": {
+      "status": "VERIFIED",
+      "details": [
+        "'check in' items NOT appearing in Item Ledger",
+        "'check in' items NOT appearing in Order Ledger",
+        "'check in' items NOT appearing in Cancellations",
+        "Code verified: insightsService.js lines 147-148, 831-832, 924-927; reportTransform.js line 963"
+      ]
+    },
+    "CR-045_Field_Stripping": {
+      "status": "VERIFIED",
+      "details": [
+        "Insights reports load correctly with data",
+        "No NaN values found in reports",
+        "No missing fields or blank columns observed",
+        "Dashboard, Order Ledger, Cancellations, Sales, Item Ledger all loading properly"
+      ]
+    },
+    "CR-044_Shared_Cache_Date_Persistence": {
+      "status": "VERIFIED",
+      "details": [
+        "Date picker shows consistent dates across different Insights reports",
+        "Cache implementation verified in insightsCache.js",
+        "fetchOrReuse function handles deduplication of concurrent requests"
+      ]
+    }
+  },
+  "test_report_links": [
+    "/app/frontend/src/components/panels/SettlementPanel.jsx",
+    "/app/frontend/src/components/layout/Sidebar.jsx",
+    "/app/frontend/src/pages/LoadingPage.jsx",
+    "/app/frontend/src/api/constants.js",
+    "/app/frontend/src/api/services/insightsService.js",
+    "/app/frontend/src/api/services/insightsCache.js"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A - frontend only testing",
+    "frontend": "100% (10/10 items verified)"
+  },
+  "test_credentials": {
+    "Welcome Resort": "email=owner@welcomeresort.com password=Qplazm@10",
+    "Palm House": "email=owner@palmhouse.com password=Qplazm@10"
+  },
+  "seed_data_creation": "None - used existing preprod data",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 10 CRs/bugs verified successfully. The app connects to external APIs at preprod.mygenie.online. Login flow works correctly. Settlement panel and Credit Management are slide-over panels accessed from sidebar. Insights reports are under the Insights section in sidebar. Test data exists for May 2026 dates."
+}
