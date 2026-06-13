@@ -10,7 +10,7 @@
 |-------|-------|
 | **Branch** | `13-6-26` (deployed from GitHub) |
 | **Deploy URL** | `https://8f1c59d2-807e-451f-8b10-133e9507c42c.preview.emergentagent.com` |
-| **Active Sprint** | **S3 — API Reality Check + Intelligent PO** |
+| **Active Sprint** | **S3 — API Reality Check + Intelligent PO + FEFO Detail** |
 | **UI Freeze Status** | PHASE 7 FROZEN — Implementation **SUBSTANTIAL** (see below) |
 | **Implementation Status** | 24/24 screens present, CR-023 fixes applied, Intelligent PO built |
 | **Data** | ChocolateHut — 158 inventory items seeded via API |

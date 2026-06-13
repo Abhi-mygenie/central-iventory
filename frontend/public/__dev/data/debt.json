@@ -201,8 +201,8 @@
     "title": "P24 — FEFO Batch Stock Detail Panel",
     "status": "PLANNED",
     "severity": null,
-    "sprint_key": null,
-    "sprint_name": "Unassigned",
+    "sprint_key": "S3",
+    "sprint_name": "API Reality Check + Intelligent PO",
     "debt_reasons": [
       "Session-Start: MISSING",
       "Code-Gate: MISSING",

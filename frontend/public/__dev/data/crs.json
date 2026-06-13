@@ -1297,7 +1297,7 @@
     "title": "P24 — FEFO Batch Stock Detail Panel",
     "status": "PLANNED",
     "severity": null,
-    "sprint_key": null,
+    "sprint_key": "S3",
     "phase": "P24",
     "files": [],
     "notes": "API validated (19 probes). 3-phase implementation planned. ~10-13h estimate.",
@@ -1371,7 +1371,7 @@
       "QA-Report: MISSING",
       "Owner-Signoff: MISSING"
     ],
-    "sprint_name": "Unassigned"
+    "sprint_name": "API Reality Check + Intelligent PO"
   },
   {
     "type": "CR",
