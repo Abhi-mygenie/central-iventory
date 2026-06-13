@@ -2562,9 +2562,9 @@
     "type": "CR",
     "id": "CR-030",
     "title": "Inward Screens Audit (Vendor Management, Raw Material Master, Purchase)",
-    "status": "PLANNED",
+    "status": "QA",
     "severity": null,
-    "sprint_key": null,
+    "sprint_key": "S3",
     "phase": "Screen Audit",
     "files": [
       "VendorManagement.jsx",
@@ -2606,28 +2606,27 @@
       {
         "artifact": 5,
         "label": "QA-Report",
-        "status": "MISSING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/CR030_ARTIFACT_5_QA_REPORT.md"
       },
       {
         "artifact": 6,
         "label": "Owner-Signoff",
-        "status": "MISSING",
+        "status": "PENDING",
         "path": null
       }
     ],
     "completeness": {
-      "done": 5,
+      "done": 6,
       "total": 7,
-      "pct": 71
+      "pct": 86
     },
     "doc_count": 0,
     "is_debt": true,
     "debt_reasons": [
-      "QA-Report: MISSING",
-      "Owner-Signoff: MISSING"
+      "Owner-Signoff: PENDING"
     ],
-    "sprint_name": "Unassigned"
+    "sprint_name": "API Reality Check + Intelligent PO"
   },
   {
     "type": "CR",

@@ -3519,9 +3519,9 @@
       "type": "CR",
       "id": "CR-030",
       "title": "Inward Screens Audit (Vendor Management, Raw Material Master, Purchase)",
-      "status": "PLANNED",
+      "status": "QA",
       "severity": null,
-      "sprint_key": null,
+      "sprint_key": "S3",
       "phase": "Screen Audit",
       "files": [
         "VendorManagement.jsx",
@@ -3563,13 +3563,13 @@
         {
           "artifact": 5,
           "label": "QA-Report",
-          "status": "MISSING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR030_ARTIFACT_5_QA_REPORT.md"
         },
         {
           "artifact": 6,
           "label": "Owner-Signoff",
-          "status": "MISSING",
+          "status": "PENDING",
           "path": null
         }
       ]
