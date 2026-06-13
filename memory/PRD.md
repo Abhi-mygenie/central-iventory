@@ -40,7 +40,7 @@ Multi-store hierarchy stock management module for the MyGenie POS platform. Prox
 | 1b | Settings Gate + Negative Stock Logic | DONE |
 | 2a | Audit Detail (drill-down) | DONE |
 | 2b | Production History List | DONE (G-018 wired — real API) |
-| 2c | Pre-run Cost Estimation | UNBLOCKED (G-019 closed) |
+| 2c | Pre-run Cost Estimation | DONE (G-019 closed, FEFO cost wired) |
 | 3 | Intelligence UI (all 9 elements) | DONE |
 
 ## Prioritized Backlog

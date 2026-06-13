@@ -19,16 +19,12 @@ import {
   Package,
   Truck,
   BarChart3,
+  DollarSign,
 } from "lucide-react";
 import { LoadingState, ErrorState } from "@/components/common/StateDisplays";
 
 /**
- * P28 Production Run Form — Phase 3 Intelligence
- *
- * P3-3: Sub-recipe sort by demand (lowest FG stock first)
- * P3-4: Ingredient health strips
- * P3-5: Coverage estimate
- * P3-6: Post-production next-best-action
+ * P28 Production Run Form — Phase 3 Intelligence + Phase 2c Cost Estimation
  */
 export default function ProductionRunForm() {
   const navigate = useNavigate();
@@ -36,6 +32,7 @@ export default function ProductionRunForm() {
   const {
     subRecipes, stockMap, productionEnabled, allowNegativeStock,
     consumptionMap, hierarchyStores,
+    ingredientSegments, fetchIngredientSegments,
     loading, error, refresh,
   } = useProductionRun();
 
@@ -66,7 +63,15 @@ export default function ProductionRunForm() {
   const mult = Number(multiplier) || 0;
   const totalQty = baseQty * mult;
 
-  // Ingredient rows with P3-4 health data
+  // Phase 2c: Fetch ingredient segments when recipe is selected
+  useEffect(() => {
+    if (selectedRecipe?.ingredients) {
+      const ids = selectedRecipe.ingredients.map((ing) => ing.ingredient_id).filter(Boolean);
+      if (ids.length > 0) fetchIngredientSegments(ids);
+    }
+  }, [selectedRecipe, fetchIngredientSegments]);
+
+  // Ingredient rows with P3-4 health + Phase 2c cost
   const ingredientRows = useMemo(() => {
     if (!selectedRecipe?.ingredients) return [];
     return selectedRecipe.ingredients.map((ing) => {
@@ -77,6 +82,24 @@ export default function ProductionRunForm() {
       const sufficient = available >= needed || needed === 0;
       const minQty = Number(stock?.min_qty_alert) || 0;
       const healthPct = minQty > 0 ? Math.min(100, Math.round((available / minQty) * 100)) : (available > 0 ? 100 : 0);
+
+      // Phase 2c: FEFO cost estimation from segment data
+      const segments = ingredientSegments[ing.ingredient_id] || [];
+      let estimatedCost = null;
+      if (segments.length > 0 && needed > 0) {
+        let remaining = needed;
+        let cost = 0;
+        for (const seg of segments) {
+          if (remaining <= 0) break;
+          const segQty = Number(seg.cal_quantity) || 0;
+          const segCost = Number(seg.unit_cost) || 0;
+          const alloc = Math.min(remaining, segQty);
+          cost += alloc * segCost;
+          remaining -= alloc;
+        }
+        estimatedCost = cost;
+      }
+
       return {
         id: ing.ingredient_id,
         name: ing.ingredient_name || `Item #${ing.ingredient_id}`,
@@ -86,15 +109,28 @@ export default function ProductionRunForm() {
         displayAvailable,
         sufficient,
         healthPct,
+        estimatedCost,
+        hasSegments: segments.length > 0,
       };
     });
-  }, [selectedRecipe, mult, stockMap]);
+  }, [selectedRecipe, mult, stockMap, ingredientSegments]);
 
   const insufficientCount = ingredientRows.filter((r) => !r.sufficient && r.needed > 0).length;
   const hasInsufficient = insufficientCount > 0;
   const canSubmit =
     selectedRecipe && mult > 0 && batchLabel.trim() && expiryDate &&
     !submitting && !(hasInsufficient && !allowNegativeStock);
+
+  // Phase 2c: Total estimated cost
+  const totalEstimatedCost = useMemo(() => {
+    const costs = ingredientRows.filter((r) => r.estimatedCost != null).map((r) => r.estimatedCost);
+    if (costs.length === 0) return null;
+    return costs.reduce((sum, c) => sum + c, 0);
+  }, [ingredientRows]);
+
+  const estimatedUnitCost = totalEstimatedCost != null && totalQty > 0
+    ? totalEstimatedCost / totalQty
+    : null;
 
   // P3-5: Coverage estimate
   const coverageEstimate = useMemo(() => {
@@ -177,7 +213,7 @@ export default function ProductionRunForm() {
     );
   }
 
-  // ── P3-6: Post-production confirmation with NBA ──
+  // ── Post-production confirmation with NBA ──
   if (result) {
     return (
       <PostProductionConfirmation
@@ -225,7 +261,7 @@ export default function ProductionRunForm() {
                   isSelected
                     ? "border-primary border-2 bg-accent/30"
                     : "border-border hover:border-primary/50 hover:bg-accent/10"
-                } ${fgStock <= 0 ? "opacity-100" : ""}`}
+                }`}
                 onClick={() => handleRecipeSelect(String(sr.recipe_id))}
               >
                 <div className="flex-1 min-w-0">
@@ -327,7 +363,7 @@ export default function ProductionRunForm() {
         </div>
       )}
 
-      {/* P3-4: Ingredient table with health strips */}
+      {/* P3-4 + Phase 2c: Ingredient table with health strips + cost estimation */}
       {selectedRecipe && mult > 0 && ingredientRows.length > 0 && (
         <div data-testid="pre-production-preview" className="space-y-2">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ingredient Requirements</h2>
@@ -340,6 +376,7 @@ export default function ProductionRunForm() {
                     <th className="text-center py-2 px-3 font-medium">Health</th>
                     <th className="text-right py-2 px-3 font-medium">Required</th>
                     <th className="text-right py-2 px-3 font-medium">Available</th>
+                    <th className="text-right py-2 px-3 font-medium">Est. Cost</th>
                     <th className="text-center py-2 px-3 font-medium">Status</th>
                   </tr>
                 </thead>
@@ -372,6 +409,12 @@ export default function ProductionRunForm() {
                       </td>
                       <td className="py-2 px-3 text-right tabular-nums">{row.needed.toFixed(1)} {row.unit}</td>
                       <td className="py-2 px-3 text-right tabular-nums">{row.displayAvailable}</td>
+                      <td className="py-2 px-3 text-right tabular-nums font-mono">
+                        {row.estimatedCost != null
+                          ? `₹${row.estimatedCost.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                          : <span className="text-muted-foreground">—</span>
+                        }
+                      </td>
                       <td className="py-2 px-3 text-center">
                         {row.needed === 0 ? (
                           <span className="text-muted-foreground">—</span>
@@ -387,6 +430,26 @@ export default function ProductionRunForm() {
               </table>
             </CardContent>
           </Card>
+
+          {/* Phase 2c: Total estimated cost */}
+          {totalEstimatedCost != null && (
+            <div data-testid="estimated-cost-summary" className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <span className="text-xs font-medium text-muted-foreground">Estimated Material Cost</span>
+              </div>
+              <div className="text-right">
+                <span className="text-sm font-bold font-mono tabular-nums">
+                  ₹{totalEstimatedCost.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+                {estimatedUnitCost != null && (
+                  <span className="text-[10px] text-muted-foreground ml-2">
+                    (₹{estimatedUnitCost.toFixed(2)}/{unit})
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
 
           {hasInsufficient && !allowNegativeStock && (
             <div data-testid="negative-stock-blocked" className="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
@@ -435,7 +498,6 @@ export default function ProductionRunForm() {
 // ── P3-6: Post-production confirmation with next-best-action ──────
 
 function PostProductionConfirmation({ result, selectedRecipe, totalQty, unit, hierarchyStores, stockMap, onReset, navigate }) {
-  // Find outlets that need the FG item most
   const fgId = selectedRecipe?.inventory_id;
   const nbaStores = useMemo(() => {
     if (!fgId || !hierarchyStores.length) return [];

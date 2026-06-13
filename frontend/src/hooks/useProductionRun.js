@@ -5,7 +5,8 @@ import { useLoginContext } from "@/hooks/useLoginContext";
 /**
  * Hook for Production Run functionality.
  * Loads sub-recipes, current stock, operational settings,
- * daily consumption (for coverage estimates), and hierarchy detail (for post-production NBA).
+ * daily consumption (for coverage estimates), hierarchy detail (for post-production NBA),
+ * and ingredient segment details (for Phase 2c cost estimation).
  */
 export function useProductionRun() {
   const { restaurantId } = useLoginContext();
@@ -14,6 +15,7 @@ export function useProductionRun() {
   const [settings, setSettings] = useState(null);
   const [consumption, setConsumption] = useState(null);
   const [hierarchyStores, setHierarchyStores] = useState([]);
+  const [ingredientSegments, setIngredientSegments] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const fetchedRef = useRef(false);
@@ -61,6 +63,34 @@ export function useProductionRun() {
     }
   }, [fetchData]);
 
+  // Phase 2c: Fetch segment details for a list of ingredient IDs (for cost estimation)
+  const fetchIngredientSegments = useCallback(async (ingredientIds) => {
+    if (!ingredientIds || ingredientIds.length === 0) return;
+    // Only fetch IDs we don't already have
+    const toFetch = ingredientIds.filter((id) => !ingredientSegments[id]);
+    if (toFetch.length === 0) return;
+
+    const results = await Promise.allSettled(
+      toFetch.map((id) => api.getStockDetail(id))
+    );
+
+    const newSegments = {};
+    toFetch.forEach((id, idx) => {
+      if (results[idx].status === "fulfilled") {
+        const data = results[idx].value.data;
+        // Sort segments by expiry ascending (FEFO order)
+        const segs = (data?.segments || [])
+          .filter((s) => Number(s.cal_quantity) > 0)
+          .sort((a, b) => new Date(a.expiry_date || "9999") - new Date(b.expiry_date || "9999"));
+        newSegments[id] = segs;
+      }
+    });
+
+    if (Object.keys(newSegments).length > 0) {
+      setIngredientSegments((prev) => ({ ...prev, ...newSegments }));
+    }
+  }, [ingredientSegments]);
+
   // Derived
   const productionEnabled = settings?.production_enabled ?? false;
   const allowNegativeStock = settings?.allow_negative_stock ?? true;
@@ -72,7 +102,6 @@ export function useProductionRun() {
   }
 
   // P3-5: Build consumption map for coverage estimates
-  // inventory_master_id → avg daily consumption qty
   const consumptionMap = {};
   if (consumption) {
     const details = consumption.stock_details || consumption.stock_summary || [];
@@ -97,6 +126,8 @@ export function useProductionRun() {
     consumption,
     consumptionMap,
     hierarchyStores,
+    ingredientSegments,
+    fetchIngredientSegments,
     productionEnabled,
     allowNegativeStock,
     loading,
