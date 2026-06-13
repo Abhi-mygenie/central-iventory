@@ -26,6 +26,9 @@ import ProductionRunForm from "@/components/central-inventory/ProductionRunForm"
 import ProductionHistory from "@/components/central-inventory/ProductionHistory";
 import SubRecipeMaster from "@/components/central-inventory/SubRecipeMaster";
 import StoreManagement from "@/components/central-inventory/StoreManagement";
+import PurchaseOrderList from "@/components/central-inventory/PurchaseOrderList";
+import PurchaseOrderCreate from "@/components/central-inventory/PurchaseOrderCreate";
+import PurchaseOrderDetail from "@/components/central-inventory/PurchaseOrderDetail";
 import { PermissionDenied } from "@/components/common/StateDisplays";
 
 function ProtectedRoute({ children }) {
@@ -67,6 +70,9 @@ function AppRoutes() {
         <Route path="/vendor-management" element={<VendorManagement />} />
         <Route path="/raw-materials" element={<IngredientCatalogue />} />
         <Route path="/purchase" element={<AddStockPurchaseForm />} />
+        <Route path="/purchase/orders" element={<PurchaseOrderList />} />
+        <Route path="/purchase/orders/new" element={<PurchaseOrderCreate />} />
+        <Route path="/purchase/orders/:id" element={<PurchaseOrderDetail />} />
 
         {/* Production */}
         <Route path="/sub-recipe-master" element={<SubRecipeMaster />} />

@@ -591,9 +591,11 @@ function getWastageReport({ restaurantIds, fromDate, toDate, wasteType, foodId, 
  * CAUTION: This is for summary/dashboard only.
  * Do NOT use for request flow source catalog (use requestCatalog instead).
  */
-function _getStockInventory({ includeHierarchy } = {}) {
+function _getStockInventory({ includeHierarchy, includeSegments, segmentLimit, includeConsumption } = {}) {
   const params = {};
   if (includeHierarchy) params.include_hierarchy = true;
+  if (includeSegments) { params.include_segments = true; if (segmentLimit) params.segment_limit = segmentLimit; }
+  if (includeConsumption) params.include_consumption = true;
   return client.get("/proxy/v2/inventory/stock-inventory", { params }).then((resp) => {
     const data = resp.data;
     if (data?.current_stocks) {
@@ -911,6 +913,89 @@ const getProductionRunHistory = _cached("getProductionRunHistory", TTL.SHORT, _g
 
 // ── P22 Daily Consumption Report ──────────────────────────────────
 
+// ── CR-030: Vendor Item List (Purchase Intelligence) ──────────────
+
+function _getVendorItemList(restaurantId, { fromDate, toDate } = {}) {
+  const params = new URLSearchParams();
+  params.set("restaurant_ids[]", restaurantId);
+  if (fromDate) params.set("from_date", fromDate);
+  if (toDate) params.set("to_date", toDate);
+  return client.get(`/proxy/v2/inventory/vendor-item-list?${params.toString()}`).then((resp) => {
+    return { ...resp, data: resp.data?.data || [] };
+  });
+}
+const getVendorItemList = _cached("getVendorItemList", TTL.LONG, _getVendorItemList);
+
+// ── CR-030: Purchase Order APIs (10 endpoints) ───────────────────
+
+function createPO(payload) {
+  return client.post("/proxy/v2/inventory/purchase-order/create", payload).then(r => {
+    _invalidateCache(["listPOs:"]); return r;
+  });
+}
+
+function _listPOs({ status, vendorId, fromDate, toDate, restaurantIds, limit, offset } = {}) {
+  const params = new URLSearchParams();
+  if (status) params.set("status", status);
+  if (vendorId) params.set("vendor_id", vendorId);
+  if (fromDate) params.set("from_date", fromDate);
+  if (toDate) params.set("to_date", toDate);
+  if (restaurantIds) restaurantIds.forEach(id => params.append("restaurant_ids[]", id));
+  if (limit) params.set("limit", limit);
+  if (offset) params.set("offset", offset);
+  return client.get(`/proxy/v2/inventory/purchase-order/list?${params.toString()}`);
+}
+const listPOs = _cached("listPOs", TTL.SHORT, _listPOs);
+
+function _getPODetail(poId) {
+  return client.get(`/proxy/v2/inventory/purchase-order/${poId}`);
+}
+const getPODetail = _cached("getPODetail", TTL.MEDIUM, _getPODetail);
+
+function updatePO(poId, payload) {
+  return client.put(`/proxy/v2/inventory/purchase-order/${poId}/update`, payload).then(r => {
+    _invalidateCache(["listPOs:", "getPODetail:"]); return r;
+  });
+}
+
+function deletePO(poId) {
+  return client.delete(`/proxy/v2/inventory/purchase-order/${poId}`).then(r => {
+    _invalidateCache(["listPOs:", "getPODetail:"]); return r;
+  });
+}
+
+function approvePO(poId) {
+  return client.post(`/proxy/v2/inventory/purchase-order/${poId}/approve`, {}).then(r => {
+    _invalidateCache(["listPOs:", "getPODetail:"]); return r;
+  });
+}
+
+function sendPO(poId) {
+  return client.post(`/proxy/v2/inventory/purchase-order/${poId}/send`, {}).then(r => {
+    _invalidateCache(["listPOs:", "getPODetail:"]); return r;
+  });
+}
+
+function receivePO(poId, payload) {
+  return client.post(`/proxy/v2/inventory/purchase-order/${poId}/receive`, payload).then(r => {
+    _invalidateCache(["listPOs:", "getPODetail:", "getVendorItemList:"]); _invalidateStockCaches(); return r;
+  });
+}
+
+function cancelPO(poId, cancelReason) {
+  return client.post(`/proxy/v2/inventory/purchase-order/${poId}/cancel`, { cancel_reason: cancelReason }).then(r => {
+    _invalidateCache(["listPOs:", "getPODetail:"]); return r;
+  });
+}
+
+function closePO(poId) {
+  return client.post(`/proxy/v2/inventory/purchase-order/${poId}/close`, {}).then(r => {
+    _invalidateCache(["listPOs:", "getPODetail:"]); return r;
+  });
+}
+
+// ── P22 Daily Consumption Report ──────────────────────────────────
+
 function getDailyConsumptionReport({ fromDate, toDate, restaurantIds, includeHierarchy } = {}) {
   const payload = {};
   if (fromDate) payload.from_date = fromDate;
@@ -1029,6 +1114,19 @@ const api = {
   getPushForm,
   pushBundle,
   getHierarchyHistory,
+  // CR-030: Vendor Purchase Intelligence
+  getVendorItemList,
+  // CR-030: Purchase Order Module (10 endpoints)
+  createPO,
+  listPOs,
+  getPODetail,
+  updatePO,
+  deletePO,
+  approvePO,
+  sendPO,
+  receivePO,
+  cancelPO,
+  closePO,
 };
 
 export default api;
