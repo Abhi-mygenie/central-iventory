@@ -1,30 +1,41 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import api from "@/services/api";
+import { useLoginContext } from "@/hooks/useLoginContext";
 
 /**
- * P20: Fetches stock inventory for logged-in store (self-store only).
- * No hierarchy — default endpoint only.
+ * P20: Fetches stock inventory for logged-in store.
+ * Phase 2: Hierarchy toggle for Master/Central users.
  *
  * @param {Object} options
  * @param {number} options.staleAfterMs - Stale threshold in ms (default: 5 min)
- * @returns {{ stocks, loading, error, refresh, lastFetched, isStale, totalItems, lowStockItems, lowStockCount, categoryCounts }}
  */
 export function useStockInventory({ staleAfterMs = 5 * 60 * 1000 } = {}) {
+  const { isTopLevel, isMiddleLevel } = useLoginContext();
+  const canToggleHierarchy = isTopLevel || isMiddleLevel;
+  const [showHierarchy, setShowHierarchy] = useState(false);
+
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastFetched, setLastFetched] = useState(null);
   const fetchIdRef = useRef(0);
 
+  // Hierarchy state
+  const [hierarchySummary, setHierarchySummary] = useState(null);
+  const [hierarchyContext, setHierarchyContext] = useState(null);
+
   const fetchInventory = useCallback(async () => {
     const id = ++fetchIdRef.current;
     setLoading(true);
     setError(null);
     try {
-      const resp = await api.getStockInventory();
+      const includeHierarchy = showHierarchy && canToggleHierarchy;
+      const resp = await api.getStockInventory(includeHierarchy ? { includeHierarchy: true } : {});
       if (id !== fetchIdRef.current) return;
       const data = resp.data;
       setStocks(data.current_stocks || []);
+      setHierarchySummary(data.hierarchy_summary || null);
+      setHierarchyContext(data.hierarchy_context || null);
       setLastFetched(Date.now());
     } catch (err) {
       if (id !== fetchIdRef.current) return;
@@ -32,7 +43,7 @@ export function useStockInventory({ staleAfterMs = 5 * 60 * 1000 } = {}) {
     } finally {
       if (id === fetchIdRef.current) setLoading(false);
     }
-  }, []);
+  }, [showHierarchy, canToggleHierarchy]);
 
   useEffect(() => {
     fetchInventory();
@@ -59,5 +70,11 @@ export function useStockInventory({ staleAfterMs = 5 * 60 * 1000 } = {}) {
     lowStockItems,
     lowStockCount: lowStockItems.length,
     categoryCounts,
+    // Hierarchy
+    canToggleHierarchy,
+    showHierarchy,
+    setShowHierarchy,
+    hierarchySummary,
+    hierarchyContext,
   };
 }

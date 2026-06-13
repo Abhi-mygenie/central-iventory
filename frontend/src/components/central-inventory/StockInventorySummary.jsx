@@ -2,10 +2,14 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStockInventory } from "@/hooks/useStockInventory";
 import { useLoginContext } from "@/hooks/useLoginContext";
+import { mapRestaurantType } from "@/lib/terminology";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -35,6 +39,8 @@ import {
   Timer,
   ArrowDownLeft,
   ArrowUpRight,
+  Building2,
+  Store,
 } from "lucide-react";
 import { LoadingState, ErrorState, EmptyState } from "@/components/common/StateDisplays";
 
@@ -66,6 +72,11 @@ export default function StockInventorySummary() {
     totalItems,
     lowStockCount,
     categoryCounts,
+    canToggleHierarchy,
+    showHierarchy,
+    setShowHierarchy,
+    hierarchySummary,
+    hierarchyContext,
   } = useStockInventory();
 
   const [search, setSearch] = useState("");
@@ -165,6 +176,18 @@ export default function StockInventorySummary() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {canToggleHierarchy && (
+            <div className="flex items-center gap-2 mr-2" data-testid="hierarchy-toggle-container">
+              <Switch
+                data-testid="hierarchy-toggle"
+                checked={showHierarchy}
+                onCheckedChange={setShowHierarchy}
+              />
+              <Label className="text-xs text-muted-foreground">
+                {showHierarchy ? "All stores" : "My store"}
+              </Label>
+            </div>
+          )}
           {lastFetched && (
             <span
               data-testid="last-refreshed"
@@ -208,7 +231,7 @@ export default function StockInventorySummary() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+      <div className={`grid grid-cols-1 sm:grid-cols-2 ${showHierarchy && hierarchySummary ? "lg:grid-cols-4" : "lg:grid-cols-3"} gap-3 mb-6`}>
         <Card data-testid="kpi-total-items">
           <CardContent className="py-4 px-4 flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
@@ -252,7 +275,34 @@ export default function StockInventorySummary() {
             </div>
           </CardContent>
         </Card>
+
+        {showHierarchy && hierarchySummary && (
+          <Card data-testid="kpi-stores-in-scope">
+            <CardContent className="py-4 px-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+                <Building2 className="h-5 w-5 text-blue-600" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-2xl font-bold">{hierarchySummary.total_stores_in_scope}</p>
+                <p className="text-xs text-muted-foreground">Stores in Scope</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
+
+      {/* Hierarchy Low-Stock Alert Banner */}
+      {showHierarchy && hierarchySummary?.totals?.low_stock_rows > 0 && (
+        <div
+          data-testid="hierarchy-low-stock-alert"
+          className="flex items-center gap-2 p-3 mb-4 rounded-lg bg-red-50 border border-red-200 text-red-800"
+        >
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          <p className="text-xs font-medium">
+            {hierarchySummary.totals.low_stock_rows} low stock items across {hierarchySummary.total_stores_in_scope} stores
+          </p>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-2 mb-4">
@@ -415,6 +465,83 @@ export default function StockInventorySummary() {
           {lowStockCount > 0 && ` — ${lowStockCount} below threshold`}
         </p>
       )}
+
+      {/* Hierarchy Store Heatmap */}
+      {showHierarchy && hierarchySummary?.by_store && hierarchySummary.by_store.length > 0 && (
+        <div data-testid="store-heatmap" className="mt-6">
+          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
+            <Store className="h-4 w-4 text-slate-500" />
+            Store Stock Health
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {[...hierarchySummary.by_store]
+              .sort((a, b) => {
+                const ratioA = a.stock_rows > 0 ? a.low_stock_rows / a.stock_rows : 0;
+                const ratioB = b.stock_rows > 0 ? b.low_stock_rows / b.stock_rows : 0;
+                return ratioB - ratioA;
+              })
+              .map((store) => (
+                <StoreHeatmapCard
+                  key={store.restaurant_id}
+                  store={store}
+                  onClick={() => navigate(`/store/${store.restaurant_id}`)}
+                />
+              ))}
+          </div>
+        </div>
+      )}
+
+      {/* Hierarchy loading skeleton */}
+      {showHierarchy && loading && !hierarchySummary && (
+        <div className="mt-6">
+          <LoadingState lines={3} />
+        </div>
+      )}
     </div>
+  );
+}
+
+function StoreHeatmapCard({ store, onClick }) {
+  const ratio = store.stock_rows > 0
+    ? Math.round((store.low_stock_rows / store.stock_rows) * 100)
+    : 0;
+  const isHealthy = ratio === 0;
+  const isCritical = ratio > 50;
+
+  return (
+    <Card
+      data-testid={`heatmap-card-${store.restaurant_id}`}
+      className="cursor-pointer hover:shadow-md transition-shadow"
+      onClick={onClick}
+    >
+      <CardContent className="py-3 px-4">
+        <div className="flex items-center justify-between mb-2">
+          <div className="min-w-0">
+            <p className="text-sm font-medium truncate">{store.name}</p>
+            <p className="text-[10px] text-muted-foreground">
+              {mapRestaurantType(store.restaurant_type_flag)}
+            </p>
+          </div>
+          <Badge
+            variant="outline"
+            className={`text-[10px] shrink-0 ml-2 ${
+              isHealthy
+                ? "text-emerald-700 border-emerald-200 bg-emerald-50"
+                : isCritical
+                ? "text-red-700 border-red-200 bg-red-50"
+                : "text-amber-700 border-amber-200 bg-amber-50"
+            }`}
+          >
+            {store.low_stock_rows}/{store.stock_rows}
+          </Badge>
+        </div>
+        <Progress value={ratio} className="h-1.5" />
+        <p className={`text-[10px] mt-1 ${isCritical ? "text-red-700 font-semibold" : isHealthy ? "text-emerald-700" : "text-muted-foreground"}`}>
+          {store.low_stock_rows > 0
+            ? `${store.low_stock_rows} low stock`
+            : "All stocked"}
+        </p>
+      </CardContent>
+    </Card>
   );
 }
