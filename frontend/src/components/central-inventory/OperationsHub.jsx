@@ -69,6 +69,7 @@ export default function OperationsHub() {
     readyToDispatchCount,
     todayActivity,
     loading, error, refresh, recentHistory,
+    fgLowStockCount, fgLowStockItems,
   } = useStockIntelligence();
 
   const { restaurantMap } = useRestaurantMap();
@@ -168,6 +169,28 @@ export default function OperationsHub() {
       ) : (
         <>
           {/* ── Next Best Actions ─────────────────────────── */}
+
+          {/* P3-1: FG Low Stock NBA banner (production intelligence) */}
+          {fgLowStockCount > 0 && (isTopLevel || isMiddleLevel) && canDo("run-production") && (
+            <div
+              data-testid="production-nba-banner"
+              className="flex items-center gap-3 p-3 mb-3 rounded-lg border-l-[3px] border-l-amber-500 bg-amber-50 border border-amber-200 cursor-pointer hover:bg-amber-100/60 transition-colors"
+              onClick={() => navigate("/production/new")}
+            >
+              <div className="h-9 w-9 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                <Factory className="h-5 w-5 text-amber-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold">{fgLowStockCount} finished good{fgLowStockCount > 1 ? "s" : ""} low on stock — consider running production</p>
+                <p className="text-xs text-muted-foreground">
+                  {fgLowStockItems[0] && `${fgLowStockItems[0].stock_title}: ${fgLowStockItems[0].display_qty} ${fgLowStockItems[0].display_unit}`}
+                  {fgLowStockItems[1] ? ` · ${fgLowStockItems[1].stock_title}: ${fgLowStockItems[1].display_qty} ${fgLowStockItems[1].display_unit}` : ""}
+                </p>
+              </div>
+              <Button variant="default" size="sm" className="shrink-0 text-xs" onClick={(e) => { e.stopPropagation(); navigate("/production/new"); }}>Run Production</Button>
+            </div>
+          )}
+
           {staleApprovalCount > 0 && canDo("approve") && (
             <div
               data-testid="nba-stale-approvals"
@@ -297,6 +320,25 @@ export default function OperationsHub() {
                 )}
               </CardContent>
             </Card>
+
+            {/* P3-2: Production KPI — FG Low Stock */}
+            {(isTopLevel || isMiddleLevel) && canDo("run-production") && (
+              <Card
+                data-testid="kpi-production"
+                className={`cursor-pointer hover:shadow-md transition-shadow ${fgLowStockCount > 0 ? "border-l-[3px] border-l-blue-500" : ""}`}
+                onClick={() => navigate("/production/new")}
+              >
+                <CardContent className="py-3 px-4">
+                  <p className={`text-2xl font-bold tabular-nums ${fgLowStockCount > 0 ? "text-blue-600" : ""}`}>
+                    {fgLowStockCount}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">FG Low Stock</p>
+                  <p className="text-[10px] text-muted-foreground mt-1 pt-1 border-t border-border">
+                    {fgLowStockCount > 0 ? "Consider running production" : "All finished goods adequate"}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* ── Your Stock Health ─────────────────────────── */}

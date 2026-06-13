@@ -39,8 +39,8 @@ Multi-store hierarchy stock management module for the MyGenie POS platform. Prox
 | 1a | Core Form + Nav + Routes + API + Hook | DONE |
 | 1b | Settings Gate + Negative Stock Logic | DONE |
 | 2a | Audit Detail (drill-down) | DONE |
-| 2b | Production History List | DONE (G-018 stub — empty state) |
-| 3 | Intelligence UI (KPIs, coverage, NBA) | PENDING |
+| 2b | Production History List | DONE (G-018 wired — real API) |
+| 3 | Intelligence UI (all 9 elements) | DONE |
 
 ## Prioritized Backlog
 | Priority | CR | Title | Status |

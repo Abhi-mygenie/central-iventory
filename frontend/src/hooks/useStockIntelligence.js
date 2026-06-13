@@ -98,6 +98,13 @@ export function useStockIntelligence({ autoFetch = true } = {}) {
       stocks,
       pendingQueues,
       recentHistory,
+      // P3: FG (finished goods) intelligence for production
+      fgLowStockCount: stocks.filter(
+        (s) => s.is_low_stock && (s.is_sub_recipe || s.subrecipe_id)
+      ).length,
+      fgLowStockItems: stocks.filter(
+        (s) => s.is_low_stock && (s.is_sub_recipe || s.subrecipe_id)
+      ),
     };
   }, [stocks, pendingQueues, recentHistory]);
 

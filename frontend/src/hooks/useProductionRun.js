@@ -4,14 +4,16 @@ import { useLoginContext } from "@/hooks/useLoginContext";
 
 /**
  * Hook for Production Run functionality.
- * Loads sub-recipes, current stock, and operational settings.
- * Provides derived intelligence: stock availability per ingredient, production gates.
+ * Loads sub-recipes, current stock, operational settings,
+ * daily consumption (for coverage estimates), and hierarchy detail (for post-production NBA).
  */
 export function useProductionRun() {
   const { restaurantId } = useLoginContext();
   const [subRecipes, setSubRecipes] = useState([]);
   const [stocks, setStocks] = useState([]);
   const [settings, setSettings] = useState(null);
+  const [consumption, setConsumption] = useState(null);
+  const [hierarchyStores, setHierarchyStores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const fetchedRef = useRef(false);
@@ -20,10 +22,12 @@ export function useProductionRun() {
     setLoading(true);
     setError(null);
     try {
-      const [srResp, stockResp, settResp] = await Promise.allSettled([
+      const [srResp, stockResp, settResp, consResp, hierResp] = await Promise.allSettled([
         api.getSubRecipeList(),
         api.getStockInventory(),
         api.getOperationalSettings(restaurantId),
+        api.getDailyConsumptionReport({ includeHierarchy: true }),
+        api.getHierarchyDetail(restaurantId).catch(() => null),
       ]);
 
       if (srResp.status === "fulfilled") {
@@ -35,6 +39,13 @@ export function useProductionRun() {
       if (settResp.status === "fulfilled") {
         const sd = settResp.value.data?.data || settResp.value.data;
         setSettings(sd?.resolved_settings || sd?.stored_settings || null);
+      }
+      if (consResp.status === "fulfilled") {
+        setConsumption(consResp.value.data || null);
+      }
+      if (hierResp.status === "fulfilled" && hierResp.value) {
+        const hd = hierResp.value.data?.data || hierResp.value.data;
+        setHierarchyStores(hd?.children || hd?.stores || []);
       }
     } catch (e) {
       setError(e?.message || "Failed to load production data");
@@ -60,11 +71,32 @@ export function useProductionRun() {
     stockMap[s.id] = s;
   }
 
+  // P3-5: Build consumption map for coverage estimates
+  // inventory_master_id → avg daily consumption qty
+  const consumptionMap = {};
+  if (consumption) {
+    const details = consumption.stock_details || consumption.stock_summary || [];
+    const dateRange = consumption.date_range || [];
+    const days = dateRange.length > 1
+      ? Math.max(1, Math.round((new Date(dateRange[1]) - new Date(dateRange[0])) / 86400000))
+      : 7;
+    for (const item of details) {
+      const id = item.inventory_master_id || item.id;
+      const totalConsumed = Number(item.total_consumed || item.total_qty || 0);
+      if (id && totalConsumed > 0) {
+        consumptionMap[id] = totalConsumed / days;
+      }
+    }
+  }
+
   return {
     subRecipes,
     stocks,
     stockMap,
     settings,
+    consumption,
+    consumptionMap,
+    hierarchyStores,
     productionEnabled,
     allowNegativeStock,
     loading,

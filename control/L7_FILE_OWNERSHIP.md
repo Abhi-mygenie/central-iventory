@@ -74,14 +74,15 @@
 ### CR-026: P28 Production Unit Module — Phase 1a+1b (9 files: 3 new + 6 modified)
 | File | Change |
 |------|--------|
-| `hooks/useProductionRun.js` **(NEW)** | Hook: loads sub-recipes, stock, operational settings |
-| `components/central-inventory/ProductionRunForm.jsx` **(NEW)** | Production run form with pre-production preview and post-production confirmation |
-| `components/central-inventory/ProductionHistory.jsx` **(NEW)** | Production history list (G-018 stub) + audit detail drill-down |
-| `services/api.js` | Added: `runProduction()`, `getProductionRunDetail()`, `getProductionRunHistory()` (G-018 stub) |
+| `hooks/useProductionRun.js` **(NEW)** | Hook: loads sub-recipes, stock, operational settings, consumption data, hierarchy stores |
+| `components/central-inventory/ProductionRunForm.jsx` **(NEW)** | Production run form with P3-3 sort-by-demand, P3-4 health strips, P3-5 coverage estimate, P3-6 post-production NBA |
+| `components/central-inventory/ProductionHistory.jsx` **(NEW)** | Production history with P3-7 KPIs, P3-8 staleness, P3-9 cost trend + audit detail |
+| `services/api.js` | Added: `runProduction()`, `getProductionRunDetail()`, `getProductionRunHistory()` (G-018 real API) |
 | `lib/screenVisibility.js` | Added: `scr-production` screen, `run-production` action, 2 nav items |
 | `App.js` | Added: 3 routes + 2 imports for production screens |
 | `components/layout/Sidebar.jsx` | Added: `Factory`, `ClipboardList` icons |
-| `components/central-inventory/OperationsHub.jsx` | Added: "Run Production" quick action card |
+| `hooks/useStockIntelligence.js` | Added: `fgLowStockCount`, `fgLowStockItems` (FG detection for P3-1/P3-2) |
+| `components/central-inventory/OperationsHub.jsx` | Added: "Run Production" quick action card + P3-1 FG Low Stock NBA banner + P3-2 Production KPI card |
 
 ## Key Dependencies
 

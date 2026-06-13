@@ -896,18 +896,14 @@ function _getProductionRunDetail(runId) {
 }
 const getProductionRunDetail = _cached("getProductionRunDetail", TTL.MEDIUM, _getProductionRunDetail);
 
-// G-018 STUB: production-run list endpoint does not exist yet.
-// Returns empty until backend delivers GET /inventory/production-run.
-function _getProductionRunHistory(/* { fromDate, toDate, limit, page } = {} */) {
-  // STUB — backend gap G-018
-  return Promise.resolve({ data: { data: [], pagination: { total: 0 } } });
-  // REAL (uncomment when G-018 is delivered):
-  // const params = {};
-  // if (fromDate) params.from_date = fromDate;
-  // if (toDate) params.to_date = toDate;
-  // if (limit) params.limit = limit;
-  // if (page) params.page = page;
-  // return client.get("/proxy/v2/inventory/production-run", { params });
+// G-018 CLOSED: production-run list endpoint confirmed working 2026-06-13.
+function _getProductionRunHistory({ fromDate, toDate, limit, page } = {}) {
+  const params = {};
+  if (fromDate) params.from_date = fromDate;
+  if (toDate) params.to_date = toDate;
+  if (limit) params.limit = limit;
+  if (page) params.page = page;
+  return client.get("/proxy/v2/inventory/production-run", { params });
 }
 const getProductionRunHistory = _cached("getProductionRunHistory", TTL.SHORT, _getProductionRunHistory);
 

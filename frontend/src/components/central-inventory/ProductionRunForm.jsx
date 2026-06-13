@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginContext } from "@/hooks/useLoginContext";
 import { useProductionRun } from "@/hooks/useProductionRun";
@@ -9,44 +9,36 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Factory,
   ShieldX,
   CheckCircle2,
   AlertTriangle,
   XCircle,
-  ArrowRight,
   RotateCcw,
   Eye,
-  FileText,
   Package,
+  Truck,
+  BarChart3,
 } from "lucide-react";
 import { LoadingState, ErrorState } from "@/components/common/StateDisplays";
 
 /**
- * P28 Production Run Form
+ * P28 Production Run Form — Phase 3 Intelligence
  *
- * Phases:
- * - Select sub-recipe
- * - Enter quantity (multiplier or absolute), batch label, expiry
- * - Pre-production preview (ingredients vs stock)
- * - Execute → post-production confirmation
+ * P3-3: Sub-recipe sort by demand (lowest FG stock first)
+ * P3-4: Ingredient health strips
+ * P3-5: Coverage estimate
+ * P3-6: Post-production next-best-action
  */
 export default function ProductionRunForm() {
   const navigate = useNavigate();
-  const { isTopLevel, isMiddleLevel, canDo } = useLoginContext();
+  const { isTopLevel, isMiddleLevel } = useLoginContext();
   const {
     subRecipes, stockMap, productionEnabled, allowNegativeStock,
+    consumptionMap, hierarchyStores,
     loading, error, refresh,
   } = useProductionRun();
 
-  // Form state
   const [selectedRecipeId, setSelectedRecipeId] = useState("");
   const [multiplier, setMultiplier] = useState("");
   const [batchLabel, setBatchLabel] = useState("");
@@ -54,6 +46,15 @@ export default function ProductionRunForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [result, setResult] = useState(null);
+
+  // P3-3: Sort sub-recipes by demand (lowest FG stock first)
+  const sortedRecipes = useMemo(() => {
+    return [...subRecipes].sort((a, b) => {
+      const stockA = Number(stockMap[a.inventory_id]?.cal_quantity) || 0;
+      const stockB = Number(stockMap[b.inventory_id]?.cal_quantity) || 0;
+      return stockA - stockB;
+    });
+  }, [subRecipes, stockMap]);
 
   const selectedRecipe = useMemo(
     () => subRecipes.find((r) => String(r.recipe_id) === String(selectedRecipeId)),
@@ -65,7 +66,7 @@ export default function ProductionRunForm() {
   const mult = Number(multiplier) || 0;
   const totalQty = baseQty * mult;
 
-  // Ingredient availability
+  // Ingredient rows with P3-4 health data
   const ingredientRows = useMemo(() => {
     if (!selectedRecipe?.ingredients) return [];
     return selectedRecipe.ingredients.map((ing) => {
@@ -74,6 +75,8 @@ export default function ProductionRunForm() {
       const available = stock ? Number(stock.cal_quantity) || 0 : 0;
       const displayAvailable = stock ? `${stock.display_qty} ${stock.display_unit}` : "—";
       const sufficient = available >= needed || needed === 0;
+      const minQty = Number(stock?.min_qty_alert) || 0;
+      const healthPct = minQty > 0 ? Math.min(100, Math.round((available / minQty) * 100)) : (available > 0 ? 100 : 0);
       return {
         id: ing.ingredient_id,
         name: ing.ingredient_name || `Item #${ing.ingredient_id}`,
@@ -82,6 +85,7 @@ export default function ProductionRunForm() {
         available,
         displayAvailable,
         sufficient,
+        healthPct,
       };
     });
   }, [selectedRecipe, mult, stockMap]);
@@ -92,7 +96,18 @@ export default function ProductionRunForm() {
     selectedRecipe && mult > 0 && batchLabel.trim() && expiryDate &&
     !submitting && !(hasInsufficient && !allowNegativeStock);
 
-  // Auto-suggest batch label
+  // P3-5: Coverage estimate
+  const coverageEstimate = useMemo(() => {
+    if (!selectedRecipe || totalQty <= 0) return null;
+    const fgId = selectedRecipe.inventory_id;
+    const dailyConsumption = consumptionMap[fgId];
+    if (!dailyConsumption || dailyConsumption <= 0) return null;
+    const currentStock = Number(stockMap[fgId]?.cal_quantity) || 0;
+    const coverageDays = Math.round((currentStock + totalQty) / dailyConsumption);
+    const outletCount = hierarchyStores.length || 0;
+    return { coverageDays, dailyConsumption: Math.round(dailyConsumption), currentStock, outletCount };
+  }, [selectedRecipe, totalQty, consumptionMap, stockMap, hierarchyStores]);
+
   const handleRecipeSelect = (id) => {
     setSelectedRecipeId(id);
     setResult(null);
@@ -150,7 +165,6 @@ export default function ProductionRunForm() {
   if (loading) return <LoadingState lines={4} />;
   if (error) return <ErrorState message={error} onRetry={refresh} />;
 
-  // ── production_enabled gate ──
   if (!productionEnabled) {
     return (
       <div data-testid="production-blocked" className="flex flex-col items-center justify-center py-16 text-center">
@@ -163,78 +177,19 @@ export default function ProductionRunForm() {
     );
   }
 
-  // ── Post-production confirmation ──
+  // ── P3-6: Post-production confirmation with NBA ──
   if (result) {
     return (
-      <div data-testid="post-production-confirmation" className="max-w-lg mx-auto py-8">
-        <Card className="border-l-[3px] border-l-emerald-500">
-          <CardContent className="py-6 px-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center">
-                <CheckCircle2 className="h-6 w-6 text-emerald-600" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold">Production Run Complete</p>
-                <p className="text-xs text-muted-foreground" data-testid="production-run-id">
-                  {result.reference_code || `Run #${result.production_run_id}`}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-              <div>
-                <p className="text-[10px] text-muted-foreground uppercase">Quantity Produced</p>
-                <p className="font-semibold tabular-nums">{result.quantity_added || totalQty} {unit}</p>
-              </div>
-              <div>
-                <p className="text-[10px] text-muted-foreground uppercase">Unit Cost</p>
-                <p className="font-semibold tabular-nums" data-testid="production-unit-cost">
-                  {result.unit_cost != null ? `₹${Number(result.unit_cost).toFixed(2)}` : "—"}
-                </p>
-              </div>
-              <div>
-                <p className="text-[10px] text-muted-foreground uppercase">Total Cost</p>
-                <p className="font-semibold tabular-nums" data-testid="production-total-cost">
-                  {result.total_cost != null ? `₹${Number(result.total_cost).toFixed(2)}` : "—"}
-                </p>
-              </div>
-              <div>
-                <p className="text-[10px] text-muted-foreground uppercase">Recipe</p>
-                <p className="font-semibold truncate">{selectedRecipe?.name || "—"}</p>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {result.production_run_id && (
-                <Button
-                  data-testid="view-audit-btn"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate(`/production/${result.production_run_id}`)}
-                >
-                  <Eye className="h-3.5 w-3.5 mr-1.5" />View Audit
-                </Button>
-              )}
-              <Button
-                data-testid="view-in-stock-btn"
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/inventory")}
-              >
-                <Package className="h-3.5 w-3.5 mr-1.5" />View in Stock
-              </Button>
-              <Button
-                data-testid="run-another-btn"
-                variant="default"
-                size="sm"
-                onClick={handleReset}
-              >
-                <RotateCcw className="h-3.5 w-3.5 mr-1.5" />Run Another
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <PostProductionConfirmation
+        result={result}
+        selectedRecipe={selectedRecipe}
+        totalQty={totalQty}
+        unit={unit}
+        hierarchyStores={hierarchyStores}
+        stockMap={stockMap}
+        onReset={handleReset}
+        navigate={navigate}
+      />
     );
   }
 
@@ -251,29 +206,51 @@ export default function ProductionRunForm() {
         </div>
       </div>
 
-      {/* Sub-recipe selector */}
+      {/* P3-3: Sub-recipe selector sorted by demand */}
       <div className="space-y-2">
-        <Label htmlFor="sub-recipe" className="text-xs font-medium">Sub-Recipe</Label>
-        <Select value={selectedRecipeId} onValueChange={handleRecipeSelect}>
-          <SelectTrigger data-testid="sub-recipe-selector" id="sub-recipe">
-            <SelectValue placeholder="Select a sub-recipe..." />
-          </SelectTrigger>
-          <SelectContent>
-            {subRecipes.length === 0 && (
-              <div className="px-3 py-2 text-xs text-muted-foreground">No sub-recipes found</div>
-            )}
-            {subRecipes.map((sr) => (
-              <SelectItem key={sr.recipe_id} value={String(sr.recipe_id)}>
-                <span className="flex items-center gap-2">
-                  <span>{sr.name}</span>
-                  <span className="text-muted-foreground text-[10px]">
-                    ({sr.qty} {sr.unit} per batch, {sr.ingredients?.length || 0} ingredients)
-                  </span>
-                </span>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Label className="text-xs font-medium">Sub-Recipe</Label>
+        <div data-testid="sub-recipe-selector" className="space-y-2">
+          {sortedRecipes.length === 0 && (
+            <p className="text-xs text-muted-foreground py-4 text-center">No sub-recipes found</p>
+          )}
+          {sortedRecipes.map((sr) => {
+            const fgStock = Number(stockMap[sr.inventory_id]?.cal_quantity) || 0;
+            const isLow = stockMap[sr.inventory_id]?.is_low_stock;
+            const isSelected = String(sr.recipe_id) === String(selectedRecipeId);
+            return (
+              <div
+                key={sr.recipe_id}
+                data-testid={`recipe-option-${sr.recipe_id}`}
+                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                  isSelected
+                    ? "border-primary border-2 bg-accent/30"
+                    : "border-border hover:border-primary/50 hover:bg-accent/10"
+                } ${fgStock <= 0 ? "opacity-100" : ""}`}
+                onClick={() => handleRecipeSelect(String(sr.recipe_id))}
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold">{sr.name}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                    {sr.qty} {sr.unit} per batch · {sr.ingredients?.length || 0} ingredients ·{" "}
+                    {fgStock <= 0 ? (
+                      <span className="text-red-600 font-semibold">0 in stock</span>
+                    ) : isLow ? (
+                      <span className="text-amber-600 font-semibold">{fgStock} {sr.unit} (low)</span>
+                    ) : (
+                      <span className="text-emerald-600">{fgStock} {sr.unit}</span>
+                    )}
+                  </p>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className={`text-lg font-bold tabular-nums font-mono ${
+                    fgStock <= 0 ? "text-red-600" : isLow ? "text-amber-600" : "text-emerald-600"
+                  }`}>{fgStock}</p>
+                  <p className="text-[9px] text-muted-foreground uppercase">FG Stock</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Quantity inputs */}
@@ -307,6 +284,22 @@ export default function ProductionRunForm() {
         </div>
       )}
 
+      {/* P3-5: Coverage estimate */}
+      {coverageEstimate && (
+        <div data-testid="coverage-estimate" className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 border border-blue-200">
+          <BarChart3 className="h-5 w-5 text-blue-600 shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-blue-900">
+              {totalQty} {selectedRecipe?.name} covers <strong>~{coverageEstimate.coverageDays} days</strong>
+              {coverageEstimate.outletCount > 0 ? ` across ${coverageEstimate.outletCount} stores` : ""}
+            </p>
+            <p className="text-[10px] text-blue-700/70">
+              Based on avg daily consumption of {coverageEstimate.dailyConsumption} {unit}/day. Current FG stock: {coverageEstimate.currentStock} {unit}.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Batch & Expiry */}
       {selectedRecipe && (
         <div className="grid grid-cols-2 gap-4">
@@ -334,7 +327,7 @@ export default function ProductionRunForm() {
         </div>
       )}
 
-      {/* Pre-production preview */}
+      {/* P3-4: Ingredient table with health strips */}
       {selectedRecipe && mult > 0 && ingredientRows.length > 0 && (
         <div data-testid="pre-production-preview" className="space-y-2">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ingredient Requirements</h2>
@@ -344,6 +337,7 @@ export default function ProductionRunForm() {
                 <thead>
                   <tr className="border-b text-muted-foreground">
                     <th className="text-left py-2 px-3 font-medium">Ingredient</th>
+                    <th className="text-center py-2 px-3 font-medium">Health</th>
                     <th className="text-right py-2 px-3 font-medium">Required</th>
                     <th className="text-right py-2 px-3 font-medium">Available</th>
                     <th className="text-center py-2 px-3 font-medium">Status</th>
@@ -361,6 +355,21 @@ export default function ProductionRunForm() {
                       }`}
                     >
                       <td className="py-2 px-3 font-medium">{row.name}</td>
+                      <td className="py-2 px-3">
+                        <div data-testid={`ingredient-health-strip-${row.id}`} className="flex items-center gap-1.5 justify-center">
+                          <div className="w-14 h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${
+                                row.healthPct > 50 ? "bg-emerald-500" : row.healthPct > 20 ? "bg-amber-500" : "bg-red-500"
+                              }`}
+                              style={{ width: `${row.healthPct}%` }}
+                            />
+                          </div>
+                          <span className={`text-[9px] tabular-nums ${
+                            row.healthPct > 50 ? "text-emerald-600" : row.healthPct > 20 ? "text-amber-600" : "text-red-600"
+                          }`}>{row.healthPct}%</span>
+                        </div>
+                      </td>
                       <td className="py-2 px-3 text-right tabular-nums">{row.needed.toFixed(1)} {row.unit}</td>
                       <td className="py-2 px-3 text-right tabular-nums">{row.displayAvailable}</td>
                       <td className="py-2 px-3 text-center">
@@ -379,7 +388,6 @@ export default function ProductionRunForm() {
             </CardContent>
           </Card>
 
-          {/* Insufficient stock warnings */}
           {hasInsufficient && !allowNegativeStock && (
             <div data-testid="negative-stock-blocked" className="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
               <XCircle className="h-4 w-4 mt-0.5 shrink-0" />
@@ -395,7 +403,6 @@ export default function ProductionRunForm() {
         </div>
       )}
 
-      {/* Submit error */}
       {submitError && (
         <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
           <XCircle className="h-4 w-4 mt-0.5 shrink-0" />
@@ -403,7 +410,6 @@ export default function ProductionRunForm() {
         </div>
       )}
 
-      {/* Submit button */}
       {selectedRecipe && (
         <Button
           data-testid="run-production-btn"
@@ -422,6 +428,118 @@ export default function ProductionRunForm() {
           )}
         </Button>
       )}
+    </div>
+  );
+}
+
+// ── P3-6: Post-production confirmation with next-best-action ──────
+
+function PostProductionConfirmation({ result, selectedRecipe, totalQty, unit, hierarchyStores, stockMap, onReset, navigate }) {
+  // Find outlets that need the FG item most
+  const fgId = selectedRecipe?.inventory_id;
+  const nbaStores = useMemo(() => {
+    if (!fgId || !hierarchyStores.length) return [];
+    return hierarchyStores
+      .map((store) => {
+        const storeStock = store.stock_items?.find((s) => s.id === fgId || s.inventory_master_id === fgId);
+        const qty = Number(storeStock?.cal_quantity || storeStock?.display_qty || 0);
+        return {
+          id: store.restaurant_id || store.id,
+          name: store.restaurant_name || store.name || `Store #${store.restaurant_id || store.id}`,
+          fgStock: qty,
+        };
+      })
+      .sort((a, b) => a.fgStock - b.fgStock)
+      .slice(0, 3);
+  }, [fgId, hierarchyStores]);
+
+  return (
+    <div data-testid="post-production-confirmation" className="max-w-lg mx-auto py-8">
+      <Card className="border-l-[3px] border-l-emerald-500">
+        <CardContent className="py-6 px-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center">
+              <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold">Production Run Complete</p>
+              <p className="text-xs text-muted-foreground" data-testid="production-run-id">
+                {result.reference_code || `Run #${result.production_run_id}`}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase">Quantity Produced</p>
+              <p className="font-semibold tabular-nums">{result.quantity_added || totalQty} {unit}</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase">Unit Cost</p>
+              <p className="font-semibold tabular-nums" data-testid="production-unit-cost">
+                {result.unit_cost != null ? `₹${Number(result.unit_cost).toFixed(2)}` : "—"}
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase">Total Cost</p>
+              <p className="font-semibold tabular-nums" data-testid="production-total-cost">
+                {result.total_cost != null ? `₹${Number(result.total_cost).toFixed(2)}` : "—"}
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase">Recipe</p>
+              <p className="font-semibold truncate">{selectedRecipe?.name || "—"}</p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2 mb-4">
+            {result.production_run_id && (
+              <Button data-testid="view-audit-btn" variant="outline" size="sm" onClick={() => navigate(`/production/${result.production_run_id}`)}>
+                <Eye className="h-3.5 w-3.5 mr-1.5" />View Audit
+              </Button>
+            )}
+            <Button data-testid="view-in-stock-btn" variant="outline" size="sm" onClick={() => navigate("/inventory")}>
+              <Package className="h-3.5 w-3.5 mr-1.5" />View in Stock
+            </Button>
+            <Button data-testid="run-another-btn" variant="default" size="sm" onClick={onReset}>
+              <RotateCcw className="h-3.5 w-3.5 mr-1.5" />Run Another
+            </Button>
+          </div>
+
+          {/* P3-6: Next-best-action — dispatch suggestions */}
+          {nbaStores.length > 0 && (
+            <div data-testid="post-production-nba" className="space-y-2 pt-3 border-t border-border">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Suggested Next Action</p>
+              {nbaStores.map((store, idx) => (
+                <div
+                  key={store.id}
+                  className={`flex items-center gap-3 p-3 rounded-lg border ${
+                    idx === 0
+                      ? "bg-emerald-50 border-emerald-200"
+                      : "bg-muted/30 border-border"
+                  }`}
+                >
+                  <Truck className={`h-4 w-4 shrink-0 ${idx === 0 ? "text-emerald-600" : "text-muted-foreground"}`} />
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-xs font-semibold ${idx === 0 ? "text-emerald-700" : ""}`}>
+                      Dispatch to {store.name}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">{store.fgStock} in stock</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={`text-[10px] h-7 ${idx === 0 ? "border-emerald-300 text-emerald-700 hover:bg-emerald-100" : ""}`}
+                    onClick={() => navigate("/dispatch/new")}
+                  >
+                    Dispatch
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
