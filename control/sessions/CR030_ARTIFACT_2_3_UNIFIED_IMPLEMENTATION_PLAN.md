@@ -3,7 +3,7 @@
 > **Date:** 2026-06-14
 > **Scope:** Vendor Management, Raw Material Master, Purchase
 > **Replaces:** Previous Artifact 2-3 (bug-fix-only plan)
-> **Estimated effort:** ~20h
+> **Estimated effort:** ~19.5h
 
 ---
 
@@ -24,7 +24,7 @@
 | `VendorManagement.jsx` | **FULL REWRITE** | 212 | ~450 | HIGH |
 | `VendorFormDialog.jsx` | DELETE (inline form replaces popup) | 93 | 0 | LOW |
 | `IngredientCatalogue.jsx` | **FULL REWRITE** | 326 | ~550 | HIGH |
-| `AddStockPurchaseForm.jsx` | EDIT (bug fixes) | 442 | ~470 | MEDIUM |
+| `AddStockPurchaseForm.jsx` | EDIT (price intelligence + bug fixes) | 442 | ~520 | MEDIUM |
 
 ---
 
@@ -270,9 +270,37 @@ else → "OK" (green)
 
 ---
 
-## Phase 3: Purchase — Bug Fixes Only (2h)
+## Phase 3: Purchase — Price Intelligence + Bug Fixes (5h)
 
-### 3.1 — Partial Failure UX (I-9) — HIGH
+### 3.1 — Price Comparison Intelligence (I-10) — HIGH — **NOW UNBLOCKED**
+
+G-017 is CLOSED. `vendor-item-list` API returns per-item purchase history with `Vendor_Name`, `Amount`, `unit_price`, `Ingredient_Name`. This enables:
+
+**Per-line price intelligence in Manual Entry mode:**
+
+When user selects an inventory item for a purchase line, show a price comparison tooltip/panel:
+
+```
+┌─ Best Price for Baking Powder ─────────────────────────┐
+│ Budget Ingredients Co   ₹100/kg  ████████████ ✓ best   │
+│ Premium Organics Ltd    ₹150/kg  ██████████████████     │
+│ bakery raw wala         ₹240/kg  ████████████████████████│
+│                                                          │
+│ Your price: ₹___/kg   [above/below avg]                 │
+└──────────────────────────────────────────────────────────┘
+```
+
+Implementation in `AddStockPurchaseForm.jsx`:
+- Load `api.getVendorItemList(restaurantId, { fromDate: 1yr ago, toDate: today })` on mount (same cached call as Vendor Management)
+- When user selects an item in a purchase line, filter `purchaseData` by `Ingredient_Name`
+- Group by `Vendor_Name`, compute avg rate per vendor: `sum(Amount) / sum(stock_quantity_raw)`
+- Show inline comparison below the item row (collapsible, not blocking)
+- Highlight if entered price is above/below historical average
+- Selected vendor in the purchase form → highlight that vendor's bar
+
+**Data source:** Same `vendor-item-list` API already cached from Phase 1.
+
+### 3.2 — Partial Failure UX (I-9) — HIGH
 
 Current: Sequential per-item submission in a loop. If item 3 of 5 fails, 1-2 are committed, 4-5 are skipped. No feedback.
 
@@ -283,13 +311,15 @@ Fix in `AddStockPurchaseForm.jsx`:
   - Partial: "X of Y items added. Z failed:" + list of failed items with errors + "Retry Failed" button
   - All fail: error toast
 
-### 3.2 — File Input Disabling (I-12/I-13) — LOW
+### 3.3 — File Input Disabling (I-12/I-13) — LOW
 
 - Upload Invoice `<input type="file">`: add `onChange` that clears file + shows toast "Invoice processing not yet available (G-014)"
 - Excel upload: same → "Excel import not yet available (G-015)"
 
 ### Test checkpoint:
-- Purchase → Manual Entry → add 3 items → submit → verify success flow
+- Purchase → Manual Entry → select item → verify price comparison panel shows vendor rates
+- Purchase → enter price above avg → verify "above average" indicator
+- Purchase → add 3 items → submit → verify success flow
 - Purchase → click Upload Invoice file input → verify toast
 - Purchase → click Excel upload → verify toast
 
@@ -302,9 +332,9 @@ Fix in `AddStockPurchaseForm.jsx`:
 | 1 | Phase 0 | api.js (add `getVendorItemList`, update `getStockInventory`) | 30min | LOW |
 | 2 | Phase 1 | VendorManagement.jsx full rewrite | 6h | HIGH |
 | 3 | Phase 2 | IngredientCatalogue.jsx full rewrite | 8h | HIGH |
-| 4 | Phase 3 | AddStockPurchaseForm.jsx bug fixes | 2h | MEDIUM |
+| 4 | Phase 3 | AddStockPurchaseForm.jsx price intelligence + bug fixes | 5h | MEDIUM |
 
-**Total estimated: ~16.5h**
+**Total estimated: ~19.5h**
 
 ---
 
@@ -341,7 +371,7 @@ Fix in `AddStockPurchaseForm.jsx`:
 | MODIFY | `services/api.js` | Add `getVendorItemList()`, update `getStockInventory()` params |
 | REWRITE | `VendorManagement.jsx` | Master-detail layout |
 | REWRITE | `IngredientCatalogue.jsx` | Expandable rows with intelligence |
-| EDIT | `AddStockPurchaseForm.jsx` | Partial failure UX + file input disabling |
+| EDIT | `AddStockPurchaseForm.jsx` | Price comparison intelligence + partial failure UX + file input disabling |
 
 ---
 
