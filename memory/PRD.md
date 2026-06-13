@@ -1,22 +1,41 @@
-# PRD - Core POS Front End
+# PRD — MyGenie POS 4.0 Sprint
 
 ## Original Problem Statement
-Pull code from GitHub repo: https://github.com/Abhi-mygenie/core-pos-front-end-.git
-- Branch: main
-- Clone destination: /app (direct, not subfolder)
-- Do not deploy
-- Copy all folders
+Gap audit agent (CLOSURE Role 11): Audit POS 4.0 sprint documentation gaps and backfill them. Read AGENT_PROMPT_ALPHA.md, pick Role 11, follow GAP_AUDIT_AGENT_HANDOVER_2026_06_13.md.
 
-## Architecture & Tasks Done
-- **2026-06-13**: Cloned repository (main branch) into /app. Wiped existing files, preserved .emergent and .git platform folders. 1,625 files copied successfully.
+## Architecture
+- React 19 + CRACO + Tailwind CSS + Radix UI + shadcn components
+- External backend: preprod.mygenie.online (Laravel)
+- Socket.io: presocket.mygenie.online
+- Firebase auth/notifications
+- CRM service for customer intelligence
+- Frontend-only codebase — no local backend logic
 
 ## What's Been Implemented
-- [2026-06-13] Repository clone from GitHub to /app (no deployment, no dependency install)
+
+### 2026-06-13 — CLOSURE Agent Gap Audit + Backfill
+- **Phase A (Gap Audit):** Audited 44 POS 4.0 items across 7 artifact dimensions. Produced `POS4_0_GAP_AUDIT_2026_06_13.md` with full matrix.
+- **Phase B (Backfill):**
+  1. **registry.json sync:** 18 items added, 26 sprint_keys fixed to pos_4_0, 10 stale statuses updated → 60 POS 4.0 items now tracked
+  2. **Smoke Batch supplement:** S-10 through S-19 added for 10 June 12-13 implemented items
+  3. **FILE_OWNERSHIP.md refresh:** Updated from 2026-05-29 to 2026-06-13 with ~30+ files from June sessions
+  4. **OPEN_GAPS_REGISTER.md review:** 3 gaps marked RESOLVED (BUG-132/BUG-133/BUG-131), 5 new gaps documented (cache temp arrangement, security mitigation, nav consistency, channel visibility, doc drift)
+  5. **CONTROL_DASHBOARD.md:** Header updated with audit summary
+  6. **Sprint Health Check script:** `/app/scripts/sprint_health_check.py` — 7-check prevention tool for future agents
+  7. **Session Start files:** Documented as "skipped for POS 4.0, enforce from next sprint"
 
 ## Prioritized Backlog
-- P0: Install dependencies and configure environment when ready
-- P1: Run and test the application
-- P2: Any feature work or bug fixes as needed
+- P0: Owner runs Smoke Batch (S-1→S-9 + S-10→S-19) — sprint cannot freeze until done
+- P0: QA agent executes 70+ test cases from QA handover doc
+- P1: BUG-130 investigation (channel visibility — likely backend)
+- P1: CR-041 owner decisions D-1/D-2/D-3
+- P2: CR-043 full planning (Gate 1 only)
+- P2: CR-027 implementation (next sprint)
+- P2: CR-028 blocked on owner decisions OD-1→OD-5
 
 ## Next Tasks
-- User to decide when to install dependencies and run the application
+1. Owner smoke testing (S-1→S-19)
+2. QA agent runs test cases
+3. Regression testing (cross-item)
+4. Pre-release audit
+5. Sprint freeze gate

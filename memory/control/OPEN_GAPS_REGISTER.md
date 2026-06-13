@@ -1,7 +1,7 @@
 # Layer 9 — Open Gaps Register
 
 **Status:** POPULATED
-**Last Updated:** 2026-06-10 (CR-019 BQ-019-1 added — first_login flag reliability)
+**Last Updated:** 2026-06-13 (CLOSURE agent gap audit backfill — POS 4.0 sprint gaps added/closed)
 
 ---
 
@@ -121,6 +121,28 @@ Full details: see `BASELINE_INDEX.md` and `BUSINESS_RULES_PENDING_FREEZE_ITEMS_2
 | OG-DOC-01 | P3 | OPEN | Multiple docs reference branch `2-jiune-v2` HEAD `278b256` but pod is on `4-june-v2` HEAD `a39360f`. Affected: `AGENT_HANDOVER_PROTOCOL.md` L36, `NEXT_AGENT_HANDOVER_2026_06_04_CR_011_S6_DELIVERY_GST.md` preamble + handovers dated 06-01/02/03 referencing the same branch. `CONTROL_DASHBOARD.md` updated 2026-06-04 PM — remaining docs still stale. | Owner confirmed `4-june-v2` is the new baseline carrying forward all S6 audit work (FE-89 + de-dup engine verified live in code). Update each affected doc with a footnote pointer instead of mutating historical handovers. |
 | OG-DOC-02 | P3 | OPEN | `NEXT_AGENT_HANDOVER_2026_06_03_EVENING.md` + `NEXT_AGENT_HANDOVER_2026_06_04_CR_011_S6_DELIVERY_GST.md` claim `OrderLedgerDetailSheet.jsx` was shipped 2026-06-03 as a thin wrapper. File does NOT exist on disk in `4-june-v2`. S6 instead imports canonical `OrderDetailSheet` directly (`OrderLedgerMockup.jsx:21` + L988). Drill flow works correctly in DATA MODE via `row.__source`. | Either the wrapper was never created, or it was inlined. **Behaviour is correct — code uses canonical `OrderDetailSheet` directly.** Stale claim only. Add footnote to both handovers: "wrapper inlined; S6 uses `OrderDetailSheet` directly". |
 | OG-DOC-03 | P3 | CLOSED 2026-06-04 PM | `auditManifest.js` FE-82 entry carried `severity: 'AMBER'` while engine had zero FE-82 branch (rejected by owner 2026-06-03, replaced by FE-82R/86/88). Stale state could mislead future agents into thinking FE-82 was active. | FIXED 2026-06-04 PM — manifest entry updated: `severity: 'REJECTED'` + `replacedBy: ['FE-82R','FE-86','FE-88']` + verbatim owner quote in `approvedSource`. No engine change. |
+
+---
+
+## POS 4.0 Sprint Gaps (June 12-13 Session)
+
+### RESOLVED this sprint
+
+| ID | Severity | Status | Description | Resolution |
+|---|---|---|---|---|
+| OG-FE-SETTLE-001 | P1 (money) | **RESOLVED — BUG-132** | Settlement Report "Expected" formula was subtracting pilferage (circular). Pilferage column showed ₹0 (ignoring backend value). Missing Total Funds KPI card. | BUG-132 shipped 2026-06-13: 13 formula edits in `SettlementPanel.jsx`. Expected = TotalFunds − Settled. Pilferage from backend. Total Funds KPI added. |
+| OG-FE-CHECKIN-001 | P1 (money) | **RESOLVED — BUG-133** | "Check In" backend-only room marker appearing in all reports with room tariff prices (₹1,100–₹3,600). 118 items = ~₹1.5L phantom revenue on Welcome Resort alone. | BUG-133 shipped 2026-06-13: 5 filter points across 3 files. `(fd.name \|\| '').trim().toLowerCase() === 'check in'` exclusion on all 8 report surfaces. |
+| OG-FE-SIDEBAR-001 | P2 | **RESOLVED — BUG-131** | Sidebar bottom section (Ringer/Refresh/User/Logout) scrolls away when nav content is long. | BUG-131 shipped 2026-06-13: `flex-shrink-0` on bottom, `min-h-0` on nav, `overflow-hidden` on aside. |
+
+### NEW / OPEN this sprint
+
+| ID | Severity | Status | Description | Resolution Path |
+|---|---|---|---|---|
+| OG-FE-CACHE-001 | P2 | **OPEN — TEMPORARY ARRANGEMENT** | CR-044/CR-045 Insights cache + field stripping are FE-side temporary measures. Backend should own: (1) `fields` query param on `order-logs-report` (strip at source), (2) server-side cache/pagination. `REACT_APP_STRIP_ORDERS` env flag controls strip (default ON). Deprecation plan in `PHASE_5_INSIGHTS_OPTIMIZATION_IMPLEMENTATION_PLAN.md`. | Backend takes over field filtering + pagination. FE strip deprecated once backend delivers. |
+| OG-FE-CACHE-002 | P1 (security) | **MITIGATED** | CR-044 shared cache must clear on logout + key by restaurant ID to prevent cross-restaurant data leak. | Mitigated in code: R-8 logout clear (Sidebar logout handler), R-9 rid in cache key. Needs pre-release audit verification. |
+| OG-FE-NAV-001 | P2 | **OPEN — OWNER DECISIONS PENDING** | CR-041 Navigation Consistency: 3 inconsistencies catalogued, 3 owner decisions pending (D-1: panels vs routes direction, D-2: remove Menu Mgmt dead children, D-3: remove hidden sidebar items). | Owner answers D-1/D-2/D-3, then implementation agent executes. |
+| OG-FE-CHANNEL-001 | P1 | **OPEN — INVESTIGATION DEFERRED** | BUG-130: Channels enabled/disabled via Restaurant Settings API are not properly gating POS dashboard. Two-layer model (master config vs per-user localStorage). Deep investigation deferred per owner — likely backend propagation issue. | Curl-probe profile API before/after settings change. Trace: settings API → profileTransform → StatusConfigPage → DashboardPage → OrderEntry → localStorage. |
+| OG-DOC-DRIFT-001 | P3 | **RESOLVED — 2026-06-13** | registry.json was missing 18 POS 4.0 items, 24 had wrong sprint_key, 10 had stale statuses. FILE_OWNERSHIP.md was 15 days stale. Smoke batch missing 10 items. | CLOSURE agent gap audit backfill 2026-06-13: registry synced (18+26+10), FILE_OWNERSHIP refreshed, smoke batch supplemented (S-10→S-19), health check script created. |
 
 ---
 
