@@ -82,6 +82,17 @@ export default function PurchaseOrderList() {
     return counts;
   }, [pos]);
 
+  const kpis = useMemo(() => {
+    const awaiting = pos.filter((p) => p.status === "sent" || p.status === "approved").length;
+    const partial = pos.filter((p) => p.status === "partially_received").length;
+    const monthTotal = pos.filter((p) => {
+      const d = new Date(p.created_at);
+      const now = new Date();
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }).reduce((s, p) => s + (Number(p.tot_amount) || 0), 0);
+    return { total: pos.length, awaiting, partial, monthTotal };
+  }, [pos]);
+
   const filtered = useMemo(() => {
     if (!search.trim()) return pos;
     const q = search.toLowerCase();
@@ -152,6 +163,26 @@ export default function PurchaseOrderList() {
         </div>
       </div>
 
+      {/* KPI Cards */}
+      <div className="grid grid-cols-4 gap-3 mb-3">
+        <Card className="bg-slate-50 border-slate-200"><CardContent className="py-3 px-3">
+          <p className="text-2xl font-bold" data-testid="kpi-total-pos">{kpis.total}</p>
+          <p className="text-[10px] text-muted-foreground">Total POs</p>
+        </CardContent></Card>
+        <Card className="bg-blue-50 border-blue-200"><CardContent className="py-3 px-3">
+          <p className="text-2xl font-bold text-blue-700" data-testid="kpi-awaiting">{kpis.awaiting}</p>
+          <p className="text-[10px] text-blue-600">Awaiting Delivery</p>
+        </CardContent></Card>
+        <Card className="bg-amber-50 border-amber-200"><CardContent className="py-3 px-3">
+          <p className="text-2xl font-bold text-amber-700" data-testid="kpi-partial">{kpis.partial}</p>
+          <p className="text-[10px] text-amber-600">Partially Received</p>
+        </CardContent></Card>
+        <Card><CardContent className="py-3 px-3">
+          <p className="text-2xl font-bold" data-testid="kpi-month-value">{formatCurrency(kpis.monthTotal)}</p>
+          <p className="text-[10px] text-muted-foreground">Total Value (month)</p>
+        </CardContent></Card>
+      </div>
+
       {/* Table */}
       {loading ? <LoadingState lines={5} /> : error ? <ErrorState message={error} onRetry={fetchData} /> : filtered.length === 0 ? (
         <EmptyState title={pos.length === 0 ? "No purchase orders yet" : "No matching POs"} description={pos.length === 0 ? "Create your first purchase order to get started." : "Try different filters."} />
@@ -165,6 +196,7 @@ export default function PurchaseOrderList() {
                   <TableHead className="text-[10px]">Vendor</TableHead>
                   <TableHead className="text-[10px] text-right">Items</TableHead>
                   <TableHead className="text-[10px] text-right">Total</TableHead>
+                  <TableHead className="text-[10px]">Expected</TableHead>
                   <TableHead className="text-[10px] text-center">Status</TableHead>
                   <TableHead className="text-[10px]">Payment</TableHead>
                   <TableHead className="text-[10px]">Created</TableHead>
@@ -182,6 +214,7 @@ export default function PurchaseOrderList() {
                     <TableCell className="text-xs">{po.vendor_name || "\u2014"}</TableCell>
                     <TableCell className="text-xs text-right tabular-nums">{po.line_count || po.lines?.length || "\u2014"}</TableCell>
                     <TableCell className="text-xs text-right font-mono">{formatCurrency(po.tot_amount)}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{po.expected_delivery_date || "\u2014"}</TableCell>
                     <TableCell className="text-center">
                       <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${STATUS_COLORS[po.status] || ""}`}>
                         {(po.status || "").replace(/_/g, " ")}

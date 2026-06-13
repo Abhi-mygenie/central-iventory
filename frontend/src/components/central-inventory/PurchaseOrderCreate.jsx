@@ -93,20 +93,65 @@ export default function PurchaseOrderCreate() {
 
   const handleSelectVendor = (vendorId) => {
     setSelectedVendorId(vendorId);
+    const vendorObj = vendors.find((v) => String(v.id) === vendorId);
+    const vendorName = vendorObj?.vendor_name || "";
+
     const newLines = inventoryItems.map((item) => {
-      // Find rate for this vendor+item
-      const records = purchaseData.filter((r) => (r.vendor_id === Number(vendorId) || r.Vendor_Name === vendors.find((v) => String(v.id) === vendorId)?.vendor_name) && (r.ingredient_id === item.id || r.Ingredient_Name === item.stock_title) && Number(r.stock_quantity_raw) > 0);
+      // This vendor's records for this item
+      const records = purchaseData.filter((r) => (r.vendor_id === Number(vendorId) || r.Vendor_Name === vendorName) && (r.ingredient_id === item.id || r.Ingredient_Name === item.stock_title) && Number(r.stock_quantity_raw) > 0);
       const totalAmt = records.reduce((s, r) => s + (Number(r.Amount) || 0), 0);
       const totalQty = records.reduce((s, r) => s + (Number(r.stock_quantity_raw) || 0), 0);
       const avgRate = totalQty > 0 ? totalAmt / totalQty : 0;
-      const isLow = item.is_low_stock || (Number(item.cal_quantity) || 0) === 0;
+      const lastRecord = records.sort((a, b) => new Date(b.Purchase_Date) - new Date(a.Purchase_Date))[0];
+      const lastRate = lastRecord ? Number(lastRecord.Amount) / Math.max(1, Number(lastRecord.stock_quantity_raw)) : 0;
+
+      // Cheapest vendor for this item across ALL vendors
+      const allVendorRates = getCheapestVendor(item.stock_title, item.id, purchaseData, vendors);
+      const cheapest = allVendorRates[0];
+      const isCheapest = cheapest && String(cheapest.vendorId) === vendorId;
+
+      // Daily consumption estimate
+      const allItemRecords = purchaseData.filter((r) => (r.Ingredient_Name === item.stock_title || r.ingredient_id === item.id) && Number(r.stock_quantity_raw) > 0);
+      const sortedDates = allItemRecords.map((r) => new Date(r.Purchase_Date)).sort((a, b) => a - b);
+      const totalPurchased = allItemRecords.reduce((s, r) => s + (Number(r.stock_quantity_raw) || 0), 0);
+      let dailyConsumption = 0;
+      if (sortedDates.length >= 2) {
+        const days = Math.max(1, (sortedDates[sortedDates.length - 1] - sortedDates[0]) / (1000 * 60 * 60 * 24));
+        dailyConsumption = totalPurchased / days;
+      }
+
+      const currentQty = Number(item.cal_quantity) || 0;
+      const daysOfCover = dailyConsumption > 0 ? Math.floor(currentQty / dailyConsumption) : null;
+      const isLow = item.is_low_stock || currentQty === 0;
+
+      // Frequency (purchases in last 30d)
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const freq = records.filter((r) => new Date(r.Purchase_Date) >= thirtyDaysAgo).length;
+
+      // Suggested qty: target 30 days of cover
+      const TARGET_DAYS = 30;
+      let suggestedQty = "";
+      if (dailyConsumption > 0) {
+        const needed = Math.max(0, Math.ceil((TARGET_DAYS * dailyConsumption) - currentQty));
+        suggestedQty = needed > 0 ? String(needed) : "";
+      }
+
+      // Urgency score for sorting
+      const urgency = currentQty === 0 ? 0 : isLow ? 1 : daysOfCover !== null && daysOfCover < 14 ? 2 : daysOfCover !== null ? 3 + daysOfCover : 999;
+
       return {
         inventory_master_id: item.id, stock_title: item.stock_title, unit: item.unit,
-        current_qty: Number(item.cal_quantity) || 0, ordered_qty: isLow ? "10" : "",
+        current_qty: currentQty, ordered_qty: isLow ? (suggestedQty || "10") : suggestedQty,
         ordered_unit: item.unit, expected_rate: avgRate > 0 ? avgRate.toFixed(2) : "",
-        checked: isLow,
+        checked: isLow || (daysOfCover !== null && daysOfCover < 14),
+        lastRate, avgRate, dailyConsumption, daysOfCover, freq, urgency,
+        cheapestVendorName: cheapest?.vendorName || null,
+        cheapestRate: cheapest?.rate || 0,
+        isCheapest,
       };
-    });
+    }).sort((a, b) => a.urgency - b.urgency);
+
     setVendorLines(newLines);
     setStep("items");
   };
@@ -138,14 +183,27 @@ export default function PurchaseOrderCreate() {
       // Urgency score (lower = more urgent)
       const urgency = isEmpty ? 0 : isLow ? 1 : daysOfCover !== null && daysOfCover < 14 ? 2 : daysOfCover !== null ? 3 + daysOfCover : 999;
 
+      // Suggested qty: target 30 days of cover
+      const TARGET_DAYS = 30;
+      let suggestedQty = "";
+      if (dailyConsumption > 0) {
+        const needed = Math.max(0, Math.ceil((TARGET_DAYS * dailyConsumption) - qty));
+        suggestedQty = needed > 0 ? String(needed) : "";
+      }
+      const shouldCheck = isEmpty || isLow || (daysOfCover !== null && daysOfCover < 14);
+
+      // Other vendors (besides cheapest)
+      const otherVendors = vendorRates.slice(1, 3);
+
       return {
         inventory_master_id: item.id, stock_title: item.stock_title, unit: item.unit,
         current_qty: qty, daily: dailyConsumption, daysOfCover, isLow, isEmpty, urgency,
         selectedVendorId: cheapest ? String(cheapest.vendorId) : "",
         vendorOptions: vendorRates,
-        ordered_qty: isEmpty || isLow || (daysOfCover !== null && daysOfCover < 14) ? "10" : "",
+        otherVendors,
+        ordered_qty: shouldCheck ? (suggestedQty || "10") : suggestedQty,
         expected_rate: cheapest ? cheapest.rate.toFixed(2) : "",
-        checked: isEmpty || isLow || (daysOfCover !== null && daysOfCover < 14),
+        checked: shouldCheck,
       };
     }).sort((a, b) => a.urgency - b.urgency);
     setNeedLines(lines);
@@ -345,8 +403,12 @@ export default function PurchaseOrderCreate() {
               <TableHeader><TableRow>
                 <TableHead className="text-[10px] w-10"></TableHead>
                 <TableHead className="text-[10px]">Item</TableHead>
+                <TableHead className="text-[10px] text-right">Last Rate</TableHead>
+                <TableHead className="text-[10px] text-right">Avg Rate</TableHead>
+                <TableHead className="text-[10px]">Cheapest</TableHead>
                 <TableHead className="text-[10px] text-right">Stock</TableHead>
-                <TableHead className="text-[10px] text-right">Order Qty</TableHead>
+                <TableHead className="text-[10px] text-right">DoC</TableHead>
+                <TableHead className="text-[10px] text-right">Qty</TableHead>
                 <TableHead className="text-[10px] text-right">Rate</TableHead>
                 <TableHead className="text-[10px] text-right">Total</TableHead>
               </TableRow></TableHeader>
@@ -356,12 +418,27 @@ export default function PurchaseOrderCreate() {
                   return (
                     <TableRow key={l.inventory_master_id} data-testid={`po-vline-${l.inventory_master_id}`} className={l.checked ? "bg-primary/5" : ""}>
                       <TableCell className="py-1.5"><Checkbox checked={l.checked} onCheckedChange={() => toggleVendorLine(idx)} /></TableCell>
-                      <TableCell className="py-1.5 text-xs font-medium">{l.stock_title}
-                        {l.current_qty === 0 && <Badge variant="destructive" className="text-[8px] px-1 py-0 ml-1.5">OOS</Badge>}
+                      <TableCell className="py-1.5 text-xs">
+                        <span className="font-medium">{l.stock_title}</span>
+                        {l.current_qty === 0 && <Badge variant="destructive" className="text-[8px] px-1 py-0 ml-1">OOS</Badge>}
+                        {l.current_qty > 0 && l.daysOfCover !== null && l.daysOfCover < 7 && <span className="text-[8px] text-red-600 ml-1">Low</span>}
+                        {l.current_qty > 0 && l.daysOfCover !== null && l.daysOfCover >= 7 && l.daysOfCover < 14 && <span className="text-[8px] text-amber-600 ml-1">Moderate</span>}
+                      </TableCell>
+                      <TableCell className="py-1.5 text-xs text-right font-mono text-muted-foreground">{l.lastRate > 0 ? formatCurrency(l.lastRate) : "\u2014"}</TableCell>
+                      <TableCell className="py-1.5 text-xs text-right font-mono text-muted-foreground">{l.avgRate > 0 ? formatCurrency(l.avgRate) : "\u2014"}</TableCell>
+                      <TableCell className="py-1.5 text-[10px]">
+                        {l.isCheapest ? <span className="text-emerald-600">{"\u2713"} This vendor</span> :
+                         l.cheapestVendorName ? <span className="text-amber-600">{l.cheapestVendorName} {formatCurrency(l.cheapestRate)}</span> :
+                         <span className="text-muted-foreground">\u2014</span>}
                       </TableCell>
                       <TableCell className="py-1.5 text-xs text-right tabular-nums">{l.current_qty} {l.unit}</TableCell>
-                      <TableCell className="py-1.5"><Input type="number" value={l.ordered_qty} onChange={(e) => updateVendorLine(idx, "ordered_qty", e.target.value)} className="h-7 text-xs w-20 ml-auto text-right" disabled={!l.checked} /></TableCell>
-                      <TableCell className="py-1.5"><Input type="number" value={l.expected_rate} onChange={(e) => updateVendorLine(idx, "expected_rate", e.target.value)} className="h-7 text-xs w-20 ml-auto text-right" disabled={!l.checked} /></TableCell>
+                      <TableCell className="py-1.5 text-xs text-right">
+                        <span className={`tabular-nums ${l.daysOfCover !== null && l.daysOfCover < 7 ? "text-red-600 font-semibold" : l.daysOfCover !== null && l.daysOfCover < 14 ? "text-amber-600" : "text-muted-foreground"}`}>
+                          {l.daysOfCover !== null ? `${l.daysOfCover}d` : "\u2014"}
+                        </span>
+                      </TableCell>
+                      <TableCell className="py-1.5"><Input type="number" value={l.ordered_qty} onChange={(e) => updateVendorLine(idx, "ordered_qty", e.target.value)} className="h-7 text-xs w-16 ml-auto text-right" disabled={!l.checked} /></TableCell>
+                      <TableCell className="py-1.5"><Input type="number" value={l.expected_rate} onChange={(e) => updateVendorLine(idx, "expected_rate", e.target.value)} className="h-7 text-xs w-16 ml-auto text-right" disabled={!l.checked} /></TableCell>
                       <TableCell className="py-1.5 text-xs text-right font-mono">{l.checked && t > 0 ? formatCurrency(t) : "\u2014"}</TableCell>
                     </TableRow>
                   );
@@ -437,21 +514,23 @@ export default function PurchaseOrderCreate() {
                 <TableHead className="text-[10px] text-right">Stock</TableHead>
                 <TableHead className="text-[10px] text-right">Daily</TableHead>
                 <TableHead className="text-[10px] text-right">Days</TableHead>
-                <TableHead className="text-[10px]">Vendor</TableHead>
+                <TableHead className="text-[10px]">Best Vendor</TableHead>
                 <TableHead className="text-[10px] text-right">Rate</TableHead>
+                <TableHead className="text-[10px]">Other Vendors</TableHead>
                 <TableHead className="text-[10px] text-right">Qty</TableHead>
               </TableRow></TableHeader>
               <TableBody>
                 {needLines.map((l, idx) => (
                   <TableRow key={l.inventory_master_id} data-testid={`po-need-${l.inventory_master_id}`} className={l.checked ? "bg-primary/5" : ""}>
                     <TableCell className="py-1.5"><Checkbox checked={l.checked} onCheckedChange={() => toggleNeedLine(idx)} /></TableCell>
-                    <TableCell className="py-1.5 text-xs font-medium">
-                      {l.stock_title}
-                      {l.isEmpty && <Badge variant="destructive" className="text-[8px] px-1 py-0 ml-1">OOS</Badge>}
-                      {l.isLow && !l.isEmpty && <Badge className="text-[8px] px-1 py-0 ml-1 bg-amber-100 text-amber-700 border-amber-200">Low</Badge>}
+                    <TableCell className="py-1.5 text-xs">
+                      <span className="font-medium">{l.stock_title}</span>
+                      {l.isEmpty && <><br/><span className="text-[9px] text-red-600 font-semibold">OUT OF STOCK</span></>}
+                      {l.isLow && !l.isEmpty && <><br/><span className="text-[9px] text-amber-600">LOW {l.daysOfCover !== null ? `\u2014 ${l.daysOfCover}d` : ""}</span></>}
+                      {!l.isLow && !l.isEmpty && l.daysOfCover !== null && l.daysOfCover < 14 && <><br/><span className="text-[9px] text-blue-600">{l.daysOfCover}d left</span></>}
                     </TableCell>
                     <TableCell className="py-1.5 text-xs text-right tabular-nums">{l.current_qty} {l.unit}</TableCell>
-                    <TableCell className="py-1.5 text-xs text-right tabular-nums text-muted-foreground">{l.daily > 0 ? l.daily.toFixed(1) : "\u2014"}</TableCell>
+                    <TableCell className="py-1.5 text-xs text-right tabular-nums text-muted-foreground">{l.daily > 0 ? `${l.daily.toFixed(1)} ${l.unit}/d` : "\u2014"}</TableCell>
                     <TableCell className="py-1.5 text-xs text-right">
                       <span className={`tabular-nums ${l.daysOfCover !== null && l.daysOfCover < 7 ? "text-red-600 font-semibold" : l.daysOfCover !== null && l.daysOfCover < 14 ? "text-amber-600" : "text-muted-foreground"}`}>
                         {l.daysOfCover !== null ? `${l.daysOfCover}d` : "\u2014"}
@@ -460,7 +539,7 @@ export default function PurchaseOrderCreate() {
                     <TableCell className="py-1.5">
                       {l.vendorOptions.length > 0 ? (
                         <Select value={l.selectedVendorId} onValueChange={(v) => updateNeedLine(idx, "selectedVendorId", v)}>
-                          <SelectTrigger className="h-7 text-[10px] w-32"><SelectValue placeholder="Vendor" /></SelectTrigger>
+                          <SelectTrigger className="h-7 text-[10px] w-36"><SelectValue placeholder="Vendor" /></SelectTrigger>
                           <SelectContent>{l.vendorOptions.map((vo) => (
                             <SelectItem key={vo.vendorId} value={String(vo.vendorId)}>{vo.vendorName} {formatCurrency(vo.rate)}</SelectItem>
                           ))}</SelectContent>
@@ -468,6 +547,12 @@ export default function PurchaseOrderCreate() {
                       ) : <span className="text-[10px] text-muted-foreground">No history</span>}
                     </TableCell>
                     <TableCell className="py-1.5"><Input type="number" value={l.expected_rate} onChange={(e) => updateNeedLine(idx, "expected_rate", e.target.value)} className="h-7 text-[10px] w-16 ml-auto text-right" disabled={!l.checked} /></TableCell>
+                    <TableCell className="py-1.5 text-[10px] text-muted-foreground">
+                      {(l.otherVendors || []).map((ov, i) => (
+                        <span key={i}>{ov.vendorName} {formatCurrency(ov.rate)}{i < (l.otherVendors || []).length - 1 ? ", " : ""}</span>
+                      ))}
+                      {(!l.otherVendors || l.otherVendors.length === 0) && "\u2014"}
+                    </TableCell>
                     <TableCell className="py-1.5"><Input type="number" value={l.ordered_qty} onChange={(e) => updateNeedLine(idx, "ordered_qty", e.target.value)} className="h-7 text-[10px] w-16 ml-auto text-right" disabled={!l.checked} /></TableCell>
                   </TableRow>
                 ))}

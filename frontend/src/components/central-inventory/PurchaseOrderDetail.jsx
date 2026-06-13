@@ -62,6 +62,7 @@ export default function PurchaseOrderDetail() {
   const { restaurantId } = useLoginContext();
 
   const [po, setPO] = useState(null);
+  const [stockMap, setStockMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
@@ -76,9 +77,14 @@ export default function PurchaseOrderDetail() {
   const fetchDetail = useCallback(async () => {
     setLoading(true); setError(null);
     try {
-      const resp = await api.getPODetail(id);
+      const [resp, stockResp] = await Promise.all([api.getPODetail(id), api.getStockInventory()]);
       const data = resp.data?.data || resp.data;
       setPO(data);
+      // Build stock map for context columns
+      const stocks = stockResp.data?.current_stocks || [];
+      const sMap = {};
+      stocks.forEach((s) => { sMap[s.id] = s; sMap[s.stock_title] = s; });
+      setStockMap(sMap);
       // Init receive lines
       if (data?.lines) {
         setReceiveLines(data.lines.map((l) => ({
@@ -223,22 +229,42 @@ export default function PurchaseOrderDetail() {
                     <TableHead className="text-[10px]">Unit</TableHead>
                     <TableHead className="text-[10px] text-right">Rate</TableHead>
                     <TableHead className="text-[10px] text-right">Total</TableHead>
+                    <TableHead className="text-[10px] text-right">Your Stock</TableHead>
+                    <TableHead className="text-[10px] text-right">Days</TableHead>
+                    <TableHead className="text-[10px] text-right">After Recv</TableHead>
                     <TableHead className="text-[10px] text-center">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {(po.lines || []).map((line, idx) => (
+                  {(po.lines || []).map((line, idx) => {
+                    const stock = stockMap[line.inventory_master_id] || stockMap[line.stock_title] || stockMap[line.ingredient_name];
+                    const curQty = stock ? Number(stock.cal_quantity) || 0 : null;
+                    const afterQty = curQty !== null ? curQty + Number(line.ordered_qty || 0) : null;
+                    return (
                     <TableRow key={line.id || idx} data-testid={`po-detail-line-${idx}`}>
-                      <TableCell className="text-xs font-medium">{line.stock_title || line.ingredient_name || `Item #${line.inventory_master_id}`}</TableCell>
+                      <TableCell className="text-xs font-medium">
+                        {line.stock_title || line.ingredient_name || `Item #${line.inventory_master_id}`}
+                        {curQty === 0 && <span className="text-[9px] text-red-600 ml-1">OOS</span>}
+                      </TableCell>
                       <TableCell className="text-xs text-right tabular-nums">{line.ordered_qty}</TableCell>
                       <TableCell className="text-xs">{line.ordered_unit || line.unit}</TableCell>
                       <TableCell className="text-xs text-right font-mono">{formatCurrency(line.expected_rate)}</TableCell>
                       <TableCell className="text-xs text-right font-mono">{formatCurrency(Number(line.ordered_qty) * Number(line.expected_rate))}</TableCell>
+                      <TableCell className={`text-xs text-right tabular-nums ${curQty === 0 ? "text-red-600 font-semibold" : stock?.is_low_stock ? "text-amber-600" : "text-muted-foreground"}`}>
+                        {curQty !== null ? `${curQty} ${stock?.unit || ""}` : "\u2014"}
+                      </TableCell>
+                      <TableCell className={`text-xs text-right tabular-nums ${curQty === 0 ? "text-red-600" : "text-muted-foreground"}`}>
+                        {curQty === 0 ? "0d" : "\u2014"}
+                      </TableCell>
+                      <TableCell className="text-xs text-right tabular-nums text-emerald-600 font-medium">
+                        {afterQty !== null ? `${afterQty.toFixed(1)} ${stock?.unit || ""}` : "\u2014"}
+                      </TableCell>
                       <TableCell className="text-center">
                         <Badge variant="outline" className="text-[9px] px-1 py-0">{line.line_status || "open"}</Badge>
                       </TableCell>
                     </TableRow>
-                  ))}
+                    );
+                  })}
                 </TableBody>
               </Table>
             </CardContent>
