@@ -658,3 +658,270 @@ Per-store mini-cards arranged in a responsive grid:
 4. **Hierarchy drill-down from heatmap:** Should clicking a store in the heatmap navigate to `/store/{id}` (existing StoreDetail) or show inline expansion? (Recommendation: Navigate to `/store/{id}` — reuses existing component, no new code.)
 
 5. **Refresh after own stock change:** Should OperationsHub auto-refresh P20 data after a transfer receive, stock adjustment, or wastage entry? (Recommendation: Yes via `useStockInventory.refresh()` call from write-action success handlers. Phase 2+.)
+
+
+---
+
+## 15. Post-Implementation Validation — CR-016 Scope (13 Jun 2026)
+
+> **Validated by:** E1 agent
+> **Context:** CR-001 through CR-025 implemented. CR-016 (Phase 2 — Hierarchy Toggle) not yet started.
+> **Purpose:** Validate plan assumptions against current codebase before sprint assignment.
+
+---
+
+### 15.1 Phase 1 Status: COMPLETE (No Work Remaining)
+
+Phase 1 (API layer + hook + KPI cards in OperationsHub) was fully implemented across CR-010, CR-021, and CR-023:
+
+| Phase 1 Deliverable | Status | Evidence |
+|---------------------|:------:|---------|
+| `getStockInventory()` in api.js | DONE | Line 594 — `_getStockInventory()` with `normalizeStockItem()` |
+| `_cached` wrapper (CR-024) | DONE | Line 603 — TTL.LONG (60s) cache with auto-invalidation |
+| `useStockInventory` hook | DONE | `hooks/useStockInventory.js` — 64 lines, self-store only |
+| KPI cards in OperationsHub | DONE | Via `useStockIntelligence.js` (line 24) — derives `totalItems`, `lowStockCount`, `lowStockItems` |
+| Stock Inventory page `/inventory` | DONE | `StockInventorySummary.jsx` — 422 lines, full table + search + sort + filter + CSV |
+| Stock Detail drill-down `/inventory/:id` | DONE | `StockDetailPanel.jsx` — 671 lines (CR-015 partial) |
+| Screen visibility registered | DONE | `screenVisibility.js` line 37: `scr-stock-inventory: { master: FULL, central: FULL, franchise: FULL }` |
+| Nav item registered | DONE | `screenVisibility.js` line 72: `id: "stock-inventory"` |
+| Route registered | DONE | `App.js` line 74: `/inventory` → `StockInventorySummary` |
+
+**Conclusion:** Phase 1 is fully shipped. CR-016 scope is ONLY Phase 2 (hierarchy toggle) + Phase 3 (hierarchy heatmap).
+
+---
+
+### 15.2 Dependency Validation Matrix
+
+| # | Dependency | Plan Assumption | Current State | Valid? |
+|---|-----------|----------------|---------------|:------:|
+| 1 | `useLoginContext.isTopLevel` | Exists, returns boolean | Line 48: `const isTopLevel = hierarchyLevel === 0` | ✅ |
+| 2 | `useLoginContext.isMiddleLevel` | Exists, returns boolean | Line 49: `const isMiddleLevel = hierarchyLevel === 1` | ✅ |
+| 3 | `useLoginContext.isBottomLevel` | Exists, returns boolean | Line 50: `const isBottomLevel = hierarchyLevel === 2` | ✅ |
+| 4 | `mapRestaurantType()` | Exists in terminology.js | Line 45, exported | ✅ |
+| 5 | `mapRestaurantTypeShort()` | Exists in terminology.js | Line 51, exported | ✅ |
+| 6 | `getStoreTypeBadge()` | Exists in terminology.js | Line 133, exported | ✅ |
+| 7 | `HIERARCHY_LEVEL` mapping | master=0, central=1, franchise=2 | Lines 37-41, exported | ✅ |
+| 8 | `Switch` UI component | Available for toggle | `ui/switch.jsx` exists, used in 5 components | ✅ |
+| 9 | `Progress` UI component | Available for heatmap bars | `ui/progress.jsx` exists | ✅ |
+| 10 | Backend proxy forwards query params | `?include_hierarchy=true` passes through | `server.py` lines 138-140: `query_string = str(request.query_params)` | ✅ |
+| 11 | `LoadingState`/`ErrorState`/`EmptyState` | Reusable components exist | `StateDisplays.jsx` lines 6, 17, 28 | ✅ |
+| 12 | Cache invalidation covers `getStockInventory` | Mutations clear stock cache | `_invalidateStockCaches()` line 130: includes `"getStockInventory:"` | ✅ |
+
+**All 12 dependencies validated. No blockers.**
+
+---
+
+### 15.3 Gaps & Deviations from Original Plan
+
+#### GAP-1: CR-024 Cache Layer (NOT in original plan)
+
+**What changed:** CR-024 added an in-memory cache layer to `api.js`. `_getStockInventory()` is now wrapped by `_cached("getStockInventory", TTL.LONG, fn)`.
+
+**Impact on Phase 2:**
+- `_getStockInventory()` currently takes **zero args**. Adding `includeHierarchy` requires updating the function signature.
+- The `_cached` wrapper uses `JSON.stringify(args)` for cache key differentiation. This means:
+  - `_getStockInventory()` → key: `getStockInventory:[]` (no hierarchy)
+  - `_getStockInventory({ includeHierarchy: true })` → key: `getStockInventory:[{"includeHierarchy":true}]`
+  - Two separate cache entries — correct behavior, no conflict.
+- `_invalidateStockCaches()` invalidates by prefix `"getStockInventory:"` — covers both keys. No change needed.
+
+**Required code change:**
+```js
+// BEFORE (current)
+function _getStockInventory() {
+  return client.get("/proxy/v2/inventory/stock-inventory").then(...)
+}
+
+// AFTER (Phase 2)
+function _getStockInventory({ includeHierarchy } = {}) {
+  const params = includeHierarchy ? "?include_hierarchy=true" : "";
+  return client.get(`/proxy/v2/inventory/stock-inventory${params}`).then(...)
+}
+```
+
+**Risk:** LOW — additive change, backward compatible (default `{}` preserves existing callers).
+
+#### GAP-2: `useStockIntelligence` Dual-Fetch Pattern
+
+**What changed:** CR-021 introduced `useStockIntelligence.js` which calls `api.getStockInventory()` (no hierarchy) on OperationsHub mount.
+
+**Impact on Phase 2:**
+- OperationsHub (Hub) loads stock inventory via `useStockIntelligence` → cached as `getStockInventory:[]`
+- `/inventory` page loads via `useStockInventory` → same cache key → **deduped by TTL cache** ✅
+- Toggle ON on `/inventory` → new call `getStockInventory:[{"includeHierarchy":true}]` → separate cache entry
+- Toggle OFF → hits existing `getStockInventory:[]` from cache
+
+**Risk:** ZERO — cache handles both paths correctly. No duplicate network calls within TTL window.
+
+#### GAP-3: `useRestaurantMap` Hook Available (CR-023, not in original plan)
+
+**What changed:** CR-023 added `useRestaurantMap.js` — builds `restaurantId → { name, type }` map from hierarchy-summary.
+
+**Impact on Phase 2:**
+- The hierarchy API's `by_store[]` already includes `name` and `restaurant_type_flag` per store. Restaurant names are **embedded in the hierarchy response** — `useRestaurantMap` is NOT needed for the heatmap.
+- However, `useRestaurantMap` is available as fallback if any store name is missing (defensive coding).
+
+**Plan update:** Use `hierarchy_summary.by_store[].name` directly for heatmap card labels. Do NOT add `useRestaurantMap` as a dependency — keep the feature self-contained.
+
+#### GAP-4: `StoreHealthStrip` Component — Reuse Opportunity
+
+**What changed:** CR-021 introduced `StoreHealthStrip.jsx` (compact store health: "X out · Y low · Z adequate").
+
+**Impact on Phase 2:**
+- `StoreHealthStrip` expects `outCount`, `lowCount`, `adequateCount`, `totalItems` props.
+- Hierarchy API `by_store[]` returns `low_stock_rows` and `stock_rows` — no `out_of_stock` / `adequate` breakdown.
+- **Cannot directly reuse** — different data shape.
+
+**Plan update:** Build heatmap cards as new inline components within `StockInventorySummary.jsx`. Follow `StoreHealthStrip` visual conventions (dot indicators, color scale) for UI consistency. Do NOT force-fit the existing component.
+
+#### GAP-5: Open Questions Resolved
+
+| # | Original Question | Resolution |
+|---|------------------|------------|
+| 1 | Nav placement? | **RESOLVED** — Hybrid (Option C) implemented. KPI in Hub via `useStockIntelligence`, full page at `/inventory`. |
+| 2 | Category grouping? | **RESOLVED** — Category dropdown filter implemented (not collapsible sections). |
+| 3 | Historical comparison? | **UNCHANGED** — Still deferred. No time-series API. |
+| 4 | Hierarchy drill-down from heatmap? | **UNCHANGED** — Navigate to `/store/{id}`. |
+| 5 | Refresh after own stock change? | **PARTIALLY RESOLVED** — `_invalidateStockCaches()` called after all mutations (CR-024). Manual refresh button on `/inventory` also exists. Auto-refresh on page focus not implemented. |
+
+---
+
+### 15.4 Risk Register Update
+
+| Risk | Severity | Original Mitigation | Updated Status |
+|------|----------|--------------------|----|
+| Misuse as source catalog for request flow | HIGH | API method isolation | **MITIGATED** — `getStockInventory` not imported in any transfer/request component (verified via grep) |
+| Mixed-unit `total_display_qty` displayed as single unit | MEDIUM | Use as relative indicator only | **STILL VALID** — must enforce during implementation. Show `low_stock_rows / stock_rows` ratio, NOT `total_display_qty` |
+| String-to-number parsing inconsistency | LOW | Normalize in `normalizeStockItem()` | **MITIGATED** — `normalizeStockItem()` already parses `cal_quantity`, `display_qty`, `quantity`, `min_qty_alert` to floats |
+| Franchise users confused by hidden hierarchy toggle | LOW | Don't show toggle for franchise | **STILL VALID** — implement `isTopLevel \|\| isMiddleLevel` gate |
+| Stale data after stock adjustment | MEDIUM | "Last refreshed" timestamp | **MITIGATED** — CR-024 cache + `_invalidateStockCaches()` on mutations + manual refresh button |
+| **NEW: Cache key collision on hierarchy toggle** | LOW | `_cached` wrapper auto-differentiates by args | Default `{}` arg preserves existing callers |
+| **NEW: Dual-fetch on Hub → /inventory navigation** | LOW | CR-024 TTL cache dedup | Same cache key, served from memory within 60s TTL |
+| **NEW: `hierarchy_summary.by_store[]` may be empty for franchise** | LOW | Hide toggle for franchise | `scope_restaurant_ids = [self]` → `by_store` has 1 entry (self only). No added value. |
+
+---
+
+### 15.5 Revised Implementation Plan (Phase 2 Only)
+
+**Original estimate:** ~4h (3 phases)
+**Revised estimate:** ~2.5h (Phase 1 complete, only Phase 2 + Phase 3 remain)
+
+#### Step 1: API Layer Update (~15 min)
+
+**File:** `frontend/src/services/api.js`
+
+Update `_getStockInventory` to accept optional `includeHierarchy` param:
+
+```js
+function _getStockInventory({ includeHierarchy } = {}) {
+  const params = includeHierarchy ? "?include_hierarchy=true" : "";
+  return client.get(`/proxy/v2/inventory/stock-inventory${params}`).then((resp) => {
+    const data = resp.data;
+    if (data?.current_stocks) {
+      data.current_stocks = data.current_stocks.map(normalizeStockItem);
+    }
+    return resp;
+  });
+}
+const getStockInventory = _cached("getStockInventory", TTL.LONG, _getStockInventory);
+```
+
+**Backward compatible:** All existing callers (`useStockInventory`, `useStockIntelligence`) call with no args → defaults to `{}` → no hierarchy → same behavior.
+
+#### Step 2: Hook Update (~30 min)
+
+**File:** `frontend/src/hooks/useStockInventory.js`
+
+Add:
+- `includeHierarchy` param (auto-derived from role)
+- `hierarchySummary` and `hierarchyContext` state
+- `showHierarchy` / `setShowHierarchy` toggle state
+- Import `useLoginContext` for `isTopLevel`, `isMiddleLevel`
+
+```js
+export function useStockInventory({ staleAfterMs = 5 * 60 * 1000 } = {}) {
+  const { isTopLevel, isMiddleLevel } = useLoginContext();
+  const canToggleHierarchy = isTopLevel || isMiddleLevel;
+  const [showHierarchy, setShowHierarchy] = useState(false);
+  const [hierarchySummary, setHierarchySummary] = useState(null);
+  const [hierarchyContext, setHierarchyContext] = useState(null);
+
+  // ... existing stocks/loading/error state ...
+
+  const fetchInventory = useCallback(async () => {
+    // ... existing fetch with includeHierarchy: showHierarchy && canToggleHierarchy ...
+    // Extract hierarchy_summary + hierarchy_context from response when present
+  }, [showHierarchy, canToggleHierarchy]);
+
+  return {
+    // ... existing returns ...
+    canToggleHierarchy,
+    showHierarchy,
+    setShowHierarchy,
+    hierarchySummary,
+    hierarchyContext,
+  };
+}
+```
+
+#### Step 3: UI — Toggle + Heatmap (~1.5h)
+
+**File:** `frontend/src/components/central-inventory/StockInventorySummary.jsx`
+
+Add:
+1. **Toggle switch** in header area (next to Refresh button):
+   - Label: "Show all stores" / "My store only"
+   - Hidden when `!canToggleHierarchy` (franchise)
+   - Uses `Switch` from `@/components/ui/switch`
+
+2. **"Stores in Scope" KPI card** (4th card, conditional):
+   - Shows `hierarchy_summary.total_stores_in_scope`
+   - Only rendered when `showHierarchy && hierarchySummary`
+
+3. **Low-stock alert banner** (above heatmap):
+   - "X stores have low stock items"
+   - Red accent, only when `hierarchy_summary.totals.low_stock_rows > 0`
+
+4. **Store heatmap grid** (below existing table):
+   - Responsive grid of mini-cards from `hierarchy_summary.by_store[]`
+   - Per card: store name, type badge, `low_stock_rows / stock_rows` ratio bar, count
+   - Color: 0 low = green, 1-50% = amber, >50% = red
+   - Click → `navigate(/store/${restaurant_id})`
+   - Sorted: most low-stock ratio first
+
+#### Step 4: Loading & Error States (~15 min)
+
+- Toggle ON → skeleton shimmer on hierarchy section only; own-store table stays visible
+- Hierarchy fetch error → inline error with retry; own-store data unaffected
+- Toggle OFF → hierarchy section unmounts, no fetch
+
+---
+
+### 15.6 Files Changed (Complete List)
+
+| File | Change Type | Risk |
+|------|------------|:----:|
+| `frontend/src/services/api.js` | Modify `_getStockInventory` signature | LOW |
+| `frontend/src/hooks/useStockInventory.js` | Add hierarchy state + toggle + role gate | LOW |
+| `frontend/src/components/central-inventory/StockInventorySummary.jsx` | Add toggle + heatmap + alert banner + 4th KPI card | LOW |
+
+**No new files. No backend changes. No route changes. No existing flow modifications.**
+
+---
+
+### 15.7 Testing Checklist (Post-Implementation)
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | `/inventory` loads for Master — toggle visible | Toggle shown, default OFF |
+| 2 | `/inventory` loads for Central — toggle visible | Toggle shown, default OFF |
+| 3 | `/inventory` loads for Franchise — toggle hidden | No toggle, no hierarchy UI |
+| 4 | Toggle ON (Master) — hierarchy data loads | Heatmap shows 7 stores, KPI "7 in scope" |
+| 5 | Toggle ON (Central) — hierarchy data loads | Heatmap shows 6 stores (no master) |
+| 6 | Toggle OFF — hierarchy section removed | Own-store table stays, heatmap unmounts |
+| 7 | Heatmap card click → navigates to `/store/{id}` | Store detail page opens |
+| 8 | Low-stock alert banner shows when `low_stock_rows > 0` | Red banner above heatmap |
+| 9 | Cache: Hub → /inventory within 60s → no duplicate fetch | Network tab shows 0 new calls |
+| 10 | Cache: Toggle ON, OFF, ON within 60s → second ON is cached | No new network call |
+| 11 | After stock mutation → toggle ON → fresh data | Cache invalidated, new fetch |
+| 12 | `total_display_qty` NOT shown as a quantity | Only ratio bars shown |
