@@ -77,6 +77,7 @@ function deriveLedgerEntries(transfers, actorRestaurantId, historyNameMap) {
           after_qty: null,
           reference_type: "Transfer",
           reference_id: t.id,
+          reference_code: t.reference_code,
           counterparty_name: toName,
           counterparty_type: toType,
           reason: t.resolution_meta?.reason || null,
@@ -104,6 +105,7 @@ function deriveLedgerEntries(transfers, actorRestaurantId, historyNameMap) {
           after_qty: null,
           reference_type: "Transfer",
           reference_id: t.id,
+          reference_code: t.reference_code,
           counterparty_name: fromName,
           counterparty_type: fromType,
           reason: null,
@@ -131,6 +133,7 @@ function deriveLedgerEntries(transfers, actorRestaurantId, historyNameMap) {
           after_qty: null,
           reference_type: "Transfer",
           reference_id: t.id,
+          reference_code: t.reference_code,
           counterparty_name: fromName,
           counterparty_type: fromType,
           reason: line.resolution_type || t.resolution_meta?.reason || null,
@@ -156,6 +159,7 @@ function deriveLedgerEntries(transfers, actorRestaurantId, historyNameMap) {
           after_qty: null,
           reference_type: "Transfer",
           reference_id: t.id,
+          reference_code: t.reference_code,
           counterparty_name: toName,
           counterparty_type: toType,
           reason: t.resolution_meta?.reason || t.resolution_type || "Cancelled",
@@ -441,7 +445,7 @@ export default function HistoryLedger() {
               const rows = [["PO","Date","Source","Destination","Status","Type","Items","Direction"]];
               filteredHistory.forEach(t => {
                 const dir = String(t.to_restaurant_id) === String(restaurantId) ? "In" : "Out";
-                rows.push([formatPO(t.id), t.created_at, t.from_restaurant_name||"", t.to_restaurant_name||"", t.status, t.type, t.items_count||"", dir]);
+                rows.push([formatPO(t.id, t.reference_code), t.created_at, t.from_restaurant_name||"", t.to_restaurant_name||"", t.status, t.type, t.items_count||"", dir]);
               });
               const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
               const blob = new Blob([csv], { type: "text/csv" });
@@ -592,7 +596,7 @@ export default function HistoryLedger() {
                                 className="cursor-pointer hover:bg-accent/50"
                                 onClick={() => navigate(`/transfer/${t.id}`)}
                               >
-                                <TableCell className="text-xs font-mono font-medium">{formatPO(t.id)}</TableCell>
+                                <TableCell className="text-xs font-mono font-medium">{formatPO(t.id, t.reference_code)}</TableCell>
                                 <TableCell className="text-xs text-muted-foreground">{formatTimestamp(t.created_at)}</TableCell>
                                 <TableCell className="text-xs">{restaurantMap[String(t.from_restaurant_id)]?.name || t.from_restaurant_name || "—"}</TableCell>
                                 <TableCell className="text-xs">{restaurantMap[String(t.to_restaurant_id)]?.name || t.to_restaurant_name || "—"}</TableCell>
@@ -767,7 +771,7 @@ export default function HistoryLedger() {
                                       data-testid={`ledger-ref-${e.reference_id}`}
                                       onClick={() => navigate(`/transfer/${e.reference_id}`)}
                                     >
-                                      {formatPO(e.reference_id)}
+                                      {formatPO(e.reference_id, e.reference_code)}
                                     </Button>
                                   ) : (
                                     <span className="text-[10px] text-muted-foreground">—</span>

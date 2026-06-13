@@ -126,7 +126,7 @@ export default function ApproveWaveDialog({ open, onOpenChange, transfer, onSubm
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent data-testid="approve-wave-dialog" className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Partial Approve — {formatPO(transfer?.id)}</DialogTitle>
+          <DialogTitle>Partial Approve — {formatPO(transfer?.id, transfer?.reference_code)}</DialogTitle>
           <DialogDescription>Select lines to approve with segment allocation. Unselected lines will be placed on hold.</DialogDescription>
         </DialogHeader>
 

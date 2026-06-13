@@ -65,7 +65,8 @@ export function validateQuantityForUnit(quantity, unit) {
  * Format transfer ID as PO number: PO-A1B2
  * Uses last 4 chars of transfer ID, uppercased. Falls back to "XXXX".
  */
-export function formatPO(transferId) {
+export function formatPO(transferId, referenceCode) {
+  if (referenceCode) return referenceCode;
   if (!transferId) return "PO-XXXX";
   const s = String(transferId);
   const tail = s.slice(-4).toUpperCase();

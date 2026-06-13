@@ -37,7 +37,6 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { LoadingState, ErrorState, EmptyState } from "@/components/common/StateDisplays";
-import { formatPO } from "@/lib/formatters";
 
 function formatTimeAgo(timestamp) {
   if (!timestamp) return "";
