@@ -46,6 +46,7 @@
 | CR-024 | API Response Cache (71→20 calls, 72%) | CLOSED | 2026-06-13 |
 | CR-025 | Intelligent PO (Request Stock + Direct Dispatch) | CLOSED | 2026-06-13 |
 | CR-015 | P24 — FEFO Batch Stock Detail Panel (GAP fixes) | CLOSED | 2026-06-13 |
+| CR-016 | P20-Phase2 — Stock Inventory Hierarchy Toggle | CLOSED | 2026-06-13 |
 
 ## Registry: 25 CRs, 16 BUGs, 3 Sprints (S0-S2 closed, S3 active)
 
@@ -72,7 +73,7 @@
 | Priority | CR | Title | Status |
 |----------|-----|-------|--------|
 | **P0** | CR-015 | P24 — FEFO Batch Stock Detail Panel | PLANNED |
-| P1 | CR-016 | P20-Phase2 — Hierarchy Toggle | PLANNED |
+| P1 | CR-016 | P20-Phase2 — Hierarchy Toggle | **CLOSED** |
 | P1 | CR-018 | P25 — Wastage Report Enhancements | PLANNED |
 | P2 | CR-017 | P21-Smart — Smart Dispatch Assistance | PROPOSED |
 | Future | CR-020 | Daily Intelligence Digest | PROPOSED |

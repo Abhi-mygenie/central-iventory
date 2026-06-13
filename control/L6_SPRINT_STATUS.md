@@ -57,8 +57,8 @@
 
 | ID | Title | Priority | Planning Doc |
 |----|-------|----------|-------------|
-| CR-015 | P24 — FEFO Batch Stock Detail | **P0** | `AI/Plans/phase3/P24_fefo_batch_stock_planning.md` |
-| CR-016 | P20-Phase2 — Hierarchy Toggle | P1 | `AI/Plans/phase2/P20_stock_inventory_summary_plan.md` |
+| CR-015 | P24 — FEFO Batch Stock Detail | **CLOSED** | `AI/Plans/phase3/P24_fefo_batch_stock_planning.md` |
+| CR-016 | P20-Phase2 — Hierarchy Toggle | **CLOSED** | `AI/Plans/phase2/P20_stock_inventory_summary_plan.md` |
 | CR-018 | P25 — Wastage Report Enhancements | P1 | — |
 | CR-017 | P21-Smart — Smart Dispatch Assistance | P2 | `AI/Plans/phase3/P21_smart_dispatch_request_assistance.md` |
 | CR-020 | Daily Intelligence Digest | Future | — |
