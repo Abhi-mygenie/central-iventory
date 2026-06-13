@@ -254,13 +254,24 @@ ProductionRun {
 
 ---
 
-## 9. Open Questions (for Impact Analysis)
+## 9. Open Questions — RESOLVED (Owner Answers, 13 Jun 2026)
 
-1. **Does `GET /inventory/production-run` (list) endpoint exist?** — Needs API probe before implementation.
-2. **Should the form support recipe-level production (not just sub-recipe)?** — Sub-recipes produce inventory items; regular recipes may not. Recommend sub-recipe only for now.
-3. **Should production be blocked if insufficient stock?** — Backend may reject anyway. Frontend should warn but allow (backend is source of truth).
-4. **Should we show cost breakdown in the form?** — Cost is computed by backend post-run. Pre-run cost estimate requires stock-detail segment costs which may not be exposed. Recommend showing cost only post-run.
-5. **Production run numbering** — Backend generates `PRD-{restaurantId}-{year}-{seq}`. No frontend generation needed.
+| # | Question | Owner Answer | Impact |
+|---|----------|-------------|--------|
+| Q1 | Does production-run list/history API exist? | **Discover gaps during Impact Analysis — owner will pass to backend team** | Probe API; document gaps as backend requirements |
+| Q2 | Recipe vs Sub-recipe production? | **Sub-recipe only** — sub-recipes are the final product (FG) that goes to master/outlets | Scope reduced: only `sub_recipe_id` in production form, no recipe-level production |
+| Q3 | Insufficient stock handling? | **Configuration-driven** — depends on `allow_negative_stock` in operational settings | Read setting at runtime; hard-block when false, warn-but-allow when true |
+| Q4 | Cost visibility? | **Both pre-run estimate + post-run actual** — final authoritative cost is post-production | Pre-run: estimate from segment costs (needs API discovery). Post-run: from production-run response |
+| Q5 | Additional features? | **Follow Intelligence UI methodology** (CR-019/CR-021 Phase 7 pattern) | Add: production suggestions based on outlet stock, ingredient health, staleness indicators, coverage-based suggestions, post-production next-best-actions |
+
+### Intelligence UI Elements for Production (from Q5)
+
+Per the Phase 7 frozen spec pattern (CR-019/CR-021), the Production UI will include:
+- **"You should produce X"** suggestions based on low FG stock at outlets or pending requests
+- **Ingredient health strip** — which ingredients are running low or expiring soon
+- **"Last produced X days ago"** staleness indicator per sub-recipe
+- **Coverage-based suggestion** — "At current consumption rate, 930 cookies covers N days across M outlets"
+- **Post-production next-best-action** — "Dispatch to Outlet Direct One (0 stock, 3 pending requests)"
 
 ---
 
