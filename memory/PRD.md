@@ -1,48 +1,38 @@
-# Central Inventory PRD
+# Central Inventory — PRD
 
-## Original Problem Statement
-Multi-store hierarchy stock management module for the MyGenie POS platform. Proxy-only FastAPI backend forwarding to `preprod.mygenie.online`. React 19 frontend with intelligence layer.
+## Problem Statement
+Pull the `central-iventory` repo from GitHub (branch `13-june-2`) into `/app`, set up dependencies, and deploy (run) the application.
 
-## Repo
-- **Source**: `Abhi-mygenie/central-iventory`
-- **Branch**: `13-june-1` (pulled 2026-06-13)
+## Architecture
+- **Backend**: FastAPI (Python 3.11) — proxy layer to MyGenie POS preprod APIs (`preprod.mygenie.online`)
+  - MongoDB (Motor async) for local state (status_checks, token_sessions)
+  - httpx for upstream HTTP calls
+- **Frontend**: React 19 + CRACO + Tailwind CSS + Radix UI/shadcn components
+  - Axios API service layer with caching + in-flight dedup
+  - React Router for SPA routing
+- **Database**: MongoDB (local, `test_database`)
 
-## Architecture / Tech Stack
-- **Frontend**: React 19, CRACO, Tailwind CSS 3, Radix UI (shadcn), Recharts, React Router v7, Axios, Zod, react-hook-form
-- **Backend**: FastAPI (Python), Motor (async MongoDB), httpx (proxy calls)
-- **Database**: MongoDB (local via Motor/pymongo) — token sessions + status checks only
-- **External APIs**: MyGenie POS preprod API v1/v2
+## What's Been Implemented (June 13, 2026)
+- Repo cloned from `13-june-2` branch
+- Backend dependencies installed (requirements.txt)
+- Frontend dependencies installed (yarn)
+- Both services running via supervisor
+- Backend API confirmed reachable
+- Frontend login page rendering correctly
 
-## What's Been Implemented (This Session — 2026-06-13)
-
-| CR | Title | Status | Test Report |
-|----|-------|:------:|-------------|
-| CR-016 | Hierarchy Toggle | QA ✅ (7/7) | iteration_44 |
-| CR-026 | Production Unit Module | QA ✅ (14/14) | iteration_43 |
-| CR-027 | Navigation Restructure | QA ✅ (14/14) | iteration_43 |
-| CR-029 | Stock Inventory FG/Raw Split | QA ✅ (14/14) | iteration_43 |
-| CR-030 | Inward Screens Audit | QA ✅ (8/8) | iteration_45 |
-
-### CR-030 Implementation Details
-- Phase 1: Replaced `alert()` with toast in VendorManagement, added error toast in IngredientCatalogue
-- Phase 2: Added "Pushed to stores" column (5 stores badge) in Raw Material Master
-- Phase 3: Purchase partial failure UX (per-item tracking), file inputs show G-014/G-015 toast
-- Phase 4: "Empty" badge for 0-stock items (22 items)
+## Core Features (from repo)
+- Auth proxy (login via MyGenie vendor API)
+- Inventory transfer management (initiate, approve, dispatch, receive, cancel)
+- Stock request 3-step flow (sources → catalog → request)
+- Stock adjustments (increase/decrease)
+- Wastage recording & reporting
+- Catalogue management (categories, items, foods, addons, recipes, sub-recipes)
+- Hierarchy/franchise management
+- Production runs
+- Daily consumption reports
+- Operational settings
 
 ## Prioritized Backlog
-
-| Priority | CR | Title | Status |
-|----------|-----|-------|--------|
-| READY | CR-018 | Wastage Report Enhancements | Code-Gate APPROVED, mock frozen |
-| READY | CR-031 | Production Screens Audit | Code-Gate APPROVED |
-| READY | CR-032 | Outward Screens Audit | Code-Gate APPROVED |
-| PLANNED | CR-033 | Action Screens Audit | Needs Impact Analysis |
-| PROPOSED | CR-028 | Product Catalog Overhaul | No artifacts |
-
-## Session Log
-- Pulled branch 13-june-1, completed mandatory reading
-- QA: CR-016/026/027/029 — all PASS
-- CR-030: Implemented + QA PASS (8/8)
-- Pulled 24 planning files from 13-june-2 (CR-030-033, G-020/021)
-- Registered CR-030-033 + G-020/021 in governance
-- CR-018 planning complete (mock frozen, code-gate approved)
+- P0: Verify end-to-end login with real credentials
+- P1: Test all proxy endpoints against preprod
+- P2: Add error monitoring / logging dashboard
