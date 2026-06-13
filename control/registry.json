@@ -3264,6 +3264,71 @@
           "path": "control/sessions/HANDOVER_CR023_CR024_CR025_CLOSURE.md"
         }
       ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-026",
+      "title": "P28 \u2014 Production Unit Module (Production Run UI + History)",
+      "status": "PLANNED",
+      "severity": null,
+      "sprint_key": "S3",
+      "phase": "Production",
+      "files": [
+        "frontend/src/components/central-inventory/ProductionRunForm.jsx",
+        "frontend/src/components/central-inventory/ProductionHistory.jsx",
+        "frontend/src/hooks/useProductionRun.js",
+        "frontend/src/services/api.js",
+        "frontend/src/lib/screenVisibility.js",
+        "frontend/src/App.js",
+        "frontend/src/components/layout/Sidebar.jsx",
+        "frontend/src/components/central-inventory/OperationsHub.jsx",
+        "frontend/src/hooks/useStockIntelligence.js"
+      ],
+      "notes": "Production Run form + audit detail + history (G-018 stub). 3 new files, 6 modified. Backend gaps: G-018 (history list API), G-019 (segment unit_cost). Owner requested 2026-06-13.",
+      "artifact_refs": [
+        {
+          "artifact": 0,
+          "label": "Session-Start",
+          "status": "DONE",
+          "path": "control/sessions/CR026_SESSION_START.md"
+        },
+        {
+          "artifact": 1,
+          "label": "Intake",
+          "status": "DONE",
+          "path": "control/sessions/CR026_ARTIFACT_1_INTAKE.md"
+        },
+        {
+          "artifact": 2,
+          "label": "Impact-Analysis",
+          "status": "DONE",
+          "path": "control/sessions/CR026_ARTIFACT_2_IMPACT_ANALYSIS.md"
+        },
+        {
+          "artifact": 3,
+          "label": "Impl-Plan",
+          "status": "DONE",
+          "path": "control/sessions/CR026_ARTIFACT_3_IMPLEMENTATION_PLAN.md"
+        },
+        {
+          "artifact": 4,
+          "label": "Code-Gate",
+          "status": "PENDING",
+          "path": null
+        },
+        {
+          "artifact": 5,
+          "label": "QA-Report",
+          "status": "PENDING",
+          "path": null
+        },
+        {
+          "artifact": 6,
+          "label": "Owner-Signoff",
+          "status": "PENDING",
+          "path": null
+        }
+      ]
     }
   ]
 }

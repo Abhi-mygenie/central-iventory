@@ -269,5 +269,21 @@
     ],
     "missing_count": 0,
     "pending_count": 1
+  },
+  {
+    "type": "CR",
+    "id": "CR-026",
+    "title": "P28 — Production Unit Module (Production Run UI + History)",
+    "status": "PLANNED",
+    "severity": null,
+    "sprint_key": "S3",
+    "sprint_name": "API Reality Check + Intelligent PO",
+    "debt_reasons": [
+      "Code-Gate: PENDING",
+      "QA-Report: PENDING",
+      "Owner-Signoff: PENDING"
+    ],
+    "missing_count": 0,
+    "pending_count": 3
   }
 ]
