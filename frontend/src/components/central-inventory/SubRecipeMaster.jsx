@@ -360,7 +360,7 @@ function DetailPanel({ recipe, stockMap, inventoryMaster, productionRuns, onSave
                         </SelectValue>
                       </SelectTrigger>
                       <SelectContent className="max-h-60">
-                        {inventoryMaster.map(m => (
+                        {inventoryMaster.filter(m => !ingredients.some((other, j) => j !== idx && String(other.ingredient_id) === String(m.id))).map(m => (
                           <SelectItem key={m.id} value={String(m.id)}>{m.stock_title} ({m.unit})</SelectItem>
                         ))}
                       </SelectContent>

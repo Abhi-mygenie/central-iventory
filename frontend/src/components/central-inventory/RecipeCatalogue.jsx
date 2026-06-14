@@ -314,7 +314,7 @@ function RecipeDetail({ recipe, foods, inventoryMaster, subRecipeMap, stockMap, 
                 <div className="flex-1">
                   <Select value={ing.ingredient_id ? String(ing.ingredient_id) : ""} onValueChange={v => updateIngredient(ing.idx, "ingredient_id", v)}>
                     <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select ingredient">{ing.ingredient_name || resolveIngName(ing.ingredient_id) || "Select"}</SelectValue></SelectTrigger>
-                    <SelectContent className="max-h-48">{inventoryMaster.map(m => <SelectItem key={m.id} value={String(m.id)}>{m.stock_title} ({m.unit})</SelectItem>)}</SelectContent>
+                    <SelectContent className="max-h-48">{inventoryMaster.filter(m => !ingredients.some((other, j) => j !== ing.idx && String(other.ingredient_id) === String(m.id))).map(m => <SelectItem key={m.id} value={String(m.id)}>{m.stock_title} ({m.unit})</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div className="w-20"><Input type="number" value={ing.ingredient_qty} onChange={e => updateIngredient(ing.idx, "ingredient_qty", e.target.value)} className="h-8 text-xs" /></div>
