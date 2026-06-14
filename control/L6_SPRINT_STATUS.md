@@ -1,6 +1,6 @@
 # L6 — Sprint Status
 
-> **Updated:** 2026-06-14 (CR-034 QA, CR-035+BUG-017 planned, Chai 813 seed complete)
+> **Updated:** 2026-06-14 (CR-035 + BUG-017 implemented, QA_PASS — awaiting owner signoff)
 > **Source of truth for items:** `control/registry.json`
 
 ---
@@ -25,16 +25,11 @@
 | CR | Title | Status | QA Report |
 |----|-------|:------:|:---------:|
 | CR-030 | Inward Screens Audit | QA | CR030_ARTIFACT_5_QA_REPORT.md |
-| CR-034 | Recipe & Sub-Recipe API Contract Fix | QA | iteration_46, iteration_48 |
+| CR-034 | Recipe & Sub-Recipe API Contract Fix | QA_PASS | iteration_46, iteration_48 |
+| CR-035 | Store Creation 2-Step + Outlet Visibility | QA_PASS | iteration_50 |
+| BUG-017 | Duplicate Ingredient Filter | QA_PASS | iteration_49 |
 
-### S3 — Planned (Artifacts 0-3 Done, Ready for Implementation)
-
-| Item | Title | Type | Est. | Artifacts |
-|------|-------|:----:|:----:|:---------:|
-| **CR-035** | Store Creation 2-Step Create & Push + Outlet Visibility | CR | ~65 min | 4/7 |
-| **BUG-017** | Duplicate Ingredient Selection in Recipe/Sub-Recipe BOM | BUG | ~15 min | 4/7 |
-
-### S3 — Backlog
+### S3 — In Progress / Backlog
 
 | Item | Title | Status |
 |------|-------|:------:|

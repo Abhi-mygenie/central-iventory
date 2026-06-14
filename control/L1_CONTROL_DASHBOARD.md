@@ -1,6 +1,6 @@
 # L1 — Control Dashboard (Project Status)
 
-> **Updated:** 2026-06-14 (CR-034 QA, CR-035 PLANNED, BUG-017 PLANNED, Chai 813 seed COMPLETE)
+> **Updated:** 2026-06-14 (CR-035 QA_PASS, BUG-017 QA_PASS — implementation session)
 
 ---
 
@@ -45,10 +45,7 @@
 
 ## Sprint S3 — Planned (Ready for Implementation)
 
-| Item | Title | Status | Artifacts | Est. |
-|------|-------|:------:|:---------:|:----:|
-| **CR-035** | Store Creation 2-Step Create & Push + Outlet Visibility | PLANNED | 4/7 (0-3 DONE) | ~65 min |
-| **BUG-017** | Duplicate Ingredient Selection in Recipe/Sub-Recipe BOM | PLANNED | 4/7 (0-3 DONE) | ~15 min |
+*None — all planned items implemented this session.*
 
 ## Registry: 35 CRs, 17 BUGs, 3 Sprints (S0-S2 closed, S3 active)
 
@@ -57,13 +54,14 @@
 | CR | Title | QA Status | Report |
 |----|-------|:---------:|--------|
 | CR-034 | Recipe & Sub-Recipe API Contract Fix | ✅ PASS | `test_reports/iteration_46.json`, `iteration_48.json` |
+| CR-035 | Store Creation 2-Step + Outlet Visibility | ✅ PASS | `test_reports/iteration_50.json` |
+| BUG-017 | Duplicate Ingredient Filter | ✅ PASS | `test_reports/iteration_49.json` |
 
 ## Next Work — Backlog Priority
 
 | Priority | Item | Title | Status |
 |----------|------|-------|--------|
-| **P0** | CR-035 | Store Creation 2-Step + Outlet Visibility | PLANNED (artifacts 0-3 done) |
-| **P0** | BUG-017 | Duplicate Ingredient Filter | PLANNED (artifacts 0-3 done) |
+| P1 | CR-025 sub-task | Wire `reference_code` as PO number | PLANNED |
 | P1 | CR-031 | Production Screens Audit | PLANNED |
 | P1 | CR-032 | Outward Screens Audit | PLANNED |
 | P2 | CR-033 | Action Screens Audit | QA |
