@@ -1390,7 +1390,7 @@
     "type": "BUG",
     "id": "BUG-017",
     "title": "Duplicate Ingredient Selection Allowed in Recipe & Sub-Recipe BOM",
-    "status": "IN_PROGRESS",
+    "status": "QA_PASS",
     "severity": "MEDIUM",
     "sprint_key": "S3",
     "phase": "Catalogue",
@@ -1398,7 +1398,7 @@
       "frontend/src/components/central-inventory/RecipeCatalogue.jsx",
       "frontend/src/components/central-inventory/SubRecipeMaster.jsx"
     ],
-    "notes": "Ingredient dropdown shows full inventory master list without excluding already-selected items. User can add same ingredient multiple times.",
+    "notes": "FIXED: Added .filter() to exclude already-selected ingredient IDs from dropdown options. Verified 49→48→47 count reduction. Row removal restores items.",
     "artifact_refs": [
       {
         "artifact": 0,
@@ -1427,14 +1427,14 @@
       {
         "artifact": 4,
         "label": "Code-Gate",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/BUG017_ARTIFACT_4_CODE_GATE.md"
       },
       {
         "artifact": 5,
         "label": "QA-Report",
-        "status": "PENDING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/BUG017_ARTIFACT_5_QA_REPORT.md"
       },
       {
         "artifact": 6,
@@ -1444,15 +1444,13 @@
       }
     ],
     "completeness": {
-      "done": 4,
+      "done": 6,
       "total": 7,
-      "pct": 57
+      "pct": 86
     },
     "doc_count": 0,
     "is_debt": true,
     "debt_reasons": [
-      "Code-Gate: PENDING",
-      "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
     ],
     "sprint_name": "API Reality Check + Intelligent PO"

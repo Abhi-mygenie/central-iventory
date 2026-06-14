@@ -398,16 +398,14 @@
     "type": "BUG",
     "id": "BUG-017",
     "title": "Duplicate Ingredient Selection Allowed in Recipe & Sub-Recipe BOM",
-    "status": "IN_PROGRESS",
+    "status": "QA_PASS",
     "severity": "MEDIUM",
     "sprint_key": "S3",
     "sprint_name": "API Reality Check + Intelligent PO",
     "debt_reasons": [
-      "Code-Gate: PENDING",
-      "QA-Report: PENDING",
       "Owner-Signoff: PENDING"
     ],
     "missing_count": 0,
-    "pending_count": 3
+    "pending_count": 1
   }
 ]
