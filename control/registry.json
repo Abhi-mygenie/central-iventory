@@ -3822,16 +3822,15 @@
     {
       "type": "CR",
       "id": "CR-035",
-      "title": "Store Creation — 2-Step Create & Push Flow",
-      "status": "IN_PROGRESS",
+      "title": "Store Creation — 2-Step Create & Push Flow + Outlet Visibility",
+      "status": "QA_PASS",
       "severity": null,
       "sprint_key": "S3",
       "phase": "UX Improvement",
       "files": [
-        "frontend/src/components/central-inventory/StoreManagement.jsx",
-        "frontend/src/hooks/useHierarchyManagement.js"
+        "frontend/src/components/central-inventory/StoreManagement.jsx"
       ],
-      "notes": "Combine 2-action store creation (create + manual push) into single 2-step UI flow. Step 1: store details, Step 2: push preview + Create & Push button.",
+      "notes": "IMPLEMENTED: 2-step wizard (Details → Review catalog counts → Create & Push). Outlet visibility from Central Store via displayChildren memo. 8/8 QA tests pass.",
       "artifact_refs": [
         {
           "artifact": 0,
@@ -3860,14 +3859,14 @@
         {
           "artifact": 4,
           "label": "Code-Gate",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR035_ARTIFACT_4_CODE_GATE.md"
         },
         {
           "artifact": 5,
           "label": "QA-Report",
-          "status": "PENDING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/CR035_ARTIFACT_5_QA_REPORT.md"
         },
         {
           "artifact": 6,

@@ -24,18 +24,22 @@ Central Inventory management system — multi-store hierarchy stock management m
 ### 2026-06-14 — BUG-017 Fix (Duplicate Ingredient Filter)
 - **Problem**: Ingredient dropdown in Recipe and Sub-Recipe BOM editors allowed selecting same item multiple times
 - **Fix**: Added `.filter()` to exclude already-selected ingredient IDs from dropdown options
-- **Files changed**: `RecipeCatalogue.jsx` (line 317), `SubRecipeMaster.jsx` (line 363)
-- **Status**: QA PASS (4/4 tests passed) — awaiting owner signoff
-- **Artifacts**: All 7 artifacts complete (0-5 DONE, 6 PENDING owner signoff)
+- **Files**: `RecipeCatalogue.jsx` (line 317), `SubRecipeMaster.jsx` (line 363)
+- **Status**: QA PASS (4/4) — Owner signoff PENDING
+
+### 2026-06-14 — CR-035 (Store Creation 2-Step + Outlet Visibility)
+- **Part A**: Replaced single-step store create with 2-step wizard (Details → Review catalog counts → Create & Push)
+- **Part B**: Fixed outlet visibility from Central Store — merged outlets from hierarchy-detail API into displayChildren
+- **File**: `StoreManagement.jsx`
+- **Status**: QA PASS (8/8) — Owner signoff PENDING
 
 ## Prioritized Backlog
 
 | Priority | Item | Status | Est. |
 |----------|------|--------|------|
-| P0 | CR-035: Store Creation 2-Step + Outlet Visibility | PLANNED (Artifacts 0-3 done) | ~65 min |
 | P1 | CR-025 sub-task: wire reference_code as PO number | Planning done | ~30 min |
 | P2 | CR-015: FEFO Batch Stock Detail Panel | Code ~80% built | TBD |
 
 ## Next Tasks
-1. Get owner signoff on BUG-017
-2. Implement CR-035 (Store Creation 2-Step + Outlet Visibility) if owner approves
+1. Owner signoff on BUG-017 and CR-035
+2. Implement CR-025 sub-task (wire reference_code as PO number)
