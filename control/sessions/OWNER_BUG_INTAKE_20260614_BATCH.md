@@ -170,11 +170,12 @@ The `CR031_RUN_PRODUCTION_UX_FREEZE.md` specifies **Pattern B — full-width exp
 
 **However**, the owner remembers a **master-detail layout with right-side selection and approval**. This may be a newer preference that differs from the frozen CR-031 spec.
 
-### Resolution Needed
-Owner to clarify: Should we convert Run Production to a **master-detail pattern** (recipe list left 35%, form + BOM + confirmation right 65%) like Sub-Recipe Master? Or is the current vertical layout acceptable?
+### Owner Decision (2026-06-14)
+**CONFIRMED: Option B — Master-Detail layout.** Recipe list left (30%), form + BOM + confirmation right (70%). Same pattern as Sub-Recipe Master.
+Mock preview: `/__dev/previews/RUN_PRODUCTION_LAYOUT_COMPARISON.html`
 
-**Severity:** MEDIUM (layout mismatch from owner's expectation)
-**Files:** `frontend/src/components/central-inventory/ProductionRunForm.jsx` (~628 lines)
+**Severity:** MEDIUM (layout change — full rewrite of ProductionRunForm.jsx)
+**Files:** `frontend/src/components/central-inventory/ProductionRunForm.jsx` (~628 lines → rewrite to master-detail)
 
 ---
 
