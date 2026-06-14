@@ -124,16 +124,104 @@ Why does this intermediate screen exist? If `require_po_for_purchase` is enabled
 
 ---
 
+## BUG-F: Dollar sign ($) icon should be Rupee (₹) across the app
+
+**Screen:** Multiple — Production Run Form, Sub-Recipe Master, Production History, Recipe Catalogue
+**Screenshot:** "Material Cost/batch" card shows `$` icon
+
+### What's Happening
+Several components import `DollarSign` from `lucide-react` and use it as the cost icon. While the **text values** are correctly formatted with `₹` (e.g. "₹8,805.56"), the **icon** itself is a dollar sign `$`.
+
+### Files Using DollarSign Icon
+| File | Lines |
+|------|-------|
+| `ProductionRunForm.jsx` | import line 22, usage line 438 |
+| `ProductionHistory.jsx` | import line 11, usage lines 199, 202 |
+| `SubRecipeMaster.jsx` | import line 13, usage line 405 |
+| `RecipeCatalogue.jsx` | import line 12 |
+
+### Fix
+Replace all `DollarSign` imports with `IndianRupee` from `lucide-react` (available in lucide-react). Global find-and-replace across these 4 files.
+
+**Severity:** MEDIUM (brand/locale mismatch — Indian product showing $ icon)
+**Files:** 4 files listed above
+
+---
+
+## BUG-G: Production Run Form layout doesn't match approved mock (Sub-Recipe screen)
+
+**Screen:** Run Production (`/production/new`)
+**Screenshot:** Shows vertical full-width ingredient BOM table + confirmation
+
+### Owner Observation
+"This screen seems wrong — we had right side selection and approval in mock screen."
+
+### Current Layout
+The `ProductionRunForm.jsx` uses a **vertical full-width** pattern:
+1. Recipe selector cards (horizontal scroll)
+2. Form fields (batch, expiry)
+3. Coverage estimate
+4. Full-width ingredient BOM table
+5. Cost summary
+6. Confirmation panel at bottom
+
+### Approved Mock (CR-031 UX Freeze)
+The `CR031_RUN_PRODUCTION_UX_FREEZE.md` specifies **Pattern B — full-width expandable cards**, which is a vertical layout (recipe cards → expandable form → confirmation). This is what's currently implemented.
+
+**However**, the owner remembers a **master-detail layout with right-side selection and approval**. This may be a newer preference that differs from the frozen CR-031 spec.
+
+### Resolution Needed
+Owner to clarify: Should we convert Run Production to a **master-detail pattern** (recipe list left 35%, form + BOM + confirmation right 65%) like Sub-Recipe Master? Or is the current vertical layout acceptable?
+
+**Severity:** MEDIUM (layout mismatch from owner's expectation)
+**Files:** `frontend/src/components/central-inventory/ProductionRunForm.jsx` (~628 lines)
+
+---
+
+## BUG-H: Food edit should NOT be a popup dialog (Product Catalogue)
+
+**Screen:** Product Catalog → Foods tab (`/product-catalog`)
+**Screenshot:** "Edit Food" appears as a centered modal popup (Dialog component)
+
+### Owner Observation
+"Food was not coming in pop up in mock screen."
+
+### Current Code
+`ProductCatalogue.jsx` uses a `Dialog` component (`FoodFormDialog`) for both Add and Edit Food (lines 162–175). Click Edit pencil → opens centered popup with Name, Category, Price, Description fields.
+
+### Approved Mock (CR-032 UX Freeze)
+`CR032_PRODUCT_CATALOG_UX_FREEZE.md` states for Foods tab:
+> **"keep current — simple table + popup"**
+> "Add Food: Popup dialog (Name, Category dropdown, Price, Description)"
+> "Actions: Edit (pencil) + Delete (trash with confirmation) | **Popup dialog for edit**"
+
+**The mock actually DOES specify popup for foods.** The current implementation matches the frozen spec. However, if the owner now wants a different pattern (inline edit, side panel, master-detail), that would be a new CR.
+
+### Resolution Needed
+Owner to clarify: The frozen CR-032 spec says popup for Food edit. Is this a change request to switch to inline/side-panel editing? If so, which pattern?
+- a) Master-detail (like Sub-Recipe Master — list left, form right)
+- b) Inline table editing (edit in place)
+- c) Side sheet (slide-in from right)
+
+**Severity:** LOW (works as spec'd, but owner may want different UX)
+**Files:** `frontend/src/components/central-inventory/ProductCatalogue.jsx` (lines 59–175)
+
+---
+
 ## Summary Table
 
 | ID | Title | Severity | Screen | Type |
 |----|-------|:--------:|--------|:----:|
 | BUG-A | "125 items behind" push status misleading | MEDIUM | Store Management | UX |
 | BUG-B | Stock Inventory should split FG (Outward) / RM (Inward) | MEDIUM | Stock Inventory | UX/Nav |
-| BUG-C | "Unknown: —" in From/To on Store Detail transactions | HIGH | Store Detail | Data |
+| BUG-C | "Unknown: —" in From/To on Store Detail transactions | **HIGH** | Store Detail | Data |
 | BUG-D | Remove "Adjust Stock" quick action (testing only) | LOW | Operations Hub | Cleanup |
 | BUG-E | Unnecessary "Direct Stock Entry Disabled" gate page | LOW | Purchase | UX |
+| BUG-F | Dollar sign ($) icon → Rupee (₹) across app | MEDIUM | Multiple | Locale |
+| BUG-G | Production Run layout doesn't match owner memory | MEDIUM | Run Production | Layout |
+| BUG-H | Food edit popup — owner questions popup pattern | LOW | Product Catalog | UX |
 
 ---
 
-*Awaiting owner confirmation to register as BUG-018 through BUG-022 in `registry.json`.*
+*Awaiting owner confirmation to register as BUG-018 through BUG-025 in `registry.json`.*
+*BUG-G and BUG-H need owner clarification before implementation — current code matches frozen specs.*
