@@ -198,13 +198,11 @@ Mock preview: `/__dev/previews/RUN_PRODUCTION_LAYOUT_COMPARISON.html`
 
 **The mock actually DOES specify popup for foods.** The current implementation matches the frozen spec. However, if the owner now wants a different pattern (inline edit, side panel, master-detail), that would be a new CR.
 
-### Resolution Needed
-Owner to clarify: The frozen CR-032 spec says popup for Food edit. Is this a change request to switch to inline/side-panel editing? If so, which pattern?
-- a) Master-detail (like Sub-Recipe Master — list left, form right)
-- b) Inline table editing (edit in place)
-- c) Side sheet (slide-in from right)
+### Owner Decision (2026-06-14)
+**CONFIRMED: Option C — Side Sheet (slide-in from right).** Table stays visible, edit form slides in from right. Quick Info section shows linked recipe + FG stock.
+Mock preview: `/__dev/previews/FOOD_EDIT_PATTERN_COMPARISON.html`
 
-**Severity:** LOW (works as spec'd, but owner may want different UX)
+**Severity:** LOW (UX change — replace Dialog with Sheet component)
 **Files:** `frontend/src/components/central-inventory/ProductCatalogue.jsx` (lines 59–175)
 
 ---
