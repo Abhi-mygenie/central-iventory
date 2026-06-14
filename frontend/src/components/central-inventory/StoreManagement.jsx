@@ -14,7 +14,7 @@ import { LoadingState, ErrorState, EmptyState } from "@/components/common/StateD
 import { mapRestaurantType } from "@/lib/terminology";
 import {
   GitBranch, Search, Plus, ChevronDown, ChevronRight, RefreshCw, Loader2,
-  Upload, Mail, Phone, MapPin, Calendar,
+  Upload, Mail, Phone, MapPin, Calendar, Check, ArrowRight, ArrowLeft,
 } from "lucide-react";
 
 /**
@@ -48,6 +48,9 @@ export default function StoreManagement() {
   const [formPassword, setFormPassword] = useState("");
   const [formAddress, setFormAddress] = useState("");
   const [creating, setCreating] = useState(false);
+  const [createStep, setCreateStep] = useState(1);
+  const [createProgress, setCreateProgress] = useState("");
+  const [allStores, setAllStores] = useState([]);
 
   useEffect(() => { fetchList(); }, [fetchList]);
 
@@ -83,9 +86,14 @@ export default function StoreManagement() {
       )
     ).then(results => {
       const map = {};
+      let allRestaurants = [];
       children.slice(0, 15).forEach((child, idx) => {
         if (results[idx].status === "fulfilled") {
           const d = results[idx].value?.data?.data || results[idx].value?.data;
+          // Extract full restaurant list from first successful response
+          if (allRestaurants.length === 0 && d?.restaurants) {
+            allRestaurants = d.restaurants;
+          }
           const stocks = d?.child_stock_summary || d?.stock_summary || [];
           let oos = 0, low = 0, ok = 0;
           const oosItems = [];
@@ -99,12 +107,29 @@ export default function StoreManagement() {
         }
       });
       setChildHealthMap(map);
+      if (allRestaurants.length > 0) setAllStores(allRestaurants);
     });
   }, [children]);
 
+  // Merge outlets into children for Central Store view
+  const displayChildren = useMemo(() => {
+    if (!isTopLevel || allStores.length === 0) return children;
+    const directIds = new Set(children.map(c => c.id));
+    const outlets = allStores
+      .filter(s => s.restaurant_type === "franchise" && !directIds.has(s.restaurant_id))
+      .map(s => ({
+        id: s.restaurant_id,
+        name: s.restaurant_name,
+        restaurantTypeFlag: s.restaurant_type,
+        email: "",
+        isNested: true,
+      }));
+    return [...children, ...outlets];
+  }, [children, allStores, isTopLevel]);
+
   // Filter
   const filtered = useMemo(() => {
-    let list = children;
+    let list = displayChildren;
     if (typeFilter === "master") list = list.filter(c => c.restaurantTypeFlag === "central");
     else if (typeFilter === "outlet") list = list.filter(c => c.restaurantTypeFlag === "franchise");
     if (search.trim()) {
@@ -112,23 +137,46 @@ export default function StoreManagement() {
       list = list.filter(c => (c.name || "").toLowerCase().includes(q) || (c.email || "").toLowerCase().includes(q));
     }
     return list;
-  }, [children, typeFilter, search]);
+  }, [displayChildren, typeFilter, search]);
 
-  const masterCount = children.filter(c => c.restaurantTypeFlag === "central").length;
-  const outletCount = children.filter(c => c.restaurantTypeFlag === "franchise").length;
+  const masterCount = displayChildren.filter(c => c.restaurantTypeFlag === "central").length;
+  const outletCount = displayChildren.filter(c => c.restaurantTypeFlag === "franchise").length;
 
-  const handleCreate = async () => {
+  const handleCreateAndPush = async () => {
     if (!formName.trim() || !formEmail.trim() || !formPassword) return;
     setCreating(true);
+    setCreateProgress("creating");
     try {
-      await createChild({ name: formName, email: formEmail, phone: formPhone, password: formPassword, address: formAddress, childType: formType });
-      toast({ title: "Store created" });
-      setShowAddForm(false);
+      const result = await createChild({
+        name: formName, email: formEmail, phone: formPhone,
+        password: formPassword, address: formAddress, childType: formType,
+      });
+      const newChildId = result?.data?.id || result?.id;
+      if (newChildId) {
+        setCreateProgress("pushing");
+        try {
+          await api.pushBundle(newChildId);
+          toast({ title: "Store created and catalog pushed" });
+        } catch {
+          toast({ title: "Store created but push failed. Use Push button to retry.", variant: "destructive" });
+        }
+      } else {
+        toast({ title: "Store created" });
+      }
+      setShowAddForm(false); setCreateStep(1);
       setFormName(""); setFormEmail(""); setFormPhone(""); setFormPassword(""); setFormAddress("");
       fetchList();
     } catch (e) {
       toast({ title: e?.response?.data?.message || "Failed to create store", variant: "destructive" });
-    } finally { setCreating(false); }
+    } finally { setCreating(false); setCreateProgress(""); }
+  };
+
+  const handleNext = () => {
+    if (!formName.trim() || !formEmail.trim() || !formPassword) {
+      toast({ title: "Please fill all required fields", variant: "destructive" });
+      return;
+    }
+    setCreateStep(2);
   };
 
   const handlePush = async (childId) => {
@@ -159,7 +207,7 @@ export default function StoreManagement() {
           <GitBranch className="h-5 w-5 text-primary" />
           <div>
             <h1 className="text-lg font-bold">Store Management</h1>
-            <p className="text-xs text-muted-foreground">{children.length} direct children</p>
+            <p className="text-xs text-muted-foreground">{displayChildren.length} stores in hierarchy</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -175,7 +223,7 @@ export default function StoreManagement() {
       {/* Type filter pills */}
       <div className="flex items-center gap-2">
         {[
-          { value: "all", label: `All (${children.length})` },
+          { value: "all", label: `All (${displayChildren.length})` },
           { value: "master", label: `Master (${masterCount})` },
           { value: "outlet", label: `Outlet (${outletCount})` },
         ].map(t => (
@@ -195,36 +243,117 @@ export default function StoreManagement() {
         </div>
       </div>
 
-      {/* Inline Add Form */}
+      {/* 2-Step Create & Push Wizard */}
       {showAddForm && (
         <Card className="border-l-[3px] border-l-emerald-500" data-testid="create-store-form">
           <CardContent className="py-4 px-5">
-            <h3 className="text-xs font-bold text-emerald-700 mb-3">New Store</h3>
-            <div className="grid grid-cols-3 gap-3 mb-3">
-              <div><Label className="text-[10px] text-muted-foreground">Store Name *</Label><Input value={formName} onChange={e => setFormName(e.target.value)} className="h-8 text-xs" data-testid="create-store-name" placeholder="e.g. Downtown Branch" /></div>
-              <div><Label className="text-[10px] text-muted-foreground">Store Type *</Label>
-                <Select value={formType} onValueChange={setFormType}>
-                  <SelectTrigger className="h-8 text-xs" data-testid="create-store-type"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="central">{mapRestaurantType("central")}</SelectItem>
-                    <SelectItem value="franchise">{mapRestaurantType("franchise")}</SelectItem>
-                  </SelectContent>
-                </Select>
+            {/* Step indicator */}
+            <div className="flex items-center gap-3 mb-4" data-testid="create-store-steps">
+              <div className={`flex items-center gap-1.5 text-xs font-medium ${createStep === 1 ? "text-emerald-700" : "text-muted-foreground"}`}>
+                <span className={`inline-flex items-center justify-center h-5 w-5 rounded-full text-[10px] font-bold ${createStep === 1 ? "bg-emerald-600 text-white" : "bg-emerald-100 text-emerald-600"}`}>
+                  {createStep > 1 ? <Check className="h-3 w-3" /> : "1"}
+                </span>
+                Store Details
               </div>
-              <div><Label className="text-[10px] text-muted-foreground">Email *</Label><Input type="email" value={formEmail} onChange={e => setFormEmail(e.target.value)} className="h-8 text-xs" data-testid="create-store-email" /></div>
+              <div className="h-px flex-1 bg-border" />
+              <div className={`flex items-center gap-1.5 text-xs font-medium ${createStep === 2 ? "text-emerald-700" : "text-muted-foreground"}`}>
+                <span className={`inline-flex items-center justify-center h-5 w-5 rounded-full text-[10px] font-bold ${createStep === 2 ? "bg-emerald-600 text-white" : "bg-muted text-muted-foreground"}`}>2</span>
+                Review & Push
+              </div>
             </div>
-            <div className="grid grid-cols-3 gap-3 mb-3">
-              <div><Label className="text-[10px] text-muted-foreground">Phone</Label><Input value={formPhone} onChange={e => setFormPhone(e.target.value)} className="h-8 text-xs" /></div>
-              <div><Label className="text-[10px] text-muted-foreground">Password *</Label><Input type="password" value={formPassword} onChange={e => setFormPassword(e.target.value)} className="h-8 text-xs" /></div>
-              <div><Label className="text-[10px] text-muted-foreground">Address</Label><Input value={formAddress} onChange={e => setFormAddress(e.target.value)} className="h-8 text-xs" /></div>
-            </div>
-            <p className="text-[10px] text-muted-foreground mb-3">This will create a new child store under your hierarchy.</p>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="text-xs" onClick={() => setShowAddForm(false)}>Cancel</Button>
-              <Button size="sm" className="text-xs bg-emerald-600 hover:bg-emerald-700 gap-1" onClick={handleCreate} disabled={creating || !formName.trim() || !formEmail.trim() || !formPassword} data-testid="submit-create-store">
-                {creating && <Loader2 className="h-3 w-3 animate-spin" />} Create Store
-              </Button>
-            </div>
+
+            {createStep === 1 && (
+              <>
+                <h3 className="text-xs font-bold text-emerald-700 mb-3">New Store — Step 1: Details</h3>
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  <div><Label className="text-[10px] text-muted-foreground">Store Name *</Label><Input value={formName} onChange={e => setFormName(e.target.value)} className="h-8 text-xs" data-testid="create-store-name" placeholder="e.g. Downtown Branch" /></div>
+                  <div><Label className="text-[10px] text-muted-foreground">Store Type *</Label>
+                    <Select value={formType} onValueChange={setFormType}>
+                      <SelectTrigger className="h-8 text-xs" data-testid="create-store-type"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="central">{mapRestaurantType("central")}</SelectItem>
+                        <SelectItem value="franchise">{mapRestaurantType("franchise")}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div><Label className="text-[10px] text-muted-foreground">Email *</Label><Input type="email" value={formEmail} onChange={e => setFormEmail(e.target.value)} className="h-8 text-xs" data-testid="create-store-email" /></div>
+                </div>
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  <div><Label className="text-[10px] text-muted-foreground">Phone</Label><Input value={formPhone} onChange={e => setFormPhone(e.target.value)} className="h-8 text-xs" /></div>
+                  <div><Label className="text-[10px] text-muted-foreground">Password *</Label><Input type="password" value={formPassword} onChange={e => setFormPassword(e.target.value)} className="h-8 text-xs" /></div>
+                  <div><Label className="text-[10px] text-muted-foreground">Address</Label><Input value={formAddress} onChange={e => setFormAddress(e.target.value)} className="h-8 text-xs" /></div>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="text-xs" onClick={() => { setShowAddForm(false); setCreateStep(1); }}>Cancel</Button>
+                  <Button size="sm" className="text-xs bg-emerald-600 hover:bg-emerald-700 gap-1" onClick={handleNext} data-testid="create-store-next">
+                    Next <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </div>
+              </>
+            )}
+
+            {createStep === 2 && (
+              <>
+                <h3 className="text-xs font-bold text-emerald-700 mb-3">New Store — Step 2: Review & Push</h3>
+                <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-3 mb-4">
+                  <p className="text-xs font-semibold text-emerald-800">Creating: <span className="font-bold">{formName}</span> as {mapRestaurantType(formType)}</p>
+                  <p className="text-[10px] text-emerald-600 mt-0.5">{formEmail}</p>
+                </div>
+
+                {/* Catalog count cards */}
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Catalog items to push</p>
+                <div className="grid grid-cols-4 gap-2 mb-2">
+                  {[
+                    { key: "categories", label: "Categories" },
+                    { key: "ingredients", label: "Ingredients" },
+                    { key: "foods", label: "Products" },
+                    { key: "recipes", label: "Recipes" },
+                  ].map(({ key, label }) => {
+                    const entities = createMeta?.available_entities || {};
+                    const count = typeof entities[key] === "number" ? entities[key] : (Array.isArray(entities[key]) ? entities[key].length : 0);
+                    return (
+                      <div key={key} className={`text-center p-2.5 rounded-lg border ${count === 0 ? "opacity-40 bg-muted/30" : "bg-card"}`} data-testid={`catalog-count-${key}`}>
+                        <p className="text-lg font-bold tabular-nums">{count}</p>
+                        <p className="text-[10px] text-muted-foreground">{label}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  {[
+                    { key: "sub_recipes", label: "Sub-Recipes" },
+                    { key: "addons", label: "Addons" },
+                    { key: "roles", label: "Roles" },
+                  ].map(({ key, label }) => {
+                    const entities = createMeta?.available_entities || {};
+                    const count = typeof entities[key] === "number" ? entities[key] : (Array.isArray(entities[key]) ? entities[key].length : 0);
+                    return (
+                      <div key={key} className={`text-center p-2.5 rounded-lg border ${count === 0 ? "opacity-40 bg-muted/30" : "bg-card"}`} data-testid={`catalog-count-${key}`}>
+                        <p className="text-lg font-bold tabular-nums">{count}</p>
+                        <p className="text-[10px] text-muted-foreground">{label}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {createProgress && (
+                  <div className="flex items-center gap-2 text-xs text-emerald-700 mb-3">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    {createProgress === "creating" ? "Creating store..." : "Pushing catalog..."}
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="text-xs gap-1" onClick={() => setCreateStep(1)} disabled={creating} data-testid="create-store-back">
+                    <ArrowLeft className="h-3 w-3" /> Back
+                  </Button>
+                  <Button size="sm" className="text-xs bg-emerald-600 hover:bg-emerald-700 gap-1" onClick={handleCreateAndPush} disabled={creating} data-testid="submit-create-store">
+                    {creating && <Loader2 className="h-3 w-3 animate-spin" />}
+                    <Check className="h-3 w-3" /> Create & Push
+                  </Button>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
       )}
@@ -267,7 +396,10 @@ export default function StoreManagement() {
                       <TableCell className="py-2.5 px-1.5">
                         {isExpanded ? <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" /> : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />}
                       </TableCell>
-                      <TableCell className="py-2.5 font-semibold text-sm">{child.name}</TableCell>
+                      <TableCell className="py-2.5 font-semibold text-sm">
+                        {child.isNested && <span className="text-[9px] text-muted-foreground mr-1" data-testid={`nested-outlet-${child.id}`}>↳</span>}
+                        {child.name}
+                      </TableCell>
                       <TableCell className="py-2.5">
                         <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${child.restaurantTypeFlag === "central" ? "text-orange-700 border-orange-200 bg-orange-50" : "text-blue-700 border-blue-200 bg-blue-50"}`}>
                           {mapRestaurantType(child.restaurantTypeFlag)}
