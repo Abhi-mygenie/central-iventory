@@ -170,51 +170,30 @@ Component swap. Same form logic, different container.
 
 ---
 
-## Execution Priority (recommended)
+## Owner Decisions (2026-06-14)
 
-| Order | Bug | Effort | Reason |
+| Q | Decision |
+|---|----------|
+| Q1 (BUG-B) | **Option A approved** — unfreeze `screenVisibility.js`, add RM Stock under Inward, default Outward to FG |
+| Q2 (BUG-A) | **DEFERRED** — waiting for backend G-023 fix. No interim frontend fix. |
+| Q3 (BUG-D) | **Option A** — card-only removal from Quick Actions, no frozen file touch |
+| Q4 (BUG-C) | **Verified** — API returns `from_restaurant_id`/`to_restaurant_id` but names are null. `useRestaurantMap` resolves by ID. |
+
+## Execution Priority (final)
+
+| Order | Bug | Effort | Status |
 |:-----:|-----|:------:|--------|
-| 1 | BUG-F | 5 min | Icon swap — quick win, zero risk |
-| 2 | BUG-D | 5 min | Remove 7 lines — quick win |
-| 3 | BUG-C | 15 min | HIGH priority data fix, hook already exists |
-| 4 | BUG-E | 10 min | Auto-redirect, no frozen files |
-| 5 | BUG-A | 10 min | Label clarification |
-| 6 | BUG-H | 30 min | Sheet swap for food edit |
-| 7 | BUG-B | 20 min | Stock split — depends on frozen file decision |
-| 8 | BUG-G | 90 min | Full rewrite of ProductionRunForm |
+| 1 | BUG-F | 5 min | ✅ Ready — icon swap |
+| 2 | BUG-D | 5 min | ✅ Ready — card removal |
+| 3 | BUG-C | 15 min | ✅ Ready — wire useRestaurantMap |
+| 4 | BUG-E | 10 min | ✅ Ready — auto-redirect |
+| 5 | BUG-H | 30 min | ✅ Ready — Dialog → Sheet |
+| 6 | BUG-B | 20 min | ✅ Ready — unfreeze approved |
+| 7 | BUG-G | 90 min | ✅ Ready — ProductionRunForm rewrite |
+| — | BUG-A | — | ⏸ DEFERRED — backend G-023 |
 
-**Total estimated: ~3 hours**
+**Total estimated: ~2.5 hours (excluding BUG-A)**
 
----
-
-## QUESTIONS FOR OWNER
-
-### Q1: BUG-B — How to add RM Stock under Inward?
-`screenVisibility.js` is **FROZEN**. Two options:
-
-**Option (a):** Modify the frozen file — add a new nav item under Inward:
-```
-{ id: "rm-stock", label: "Raw Material Stock", path: "/inventory?type=raw", icon: "Package" }
-```
-And default the Outward Stock Inventory to show Finished Goods only.
-→ Requires your approval to unfreeze.
-
-**Option (b):** Keep nav as-is, but change the **default tab** in Stock Inventory to "Finished Goods" (under Outward) and add a "View Raw Material Stock" link in the Raw Material Master screen (already under Inward).
-→ No frozen file change needed.
-
-Which do you prefer?
-
-### Q2: BUG-A — What label do you want?
-Current: `"Stale — 125 items behind"`
-Options:
-- (a) `"125 items not pushed"` 
-- (b) `"125 unpushed catalog items"`
-- (c) `"Catalog gap: 125 items"` 
-- (d) Different text? What wording feels right to you?
-
-### Q3: BUG-D — Remove route and sidebar too, or just the Quick Action card?
-- (a) **Card only** — remove from OperationsHub Quick Actions. Route `/adjustment/new` still works if someone navigates directly. No frozen file change.
-- (b) **Full removal** — card + route + sidebar reference. Requires touching `screenVisibility.js` (FROZEN).
-
-### Q4: BUG-C — Need to verify API field
-I need to test whether the `getHierarchyDetail` API response includes `from_restaurant_id` and `to_restaurant_id` in the `transactions[]` array. Can I run a test call to confirm, or do you know if these fields are present?
+## Backend Contract Filed
+- `G-023`: Push status API gap → `control/sessions/G023_PUSH_STATUS_BACKEND_CONTRACT.md`
+- `G-003/G-004`: Transfer history restaurant names/types → included in same contract
