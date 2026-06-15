@@ -41,7 +41,7 @@
     {
       "type": "CR",
       "id": "CR-001",
-      "title": "Slice 1 \u2014 Read-only Screens (Hub, Hierarchy, Store Detail, Login)",
+      "title": "Slice 1 — Read-only Screens (Hub, Hierarchy, Store Detail, Login)",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -129,7 +129,7 @@
     {
       "type": "CR",
       "id": "CR-002",
-      "title": "Slice 2 \u2014 Pending Queues, Transfer Detail, Status Timeline",
+      "title": "Slice 2 — Pending Queues, Transfer Detail, Status Timeline",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -211,7 +211,7 @@
     {
       "type": "CR",
       "id": "CR-003",
-      "title": "Slice 3 \u2014 History & Ledger, Date/Status Filters",
+      "title": "Slice 3 — History & Ledger, Date/Status Filters",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -290,7 +290,7 @@
     {
       "type": "CR",
       "id": "CR-004",
-      "title": "Slice 4 \u2014 Transfer Write Flows (Dispatch, Request, Approve, Reject, Receive, Cancel)",
+      "title": "Slice 4 — Transfer Write Flows (Dispatch, Request, Approve, Reject, Receive, Cancel)",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -376,7 +376,7 @@
     {
       "type": "CR",
       "id": "CR-005",
-      "title": "Slice 5 \u2014 Stock Adjustment, Wastage, Source Selector, Seed Shutdown",
+      "title": "Slice 5 — Stock Adjustment, Wastage, Source Selector, Seed Shutdown",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -460,7 +460,7 @@
     {
       "type": "CR",
       "id": "CR-006",
-      "title": "P17 \u2014 Amend / Withdraw / Modification",
+      "title": "P17 — Amend / Withdraw / Modification",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -539,7 +539,7 @@
     {
       "type": "CR",
       "id": "CR-007",
-      "title": "P17-Settings \u2014 Operational Settings CRUD",
+      "title": "P17-Settings — Operational Settings CRUD",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -618,7 +618,7 @@
     {
       "type": "CR",
       "id": "CR-008",
-      "title": "P18 \u2014 Vendor Management CRUD",
+      "title": "P18 — Vendor Management CRUD",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -697,7 +697,7 @@
     {
       "type": "CR",
       "id": "CR-009",
-      "title": "P19 \u2014 Add Stock / Procurement",
+      "title": "P19 — Add Stock / Procurement",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -776,7 +776,7 @@
     {
       "type": "CR",
       "id": "CR-010",
-      "title": "P20 \u2014 Stock Inventory Summary (Self-Store)",
+      "title": "P20 — Stock Inventory Summary (Self-Store)",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -856,7 +856,7 @@
     {
       "type": "CR",
       "id": "CR-011",
-      "title": "P21 \u2014 Catalogue CRUD (Ingredient/Product/Recipe/Addon-Recipe)",
+      "title": "P21 — Catalogue CRUD (Ingredient/Product/Recipe/Addon-Recipe)",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -940,7 +940,7 @@
     {
       "type": "CR",
       "id": "CR-012",
-      "title": "P21-Gaps \u2014 Food Category + Addon CRUD + Ingredient Rename",
+      "title": "P21-Gaps — Food Category + Addon CRUD + Ingredient Rename",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -1019,7 +1019,7 @@
     {
       "type": "CR",
       "id": "CR-013",
-      "title": "P22 \u2014 Daily Consumption Report",
+      "title": "P22 — Daily Consumption Report",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -1099,7 +1099,7 @@
     {
       "type": "CR",
       "id": "CR-014",
-      "title": "P23 \u2014 Hierarchy Management + Bundle Push",
+      "title": "P23 — Hierarchy Management + Bundle Push",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S0",
@@ -1179,7 +1179,7 @@
     {
       "type": "CR",
       "id": "CR-015",
-      "title": "P24 \u2014 FEFO Batch Stock Detail Panel",
+      "title": "P24 — FEFO Batch Stock Detail Panel",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S3",
@@ -1258,7 +1258,7 @@
     {
       "type": "CR",
       "id": "CR-016",
-      "title": "P20-Phase2 \u2014 Stock Inventory Hierarchy Toggle",
+      "title": "P20-Phase2 — Stock Inventory Hierarchy Toggle",
       "status": "QA",
       "severity": null,
       "sprint_key": "S3",
@@ -1342,7 +1342,7 @@
     {
       "type": "CR",
       "id": "CR-017",
-      "title": "P21-Smart \u2014 Smart Dispatch / Request Assistance",
+      "title": "P21-Smart — Smart Dispatch / Request Assistance",
       "status": "PROPOSED",
       "severity": null,
       "sprint_key": null,
@@ -1406,7 +1406,7 @@
     {
       "type": "CR",
       "id": "CR-018",
-      "title": "P25 \u2014 Wastage Report Enhancements",
+      "title": "P25 — Wastage Report Enhancements",
       "status": "IN_PROGRESS",
       "severity": null,
       "sprint_key": "S3",
@@ -2646,7 +2646,7 @@
     {
       "type": "CR",
       "id": "CR-019",
-      "title": "Intelligent UI Freeze \u2014 Screen Intelligence Layer",
+      "title": "Intelligent UI Freeze — Screen Intelligence Layer",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S1",
@@ -2787,7 +2787,7 @@
     {
       "type": "CR",
       "id": "CR-021",
-      "title": "Intelligent UI Implementation \u2014 Sprint A+B+C + Polish",
+      "title": "Intelligent UI Implementation — Sprint A+B+C + Polish",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S2",
@@ -2910,7 +2910,7 @@
     {
       "type": "CR",
       "id": "CR-022",
-      "title": "Code Quality Review Fixes \u2014 Security + React Patterns",
+      "title": "Code Quality Review Fixes — Security + React Patterns",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S2",
@@ -3095,7 +3095,7 @@
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S3",
-      "phase": "Code Gate PASSED \u2192 Batch 1 Implementation",
+      "phase": "Code Gate PASSED → Batch 1 Implementation",
       "files": [
         "hooks/useRestaurantMap.js",
         "OperationsHub.jsx",
@@ -3164,7 +3164,7 @@
     {
       "type": "CR",
       "id": "CR-024",
-      "title": "API Response Cache \u2014 Performance Optimization",
+      "title": "API Response Cache — Performance Optimization",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S3",
@@ -3172,7 +3172,7 @@
       "files": [
         "frontend/src/services/api.js"
       ],
-      "notes": "In-memory cache with TTL. 71\u219220 API calls (72% reduction). Gate waived (velocity exception).",
+      "notes": "In-memory cache with TTL. 71→20 API calls (72% reduction). Gate waived (velocity exception).",
       "artifact_refs": [
         {
           "artifact": 0,
@@ -3221,7 +3221,7 @@
     {
       "type": "CR",
       "id": "CR-025",
-      "title": "Coverage-Based Intelligent PO \u2014 Request Stock + Direct Dispatch",
+      "title": "Coverage-Based Intelligent PO — Request Stock + Direct Dispatch",
       "status": "CLOSED",
       "severity": null,
       "sprint_key": "S3",
@@ -3279,7 +3279,7 @@
     {
       "type": "CR",
       "id": "CR-026",
-      "title": "P28 \u2014 Production Unit Module (Production Run UI + History)",
+      "title": "P28 — Production Unit Module (Production Run UI + History)",
       "status": "QA",
       "severity": null,
       "sprint_key": "S3",
@@ -3344,7 +3344,7 @@
     {
       "type": "CR",
       "id": "CR-027",
-      "title": "Navigation Restructure \u2014 Grouped Sidebar (INWARD / PRODUCTION / OUTWARD / REPORTS / SETTINGS)",
+      "title": "Navigation Restructure — Grouped Sidebar (INWARD / PRODUCTION / OUTWARD / REPORTS / SETTINGS)",
       "status": "QA",
       "severity": null,
       "sprint_key": "S3",
@@ -3354,7 +3354,7 @@
         "frontend/src/components/layout/Sidebar.jsx",
         "frontend/src/App.js"
       ],
-      "notes": "Grouped sidebar sections: DASHBOARD, INWARD (Vendor Management, Raw Material Master, Purchase), PRODUCTION (Sub-Recipe Master, Run Production, Production History), OUTWARD (Store Management, Product Catalog, Stock Inventory, Pending Queues, History & Ledger), REPORTS (Consumption, Wastage), SETTINGS. Renames: Vendors\u2192Vendor Management, Ingredients\u2192Raw Material Master, Add Stock\u2192Purchase, Products\u2192Product Catalog. Remove Recipe + Addon Recipe as separate nav items (absorbed into Product Catalog). Hierarchy Summary merged into Store Management.",
+      "notes": "Grouped sidebar sections: DASHBOARD, INWARD (Vendor Management, Raw Material Master, Purchase), PRODUCTION (Sub-Recipe Master, Run Production, Production History), OUTWARD (Store Management, Product Catalog, Stock Inventory, Pending Queues, History & Ledger), REPORTS (Consumption, Wastage), SETTINGS. Renames: Vendors→Vendor Management, Ingredients→Raw Material Master, Add Stock→Purchase, Products→Product Catalog. Remove Recipe + Addon Recipe as separate nav items (absorbed into Product Catalog). Hierarchy Summary merged into Store Management.",
       "artifact_refs": [
         {
           "artifact": 0,
@@ -3403,7 +3403,7 @@
     {
       "type": "CR",
       "id": "CR-028",
-      "title": "Product Catalog Overhaul \u2014 Excel-like Bulk Editor + Inline Recipe/Addon/Sub-Recipe Linking",
+      "title": "Product Catalog Overhaul — Excel-like Bulk Editor + Inline Recipe/Addon/Sub-Recipe Linking",
       "status": "PROPOSED",
       "severity": null,
       "sprint_key": null,
@@ -3411,7 +3411,7 @@
       "files": [
         "frontend/src/components/central-inventory/ProductCatalogue.jsx"
       ],
-      "notes": "Full redesign of Products page \u2192 Product Catalog. Excel-like spreadsheet UI with: inline cell editing, bulk upload (Excel import), Excel export, column toggles, mandatory category enforcement, search + filter, unsaved changes indicator, + Add Item quick row. Each product shows linked Recipe, Sub-Recipe, and Addons inline. Expand row to see ingredient BOM from sub-recipe. Category is compulsory \u2014 UX enforces without friction. Reference: owner-shared screenshot of bulk editor pattern.",
+      "notes": "Full redesign of Products page → Product Catalog. Excel-like spreadsheet UI with: inline cell editing, bulk upload (Excel import), Excel export, column toggles, mandatory category enforcement, search + filter, unsaved changes indicator, + Add Item quick row. Each product shows linked Recipe, Sub-Recipe, and Addons inline. Expand row to see ingredient BOM from sub-recipe. Category is compulsory — UX enforces without friction. Reference: owner-shared screenshot of bulk editor pattern.",
       "artifact_refs": [
         {
           "artifact": 0,
@@ -3460,7 +3460,7 @@
     {
       "type": "CR",
       "id": "CR-029",
-      "title": "Stock Inventory Split \u2014 Finished Goods vs Raw Materials Tabs",
+      "title": "Stock Inventory Split — Finished Goods vs Raw Materials Tabs",
       "status": "QA",
       "severity": null,
       "sprint_key": "S3",
@@ -3469,7 +3469,7 @@
         "frontend/src/components/central-inventory/StockInventorySummary.jsx",
         "frontend/src/hooks/useStockInventory.js"
       ],
-      "notes": "Split Stock Inventory into tabs: Finished Goods (items with subrecipe_id / is_sub_recipe) and Raw Materials (ingredient type). Each tab shows own KPIs, own table. Optional 'All' tab for power users. Clarifies the inward/outward confusion \u2014 raw materials are inward procurement, FG is outward distribution.",
+      "notes": "Split Stock Inventory into tabs: Finished Goods (items with subrecipe_id / is_sub_recipe) and Raw Materials (ingredient type). Each tab shows own KPIs, own table. Optional 'All' tab for power users. Clarifies the inward/outward confusion — raw materials are inward procurement, FG is outward distribution.",
       "artifact_refs": [
         {
           "artifact": 0,
@@ -3931,6 +3931,74 @@
           "label": "Owner-Signoff",
           "status": "PENDING",
           "path": null
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-036",
+      "title": "Control Layer Redesign — Role-Based Agent Dispatch System",
+      "status": "INTAKE",
+      "severity": null,
+      "sprint_key": "S3",
+      "phase": null,
+      "files": [],
+      "notes": "Redesign control layer from single-agent sequential flow to 11-role dispatch system with dashboard batch queue. Adapted from MyGenie POS v0.6 agent prompt architecture.",
+      "artifact_refs": [
+        {
+          "artifact": 0,
+          "label": "Session-Start",
+          "status": "DONE",
+          "paths": [
+            "control/sessions/CR036_SESSION_START.md"
+          ],
+          "tags": []
+        },
+        {
+          "artifact": 1,
+          "label": "Intake",
+          "status": "DONE",
+          "paths": [
+            "control/sessions/CR036_ARTIFACT_1_INTAKE.md"
+          ],
+          "tags": []
+        },
+        {
+          "artifact": 2,
+          "label": "Impact-Analysis",
+          "status": "IN_PROGRESS",
+          "paths": [
+            "control/sessions/CR036_ARTIFACT_2_IMPACT_ANALYSIS.md"
+          ],
+          "tags": []
+        },
+        {
+          "artifact": 3,
+          "label": "Impl-Plan",
+          "status": "MISSING",
+          "paths": [],
+          "tags": []
+        },
+        {
+          "artifact": 4,
+          "label": "Code-Gate",
+          "status": "MISSING",
+          "paths": [],
+          "tags": []
+        },
+        {
+          "artifact": 5,
+          "label": "QA-Report",
+          "status": "MISSING",
+          "paths": [],
+          "tags": []
+        },
+        {
+          "artifact": 6,
+          "label": "Owner-Signoff",
+          "status": "MISSING",
+          "paths": [],
+          "tags": []
         }
       ]
     }
