@@ -4295,8 +4295,8 @@
       {
         "artifact": 3,
         "label": "Impl-Plan",
-        "status": "MISSING",
-        "path": null
+        "status": "DONE",
+        "path": "control/sessions/BUG-062_ARTIFACT_3_IMPLEMENTATION_PLAN.md"
       },
       {
         "artifact": 4,
@@ -4318,14 +4318,13 @@
       }
     ],
     "completeness": {
-      "done": 3,
+      "done": 4,
       "total": 7,
-      "pct": 43
+      "pct": 57
     },
     "doc_count": 0,
     "is_debt": true,
     "debt_reasons": [
-      "Impl-Plan: MISSING",
       "Code-Gate: MISSING",
       "QA-Report: MISSING",
       "Owner-Signoff: MISSING"

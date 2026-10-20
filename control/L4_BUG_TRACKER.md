@@ -195,6 +195,24 @@ Intake: `control/sessions/BUG-054_ARTIFACT_1_INTAKE.md`
 
 ---
 
+## BUG-062 — Dispatch: Source Selector Shows Only FEFO Batch (All Batches Not Selectable)
+
+| Field | Value |
+|-------|-------|
+| **ID** | BUG-062 |
+| **Severity** | P2 — MEDIUM |
+| **Status** | PLANNED (Gate 3 complete — awaiting Gate 4 GO) |
+| **File** | `frontend/src/components/central-inventory/DirectDispatchForm.jsx` |
+| **Root Cause** | `<select>` built from `fefoAllocs[]` — only FEFO-chosen segments; each alloc gets 1 `<option>` pointing to itself. `segments_preview[]` (all batches) never used to populate options. |
+| **Fix** | Replace `fefoAllocs.map(<1-option select>)` with single `<select>` listing all `segments_preview[]` entries. FEFO batch pre-selected + marked `★ FEFO`. Over-qty warning `⚠ only X in this batch`. Single-segment → static badge. |
+| **Scope** | 1 file, ~40 lines replace (774–813). 0 new state. 0 API changes. |
+| **Registered** | 2026-10-20 |
+| **Planned** | 2026-10-20 |
+| **Found By** | OWNER-REPORTED (screenshot: dropdown pre-selected only) |
+| **Related** | BUG-060 (multi-batch split — prerequisite: fix BUG-062 first) |
+
+---
+
 ## BUG-061 — Purchase Report: Fare Column Missing + Summary Excludes Fare
 
 | Field | Value |

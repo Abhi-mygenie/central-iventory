@@ -7279,8 +7279,8 @@
         {
           "artifact": 3,
           "label": "Impl-Plan",
-          "status": "MISSING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/BUG-062_ARTIFACT_3_IMPLEMENTATION_PLAN.md"
         },
         {
           "artifact": 4,
