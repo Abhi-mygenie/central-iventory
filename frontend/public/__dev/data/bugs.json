@@ -4329,5 +4329,76 @@
       "Owner-Signoff: MISSING"
     ],
     "sprint_name": "Unassigned"
+  },
+  {
+    "type": "BUG",
+    "id": "BUG-063",
+    "title": "Dispatch — Source Selector Too Small + Click Dead Zone (native <select> UX)",
+    "status": "PLANNED",
+    "severity": "P2",
+    "sprint_key": null,
+    "phase": "S5 — Dispatch UX Overhaul",
+    "files": [
+      "frontend/src/components/central-inventory/DirectDispatchForm.jsx"
+    ],
+    "notes": "3 compounding causes: (1) h-6 (24px) native <select> too short — tiny hit target. (2) Native OS <select> widget: text area is not reliably clickable on all platforms (esp. macOS Chrome/Safari) — only the dropdown arrow triggers open. (3) disabled={!row.included} silently kills clicks on unchecked rows — storekeeper clicks the dropdown and nothing happens. Fix: replace native <select>/<option> with Shadcn <Select> (already imported line 14) — full-width <button> trigger, entirely clickable; increase to h-8; remove disabled={!row.included} (keep disabled={submitting} only, consistent with qty Input). 1 file, 1 region (~22 lines). RELATED: BUG-062 (same region, immediate follow-on).",
+    "artifact_refs": [
+      {
+        "artifact": 0,
+        "label": "Session-Start",
+        "status": "WAIVED",
+        "path": null
+      },
+      {
+        "artifact": 1,
+        "label": "Intake",
+        "status": "DONE",
+        "path": "control/sessions/BUG-063_ARTIFACT_1_INTAKE.md"
+      },
+      {
+        "artifact": 2,
+        "label": "Impact-Analysis",
+        "status": "DONE",
+        "path": "control/sessions/BUG-063_ARTIFACT_2_IMPACT_ANALYSIS.md"
+      },
+      {
+        "artifact": 3,
+        "label": "Impl-Plan",
+        "status": "MISSING",
+        "path": null
+      },
+      {
+        "artifact": 4,
+        "label": "Code-Gate",
+        "status": "MISSING",
+        "path": null
+      },
+      {
+        "artifact": 5,
+        "label": "QA-Report",
+        "status": "MISSING",
+        "path": null
+      },
+      {
+        "artifact": 6,
+        "label": "Owner-Signoff",
+        "status": "MISSING",
+        "path": null
+      }
+    ],
+    "completeness": {
+      "done": 3,
+      "total": 7,
+      "pct": 43
+    },
+    "doc_count": 0,
+    "is_debt": true,
+    "debt_reasons": [
+      "Impl-Plan: MISSING",
+      "Code-Gate: MISSING",
+      "QA-Report: MISSING",
+      "Owner-Signoff: MISSING"
+    ],
+    "sprint_name": "Unassigned"
   }
 ]
