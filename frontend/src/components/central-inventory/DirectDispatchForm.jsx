@@ -772,45 +772,65 @@ function DispatchRow({ row, onUpdate, submitting }) {
       </td>
 
       <td className="px-2">
-        {row.isUnbatched ? (
-          <div className="text-[9.5px] text-amber-700 bg-amber-50 rounded px-1.5 py-0.5 leading-tight">
-            No batch tracking — bucket dispatch.{" "}
-            <a href="/purchase" className="text-primary underline text-[9px]" tabIndex={-1}>Add purchase</a>
-          </div>
-        ) : (row.fefoAllocs || []).length > 0 ? (
-          <div className="space-y-0.5">
-            {(row.fefoAllocs || []).map((alloc, i) => (
-              <div key={i} className="flex items-center gap-1">
-                <select
-                  className="h-6 text-[10px] border border-green-300 bg-green-50 text-green-800
-                             rounded px-1 flex-1 min-w-0"
-                  value={String(alloc.segment_id)}
-                  onChange={e => onUpdate("sourceSelector",
-                    { mode: "segment_id", segment_id: Number(e.target.value) })}
-                  disabled={!row.included || submitting}
-                  data-testid={`dispatch-source-${row.invMasterId}-${i}`}>
-                  <option value={String(alloc.segment_id)}>
-                    {alloc.batch || `Seg #${alloc.segment_id}`} ({alloc.qty} {row.unit})
-                  </option>
-                </select>
-                <span className="text-[8.5px] font-bold bg-green-100 text-green-700 rounded px-1 whitespace-nowrap">
-                  FEFO
+        {/* BUG-062 — real segment picker: all batches from segments_preview, FEFO pre-selected */}
+        {(() => {
+          const batchedSegs = (row.segments_preview || []).filter(s => s.segment_id !== null);
+          const fefoRecId = (row.fefoAllocs || [])[0]?.segment_id;
+          const selectedId = row.sourceSelector?.segment_id ?? fefoRecId;
+          const selectedSeg = batchedSegs.find(s => s.segment_id === selectedId);
+          const overBatch = selectedSeg && Number(selectedSeg.display_qty) < Number(row.qty);
+
+          if (row.isUnbatched) return (
+            <div className="text-[9.5px] text-amber-700 bg-amber-50 rounded px-1.5 py-0.5 leading-tight">
+              No batch tracking — bucket dispatch.{" "}
+              <a href="/purchase" className="text-primary underline text-[9px]" tabIndex={-1}>Add purchase</a>
+            </div>
+          );
+
+          if (batchedSegs.length === 0) return (
+            <div className="text-[10px] text-muted-foreground">—</div>
+          );
+
+          if (batchedSegs.length === 1) return (
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] bg-green-50 border border-green-200 text-green-800 rounded px-1.5 py-0.5 whitespace-nowrap">
+                  {batchedSegs[0].batch || `Seg #${batchedSegs[0].segment_id}`} ({Number(batchedSegs[0].display_qty)} {row.unit})
                 </span>
+                {fefoRecId === batchedSegs[0].segment_id && (
+                  <span className="text-[8.5px] font-bold bg-green-100 text-green-700 rounded px-1 whitespace-nowrap">FEFO</span>
+                )}
               </div>
-            ))}
-            {(() => {
-              const total = (row.fefoAllocs || []).reduce((s, a) => s + a.qty, 0);
-              const need = Number(row.qty) || 0;
-              return Math.abs(total - need) < 0.01
-                ? <div className="text-[9px] text-green-700">✓ Exact</div>
-                : total < need
-                  ? <div className="text-[9px] text-amber-700">⚠ Short {(need - total).toFixed(1)} {row.unit}</div>
-                  : null;
-            })()}
-          </div>
-        ) : (
-          <div className="text-[10px] text-muted-foreground">—</div>
-        )}
+              {overBatch && (
+                <div className="text-[9px] text-amber-700">⚠ only {Number(selectedSeg.display_qty)} {row.unit} in this batch</div>
+              )}
+            </div>
+          );
+
+          return (
+            <div className="space-y-0.5">
+              <select
+                className="h-6 text-[10px] border border-green-300 bg-green-50 text-green-800 rounded px-1 w-full min-w-0"
+                value={selectedId ? String(selectedId) : ""}
+                onChange={e => onUpdate("sourceSelector", { mode: "segment_id", segment_id: Number(e.target.value) })}
+                disabled={!row.included || submitting}
+                data-testid={`dispatch-source-${row.invMasterId}`}
+              >
+                {batchedSegs.map(seg => {
+                  const expired = seg.expiry_date && new Date(seg.expiry_date + "T23:59:59") <= new Date();
+                  return (
+                    <option key={seg.segment_id} value={String(seg.segment_id)} disabled={expired}>
+                      {seg.batch || `Seg #${seg.segment_id}`} ({Number(seg.display_qty)} {row.unit}){seg.segment_id === fefoRecId ? " ★ FEFO" : ""}{expired ? " [EXPIRED]" : ""}
+                    </option>
+                  );
+                })}
+              </select>
+              {overBatch && (
+                <div className="text-[9px] text-amber-700">⚠ only {Number(selectedSeg.display_qty)} {row.unit} in this batch</div>
+              )}
+            </div>
+          );
+        })()}
       </td>
 
       <td className="px-2 text-right">

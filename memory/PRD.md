@@ -17,6 +17,13 @@ Deploy the existing React frontend repo directly into `/app` and run it as-is, w
 
 ## Deployment History
 
+### 2026-10-20 — BUG-062 Implemented (branch `20oct`)
+- Dispatch screen Source Selector: replaced broken `fefoAllocs.map(<1-option select>)` with `segments_preview`-backed real selector
+- 1 file changed: `DirectDispatchForm.jsx` lines 774–834
+- FEFO pre-selected + `★ FEFO` label; single-seg → static badge; over-qty `⚠ only X kg` warning
+- Testing: 9/9 static code checks PASS (live blocked by preprod 401 — pre-existing)
+- Gate status: IMPLEMENTED (Gate 5). Needs QA (Gate 6) once credentials work.
+
 ### 2026-10-20 — Branch `20oct` Deployed (repo: parth-mygenie/central_inventory)
 - Source: https://github.com/parth-mygenie/central_inventory.git, branch `20oct`
 - Cleared `/app` (preserved `.git`)

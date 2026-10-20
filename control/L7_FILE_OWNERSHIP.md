@@ -186,6 +186,11 @@
 |------|--------|------|
 | `frontend/src/components/central-inventory/DirectDispatchForm.jsx` | MODIFIED — onKeyDown on search input (B1+B3), onKeyDown on qty Input (B2+B4), removed !row.included from qty disabled guard | BUG-054 |
 
+### BUG-062: Dispatch Source Selector — Real Segment Picker (session 2026-10-20)
+| File | Change | Item |
+|------|--------|------|
+| `frontend/src/components/central-inventory/DirectDispatchForm.jsx` | MODIFIED — lines 774–834: replaced `fefoAllocs.map(<1-option select>)` with `segments_preview`-backed real selector; FEFO pre-selected + `★ FEFO` label; single-seg → static badge; over-qty warning | BUG-062 |
+
 ### BUG-047: Addon Recipe CRUD Fix (session 2026-07-24)
 | File | Change | Item |
 |------|--------|------|
