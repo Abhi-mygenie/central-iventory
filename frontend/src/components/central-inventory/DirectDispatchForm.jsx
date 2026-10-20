@@ -809,22 +809,29 @@ function DispatchRow({ row, onUpdate, submitting }) {
 
           return (
             <div className="space-y-0.5">
-              <select
-                className="h-6 text-[10px] border border-green-300 bg-green-50 text-green-800 rounded px-1 w-full min-w-0"
+              {/* BUG-063 — Shadcn Select: full-width button trigger, entirely clickable; disabled only on submit */}
+              <Select
                 value={selectedId ? String(selectedId) : ""}
-                onChange={e => onUpdate("sourceSelector", { mode: "segment_id", segment_id: Number(e.target.value) })}
-                disabled={!row.included || submitting}
-                data-testid={`dispatch-source-${row.invMasterId}`}
+                onValueChange={v => onUpdate("sourceSelector", { mode: "segment_id", segment_id: Number(v) })}
+                disabled={submitting}
               >
-                {batchedSegs.map(seg => {
-                  const expired = seg.expiry_date && new Date(seg.expiry_date + "T23:59:59") <= new Date();
-                  return (
-                    <option key={seg.segment_id} value={String(seg.segment_id)} disabled={expired}>
-                      {seg.batch || `Seg #${seg.segment_id}`} ({Number(seg.display_qty)} {row.unit}){seg.segment_id === fefoRecId ? " ★ FEFO" : ""}{expired ? " [EXPIRED]" : ""}
-                    </option>
-                  );
-                })}
-              </select>
+                <SelectTrigger
+                  className="h-7 text-[10px] border-green-300 bg-green-50 text-green-800 px-1.5"
+                  data-testid={`dispatch-source-${row.invMasterId}`}
+                >
+                  <SelectValue placeholder="Select batch" />
+                </SelectTrigger>
+                <SelectContent>
+                  {batchedSegs.map(seg => {
+                    const expired = seg.expiry_date && new Date(seg.expiry_date + "T23:59:59") <= new Date();
+                    return (
+                      <SelectItem key={seg.segment_id} value={String(seg.segment_id)} disabled={expired}>
+                        {seg.batch || `Seg #${seg.segment_id}`} ({Number(seg.display_qty)} {row.unit}){seg.segment_id === fefoRecId ? " ★ FEFO" : ""}{expired ? " [EXPIRED]" : ""}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
               {overBatch && (
                 <div className="text-[9px] text-amber-700">⚠ only {Number(selectedSeg.display_qty)} {row.unit} in this batch</div>
               )}

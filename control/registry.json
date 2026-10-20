@@ -7306,7 +7306,7 @@
       "type": "BUG",
       "id": "BUG-063",
       "title": "Dispatch \u2014 Source Selector Too Small + Click Dead Zone (native <select> UX)",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "severity": "P2",
       "sprint_key": null,
       "phase": "S5 \u2014 Dispatch UX Overhaul",
@@ -7336,14 +7336,14 @@
         {
           "artifact": 3,
           "label": "Impl-Plan",
-          "status": "MISSING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/BUG-063_ARTIFACT_3_IMPLEMENTATION_PLAN.md"
         },
         {
           "artifact": 4,
           "label": "Code-Gate",
-          "status": "MISSING",
-          "path": null
+          "status": "DONE",
+          "path": "control/sessions/BUG-063_ARTIFACT_4_CODE_GATE.md"
         },
         {
           "artifact": 5,
